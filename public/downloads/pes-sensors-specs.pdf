@@ -1,0 +1,69 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 1477 >>
+stream
+BT /F2 11 Tf 56 740 Td (Specification summary - Smart Sensors) Tj ET
+0.83 0.68 0.22 RG 56 720 m 556 720 l S
+BT /F2 13 Tf 56 706 Td (Pearl Motion Sensor Switch) Tj ET
+BT /F1 10 Tf 56 679 Td (Range: 7 m, 360 degrees) Tj ET
+BT /F1 10 Tf 56 661 Td (Load: 300 W) Tj ET
+BT /F1 10 Tf 56 643 Td (Delay: 10s - 5min) Tj ET
+BT /F1 10 Tf 56 625 Td (Warranty: 1 year) Tj ET
+BT /F1 10 Tf 56 607 Td (Warranty: 1 year) Tj ET
+0.83 0.68 0.22 RG 56 589 m 556 589 l S
+BT /F2 13 Tf 56 575 Td (Royal Smart Motion Floodlight) Tj ET
+BT /F1 10 Tf 56 548 Td (Light: 30 W daylight) Tj ET
+BT /F1 10 Tf 56 530 Td (Range: 12 m, 120 degrees) Tj ET
+BT /F1 10 Tf 56 512 Td (Protection: IP65) Tj ET
+BT /F1 10 Tf 56 494 Td (Warranty: 1 year) Tj ET
+BT /F1 10 Tf 56 476 Td (Warranty: 1 year) Tj ET
+0.83 0.68 0.22 RG 56 458 m 556 458 l S
+BT /F2 13 Tf 56 444 Td (Pearl Smoke & Heat Detector) Tj ET
+BT /F1 10 Tf 56 417 Td (Type: Optical smoke + heat) Tj ET
+BT /F1 10 Tf 56 399 Td (Alarm: 85 dB) Tj ET
+BT /F1 10 Tf 56 381 Td (Coverage: 40 m2) Tj ET
+BT /F1 10 Tf 56 363 Td (Warranty: 1 year) Tj ET
+BT /F1 10 Tf 56 345 Td (Warranty: 1 year) Tj ET
+0.83 0.68 0.22 RG 56 327 m 556 327 l S
+BT /F2 13 Tf 56 313 Td (Royal Temperature & Timer Controller) Tj ET
+BT /F1 10 Tf 56 286 Td (Range: 5-40 C) Tj ET
+BT /F1 10 Tf 56 268 Td (Load: 2 kW) Tj ET
+BT /F1 10 Tf 56 250 Td (Display: LED) Tj ET
+BT /F1 10 Tf 56 232 Td (Warranty: 1 year) Tj ET
+BT /F1 10 Tf 56 214 Td (Warranty: 1 year) Tj ET
+0.83 0.68 0.22 RG 56 196 m 556 196 l S
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Title (Smart Sensors - Specification Sheets) /Producer (PES) /Creator (PES) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000260 00000 n 
+0000001788 00000 n 
+0000001924 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+2022
+%%EOF

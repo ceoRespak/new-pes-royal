@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <radialGradient id="halo" cx="0.5" cy="0.45" r="0.5">
+      <stop offset="0" stop-color="#5fc3e0" stop-opacity="0.2"/><stop offset="1" stop-color="#5fc3e0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e4c566"/><stop offset="1" stop-color="#b3922a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="600" cy="540" r="520" fill="url(#halo)"/>
+  <g transform="translate(600 540)">
+    <circle r="330" fill="#ffffff" opacity="0.06"/>
+    <circle r="330" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3" stroke-dasharray="8 14"/>
+    <g transform="translate(0 -20) scale(2.35)">
+    <g>
+      <circle cy="-6" r="88" fill="#ffffff" opacity="0.9"/>
+      <path d="M-36 70 H36 L44 122 H-44 Z" fill="#5fc3e0"/>
+      <rect x="-30" y="122" width="60" height="14" rx="7" fill="#5fc3e0"/>
+      <path d="M-128 -60 H-96 M96 -60 H128 M-92 -128 L-70 -106 M70 -106 L92 -128 M0 -158 V-190" stroke="#5fc3e0" stroke-width="14" stroke-linecap="round"/>
+      <circle r="20" fill="#fff" opacity="0.75" cx="-34" cy="-40"/>
+    </g></g>
+  </g>
+  <g fill="#5fc3e0" opacity="0.9">
+    <circle cx="180" cy="220" r="12"/><circle cx="1030" cy="340" r="16"/>
+    <circle cx="900" cy="150" r="9"/><circle cx="260" cy="920" r="13"/>
+    <circle cx="1040" cy="880" r="10"/>
+  </g>
+</svg>

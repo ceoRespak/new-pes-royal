@@ -21,9 +21,21 @@ export interface SiteInfo {
   announcement?: string;
 }
 
+export interface PageText {
+  title?: string;
+  highlight?: string;
+}
+
 export interface SiteContent {
   heroSlides?: HeroSlide[];
   siteInfo?: SiteInfo;
+  pages?: {
+    about?: PageText;
+    contact?: PageText;
+    support?: PageText;
+    gallery?: PageText;
+    dealers?: PageText;
+  };
   trustStrip?: { icon: string; title: string; text: string }[];
   slogan?: {
     eyebrow: string;

@@ -9,6 +9,7 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaCommentDots,
+  FaFileAlt,
   FaImages,
   FaPhoneAlt,
   FaPlus,
@@ -60,6 +61,14 @@ const ICONS = ["truck","shield","money","check","headset","store","tags","award"
 const FEATURE_ICONS = ["bolt","sun","star","shield","truck","wifi","award","headset","check","store"];
 const DEFAULT_BG =
   "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)";
+
+const PAGES: { id: string; label: string }[] = [
+  { id: "about", label: "About Us" },
+  { id: "contact", label: "Contact" },
+  { id: "support", label: "Support" },
+  { id: "gallery", label: "Gallery" },
+  { id: "dealers", label: "Dealers" },
+];
 
 const input =
   "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#E11D2A]";
@@ -114,6 +123,11 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   );
   const setInfo = (k: string, v: string) =>
     setSiteInfo((s) => ({ ...s, [k]: v }));
+  const [pages, setPages] = useState<Record<string, Record<string, string>>>(
+    (initial.pages as Record<string, Record<string, string>> | undefined) || {}
+  );
+  const setPg = (id: string, f: string, v: string) =>
+    setPages((p) => ({ ...p, [id]: { ...(p[id] ?? {}), [f]: v } }));
   const [open, setOpen] = useState<number | null>(0);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -165,6 +179,16 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       testimonials,
       siteInfo: Object.fromEntries(
         Object.entries(siteInfo).filter(([, v]) => String(v).trim() !== "")
+      ),
+      pages: Object.fromEntries(
+        PAGES.map(({ id }) => [
+          id,
+          Object.fromEntries(
+            Object.entries(pages[id] ?? {}).filter(([, v]) =>
+              String(v).trim() !== ""
+            )
+          ),
+        ]).filter(([, o]) => Object.keys(o as object).length > 0)
       ),
     };
     try {
@@ -446,6 +470,40 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
               <Field label="Footer about text"><textarea rows={2} className={`${input} resize-none`} value={siteInfo.footerAbout ?? ""} onChange={(e) => setInfo("footerAbout", e.target.value)} /></Field>
             </div>
           </div>
+        </div>
+      </Group>
+
+      {/* ============ INNER PAGES ============ */}
+      <Group
+        title="Inner page headings"
+        hint="Main heading + highlighted word for About, Contact, Support, Gallery & Dealers."
+        accent="bg-gradient-to-r from-rose-500 to-pink-700"
+        icon={FaFileAlt}
+        count={5}
+      >
+        <div className="space-y-3">
+          {PAGES.map(({ id, label }) => (
+            <div key={id} className="rounded-2xl border border-slate-200 bg-white p-3">
+              <p className="mb-2 text-sm font-bold text-slate-700">{label}</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <input
+                  className={input}
+                  value={pages[id]?.title ?? ""}
+                  onChange={(e) => setPg(id, "title", e.target.value)}
+                  placeholder="Heading"
+                />
+                <input
+                  className={input}
+                  value={pages[id]?.highlight ?? ""}
+                  onChange={(e) => setPg(id, "highlight", e.target.value)}
+                  placeholder="Highlighted word"
+                />
+              </div>
+              <p className="mt-1 text-xs text-slate-400">
+                Leave blank to keep the current heading.
+              </p>
+            </div>
+          ))}
         </div>
       </Group>
     </div>

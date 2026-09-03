@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { getContent } from "@/lib/content/store";
+
+export const dynamic = "force-dynamic";
 import { FaHandshake, FaHeadset, FaStore } from "react-icons/fa";
 import PageHero from "@/components/ui/PageHero";
 import DealerDirectory from "@/components/DealerDirectory";
@@ -31,12 +34,13 @@ const perks = [
 ];
 
 export default function DealersPage() {
+  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["dealers"] ?? {}) as Record<string, string>;
   return (
     <>
       <PageHero
         crumb="Dealers"
-        title="Find a PES Dealer"
-        highlight="Near You"
+        title={pg.title || "Find a PES Dealer"}
+        highlight={pg.highlight || "Near You"}
         description="Search our authorized retail network across Pakistan — or become a partner and grow with us."
       />
 

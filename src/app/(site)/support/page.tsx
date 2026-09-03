@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { getContent } from "@/lib/content/store";
+
+export const dynamic = "force-dynamic";
 import {
   FaAward,
   FaCheckCircle,
@@ -65,12 +68,13 @@ const downloads = [
 ];
 
 export default function SupportPage() {
+  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["support"] ?? {}) as Record<string, string>;
   return (
     <>
       <PageHero
         crumb="Support"
-        title="We've Got You"
-        highlight="Covered"
+        title={pg.title || "We've Got You"}
+        highlight={pg.highlight || "Covered"}
         description="Warranty information, frequently asked questions, authorized service centers and useful downloads — everything you need in one place."
       />
 

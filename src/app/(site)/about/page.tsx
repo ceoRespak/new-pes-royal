@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { getContent } from "@/lib/content/store";
+
+export const dynamic = "force-dynamic";
 import Image from "next/image";
 import {
   FaAward,
@@ -95,12 +98,13 @@ const introPoints = [
 ];
 
 export default function AboutPage() {
+  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["about"] ?? {}) as Record<string, string>;
   return (
     <>
       <PageHero
         crumb="About Us"
-        title={about.heading}
-        highlight={about.headingHighlight}
+        title={pg.title || about.heading}
+        highlight={pg.highlight || about.headingHighlight}
         description={about.short}
       />
 

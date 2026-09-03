@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { getContent } from "@/lib/content/store";
+
+export const dynamic = "force-dynamic";
 import {
   FaClock,
   FaEnvelope,
@@ -49,12 +52,13 @@ const infoCards = [
 ];
 
 export default function ContactPage() {
+  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["contact"] ?? {}) as Record<string, string>;
   return (
     <>
       <PageHero
         crumb="Contact Us"
-        title="Let's Start a"
-        highlight="Conversation"
+        title={pg.title || "Let's Start a"}
+        highlight={pg.highlight || "Conversation"}
         description="Questions, quotations, partnerships or project support — the PES team is ready to help. Reach out through any channel below."
       />
 

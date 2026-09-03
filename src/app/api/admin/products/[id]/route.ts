@@ -5,6 +5,7 @@ import {
   normalizeVariants,
   saveVariantsForProduct,
 } from "@/lib/admin/variants-store";
+import { clearLiveCache } from "@/lib/store/live";
 
 export const runtime = "nodejs";
 
@@ -25,6 +26,7 @@ export async function PUT(
   // Variants are owned by this site (the live backend can't persist them).
   saveVariantsForProduct(productId, variants);
   clearCache();
+  clearLiveCache();
 
   const payload = {
     id: productId,
@@ -50,6 +52,7 @@ export async function PUT(
       { status: result.status || 500 }
     );
   }
+  clearLiveCache();
   return NextResponse.json({ ok: true, data: result.data });
 }
 

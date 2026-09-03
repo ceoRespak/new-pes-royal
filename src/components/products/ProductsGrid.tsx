@@ -5,9 +5,14 @@ import { StaggerGroup, StaggerItem } from "@/components/ui/AnimatedSectionWrappe
 interface ProductsGridProps {
   products: Product[];
   cols?: 3 | 4;
+  storefront?: boolean;
 }
 
-export default function ProductsGrid({ products, cols = 4 }: ProductsGridProps) {
+export default function ProductsGrid({
+  products,
+  cols = 4,
+  storefront = false,
+}: ProductsGridProps) {
   const colClass =
     cols === 3
       ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
@@ -30,7 +35,11 @@ export default function ProductsGrid({ products, cols = 4 }: ProductsGridProps) 
     <StaggerGroup className={colClass}>
       {products.map((product) => (
         <StaggerItem key={product.id} className="h-full">
-          <ProductCard product={product} className="h-full" />
+          <ProductCard
+            product={product}
+            className="h-full"
+            storefront={storefront}
+          />
         </StaggerItem>
       ))}
     </StaggerGroup>

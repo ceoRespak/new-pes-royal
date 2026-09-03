@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
 import { backendDelete, backendPut, clearCache } from "@/lib/admin/backend";
+import { clearLiveCache } from "@/lib/store/live";
 
 export const runtime = "nodejs";
 
@@ -30,6 +31,7 @@ export async function PUT(
     );
   }
   clearCache();
+  clearLiveCache();
   return NextResponse.json({ ok: true, data: result.data });
 }
 
@@ -46,5 +48,6 @@ export async function DELETE(
     );
   }
   clearCache();
+  clearLiveCache();
   return NextResponse.json({ ok: true });
 }

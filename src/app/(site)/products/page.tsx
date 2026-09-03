@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/ui/PageHero";
 import ProductCatalog from "@/components/products/ProductCatalog";
-import { products } from "@/data/products";
-import { categories } from "@/data/categories";
-import type { Category } from "@/types";
+import { products as snapshotProducts } from "@/data/products";
+import { categories as snapshotCategories } from "@/data/categories";
+import { getLiveProducts, getLiveCategories } from "@/lib/store/live";
+import type { Category, CategoryMeta, Product } from "@/types";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -12,18 +13,34 @@ export const metadata: Metadata = {
   alternates: { canonical: "/products" },
 };
 
+// Read live so admin-panel edits show up (fallback = imported snapshot).
+export const dynamic = "force-dynamic";
+
 interface ProductsPageProps {
   searchParams: { category?: string };
 }
 
-export default function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({
+  searchParams,
+}: ProductsPageProps) {
+  let liveProducts: Product[] = snapshotProducts;
+  let liveCats: CategoryMeta[] = snapshotCategories;
+  try {
+    [liveProducts, liveCats] = await Promise.all([
+      getLiveProducts(),
+      getLiveCategories(),
+    ]);
+  } catch {
+    /* offline → snapshot fallback */
+  }
+
   const raw = searchParams?.category ?? "all";
   const valid =
-    raw !== "all" && categories.some((c) => c.id === raw)
+    raw !== "all" && liveCats.some((c) => c.id === raw)
       ? (raw as Category)
       : "all";
 
-  const activeCategory = categories.find((c) => c.id === valid);
+  const activeCategory = liveCats.find((c) => c.id === valid);
 
   return (
     <>
@@ -44,7 +61,7 @@ export default function ProductsPage({ searchParams }: ProductsPageProps) {
 
       <section className="section-pad bg-light/60">
         <div className="container-px">
-          <ProductCatalog products={products} initialCategory={valid} />
+          <ProductCatalog products={liveProducts} initialCategory={valid} />
         </div>
       </section>
     </>

@@ -15,15 +15,19 @@ interface ProductCardProps {
   product: Product;
   className?: string;
   priority?: boolean;
+  /** Storefront look (royalfans-style: clean white card, plain name/price, red CTA). */
+  storefront?: boolean;
 }
 
 /**
  * ProductCard — premium card with hover zoom, floating badges and quick actions.
+ * Set `storefront` for the clean royalfans-style home-page variant.
  */
 export default function ProductCard({
   product,
   className,
   priority = false,
+  storefront = false,
 }: ProductCardProps) {
   const discount = discountPercent(product.price, product.salePrice);
   const waMessage = encodeURIComponent(
@@ -32,6 +36,111 @@ export default function ProductCard({
     )}). Please share more details.`
   );
 
+  // ---- Royalfans-style storefront card (used on the home page) ----
+  if (storefront) {
+    return (
+      <article
+        className={cn(
+          "group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl",
+          className
+        )}
+      >
+        <div className="relative aspect-square overflow-hidden bg-white">
+          <Link
+            href={`/products/${product.slug}`}
+            aria-label={product.name}
+            className="absolute inset-0"
+          >
+            <Image
+              src={product.images[0]}
+              alt={product.name}
+              fill
+              priority={priority}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+            />
+          </Link>
+          {/* Badges */}
+          <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
+            {product.badge && (
+              <span className="rounded-full bg-[#E11D2A] px-2.5 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider text-white">
+                {product.badge}
+              </span>
+            )}
+            {discount && (
+              <span className="rounded-full bg-slate-900 px-2.5 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider text-white">
+                -{discount}%
+              </span>
+            )}
+          </div>
+          {/* WhatsApp quick action */}
+          <a
+            href={`https://wa.me/${site.whatsapp}?text=${waMessage}`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Ask on WhatsApp"
+            className="absolute right-3 top-3 flex h-9 w-9 translate-y-1 items-center justify-center rounded-full bg-white text-[#25D366] opacity-0 shadow transition hover:scale-110 group-hover:translate-y-0 group-hover:opacity-100"
+          >
+            <FaWhatsapp />
+          </a>
+        </div>
+
+        <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
+          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-slate-400">
+            {categoryLabel(product.category)}
+          </p>
+          <h3 className="mt-1">
+            <Link
+              href={`/products/${product.slug}`}
+              className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900 transition hover:text-[#E11D2A]"
+            >
+              {product.name}
+            </Link>
+          </h3>
+
+          {product.reviews > 0 && (
+            <div className="mt-1.5 flex items-center gap-1.5">
+              <RatingStars rating={product.rating} className="!text-amber-400" />
+              <span className="text-[0.68rem] text-slate-400">
+                ({product.reviews})
+              </span>
+            </div>
+          )}
+
+          <div className="mt-auto flex items-baseline gap-2 pt-2.5">
+            {product.salePrice && (
+              <span className="text-xs text-slate-400 line-through">
+                {formatPrice(product.price)}
+              </span>
+            )}
+            <span className="text-lg font-extrabold text-slate-900">
+              {formatPrice(product.salePrice ?? product.price)}
+            </span>
+          </div>
+
+          <div className="mt-3 flex items-center gap-2">
+            <Link
+              href={`/products/${product.slug}`}
+              className="flex-1 rounded-lg bg-[#E11D2A] py-2.5 text-center text-[0.7rem] font-bold uppercase tracking-wider text-white transition hover:bg-[#b8111f]"
+            >
+              View Details
+            </Link>
+            <a
+              href={`https://wa.me/${site.whatsapp}?text=${waMessage}`}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Order on WhatsApp"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500 text-white transition hover:bg-emerald-600"
+            >
+              <FaWhatsapp />
+            </a>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  // ---- Premium card (default) ----
   return (
     <article
       className={cn(

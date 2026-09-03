@@ -20,6 +20,12 @@ import {
   relatedProducts,
 } from "@/data/products";
 import { variantsForProduct } from "@/lib/admin/variants-store";
+import {
+  getLiveProductBySlug,
+  getLiveRelated,
+  getLiveCategories,
+} from "@/lib/store/live";
+import type { Product } from "@/types";
 import { site } from "@/data/site";
 import { formatPrice } from "@/lib/utils";
 
@@ -31,8 +37,16 @@ interface PageProps {
 // so product pages render live — don't pre-render/SSG them.
 export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  // Prefer the live backend so admin edits (name/price/badge) show up.
+  let product: Product | undefined;
+  try {
+    product = (await getLiveProductBySlug(params.slug)) ?? getProductBySlug(params.slug);
+  } catch {
+    product = getProductBySlug(params.slug);
+  }
   if (!product) return { title: "Product Not Found" };
   const category = categoryLabel(product.category);
   return {
@@ -56,8 +70,15 @@ const askWhatsapp = (productName: string) =>
     `Hello PES! Please confirm details & price of: ${productName}`
   )}`;
 
-export default function ProductDetailPage({ params }: PageProps) {
-  const product = getProductBySlug(params.slug);
+export default async function ProductDetailPage({ params }: PageProps) {
+  // Live backend first (admin edits show immediately), snapshot as fallback.
+  let liveProduct: Product | undefined;
+  try {
+    liveProduct = await getLiveProductBySlug(params.slug);
+  } catch {
+    /* offline → fall back to snapshot below */
+  }
+  const product = liveProduct ?? getProductBySlug(params.slug);
   if (!product) notFound();
 
   // attach locally-owned variants so the buy panel can offer options
@@ -67,8 +88,17 @@ export default function ProductDetailPage({ params }: PageProps) {
     variants: localVariants.length ? localVariants : (product.variants ?? []),
   };
 
-  const related = relatedProducts(product);
-  const category = getCategory(product.category);
+  let category = getCategory(product.category);
+  let related: Product[] = [];
+  try {
+    const liveCats = await getLiveCategories();
+    category =
+      liveCats.find((c) => c.id === product.category) ?? category;
+    related = await getLiveRelated(product, 4);
+  } catch {
+    related = relatedProducts(product);
+  }
+  if (related.length === 0) related = relatedProducts(product);
   const specs = Object.entries(product.specs ?? {});
   const hasSpecs = specs.length > 0;
   const hasFeatures = (product.features ?? []).length > 0;

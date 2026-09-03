@@ -7,6 +7,7 @@ import {
   maybeParse,
   maybeStringify,
 } from "@/lib/admin/backend";
+import { clearLiveCache } from "@/lib/store/live";
 
 export const runtime = "nodejs";
 
@@ -56,5 +57,6 @@ export async function PUT(req: Request) {
     );
   }
   clearCache();
+  clearLiveCache();
   return NextResponse.json({ ok: true, data: result.data });
 }

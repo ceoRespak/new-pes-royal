@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
 import { backendPost, clearCache } from "@/lib/admin/backend";
+import { clearLiveCache } from "@/lib/store/live";
 
 export const runtime = "nodejs";
 
@@ -25,5 +26,6 @@ export async function POST(req: Request) {
     );
   }
   clearCache();
+  clearLiveCache();
   return NextResponse.json({ ok: true, data: result.data });
 }

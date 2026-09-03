@@ -5,6 +5,7 @@ import {
   normalizeVariants,
   saveVariantsForProduct,
 } from "@/lib/admin/variants-store";
+import { clearLiveCache } from "@/lib/store/live";
 
 export const runtime = "nodejs";
 
@@ -44,5 +45,6 @@ export async function POST(req: Request) {
   // Only keep variants once the product itself exists on the live side.
   if (variants.length) saveVariantsForProduct(productId, variants);
   clearCache();
+  clearLiveCache();
   return NextResponse.json({ ok: true, data: result.data });
 }

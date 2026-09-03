@@ -162,12 +162,18 @@ export default function HeroSlider() {
                   </p>
 
                   <div className="mt-9 flex flex-wrap items-center gap-4">
-                    <Link href={slide.ctaHref} className="btn-gold group">
+                    <Link
+                      href={slide.ctaHref}
+                      className="group inline-flex items-center gap-2 rounded-full bg-[#E11D2A] px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-[#E11D2A]/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#b8111f]"
+                    >
                       {slide.ctaLabel}
                       <FaArrowRight className="transition-transform group-hover:translate-x-1" />
                     </Link>
                     {slide.cta2Label && slide.cta2Href && (
-                      <Link href={slide.cta2Href} className="btn-light">
+                      <Link
+                        href={slide.cta2Href}
+                        className="inline-flex items-center gap-2 rounded-full border border-white/40 px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white backdrop-blur transition-all duration-300 hover:border-white hover:bg-white hover:text-primary"
+                      >
                         {slide.cta2Label}
                       </Link>
                     )}

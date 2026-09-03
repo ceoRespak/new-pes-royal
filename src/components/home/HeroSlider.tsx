@@ -67,8 +67,22 @@ function Feature({ f }: { f: HeroFeature }) {
  * HeroSlider — the homepage's main advertisement carousel.
  * Content comes from the admin (Site Content) when set, else src/data/hero.ts.
  */
-export default function HeroSlider({ slides }: { slides?: HeroSlide[] }) {
+export default function HeroSlider({
+  slides,
+  version,
+}: {
+  slides?: HeroSlide[];
+  version?: number;
+}) {
   const list = slides && slides.length ? slides : heroSlides;
+  const heroImg = (src: string) => {
+    const abs = /^https?:\/\//.test(src)
+      ? src
+      : src.startsWith("/storage/")
+        ? `https://api.pespeshawar.pk${src}`
+        : src;
+    return version ? `${abs}${abs.includes("?") ? "&" : "?"}v=${version}` : abs;
+  };
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
@@ -181,7 +195,7 @@ export default function HeroSlider({ slides }: { slides?: HeroSlide[] }) {
                     <div className="relative w-full overflow-hidden bg-white lg:rounded-[2rem] lg:shadow-2xl lg:shadow-black/30">
                       <div className="relative aspect-square w-full overflow-hidden">
                         <Image
-                          src={slide.image}
+                          src={heroImg(slide.image)}
                           alt={slide.imageAlt}
                           fill
                           priority

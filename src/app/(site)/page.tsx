@@ -75,7 +75,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSlider slides={heroSlides} />
+      <HeroSlider slides={heroSlides} version={content.updatedAt} />
       <TrustStrip items={content.trustStrip} />
       <CategoryCards cats={liveCats} />
       <BestSellersBand best={best} />

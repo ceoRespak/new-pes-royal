@@ -59,6 +59,7 @@ export interface SiteContent {
     role: string;
     city: string;
   }[];
+  updatedAt?: number;
   // more sections to come (header/footer, inner pages…)
   [key: string]: unknown;
 }
@@ -95,6 +96,7 @@ export function saveContent(patch: Record<string, unknown>): SiteContent {
     }
   }
   mkdirSync(DIR, { recursive: true });
+  next.updatedAt = Date.now();
   writeFileSync(FILE, JSON.stringify(next, null, 2), "utf8");
   return next;
 }

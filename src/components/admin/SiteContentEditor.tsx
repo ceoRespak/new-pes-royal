@@ -22,6 +22,7 @@ import {
 import { heroSlides as defaultHero } from "@/data/hero";
 import { testimonials as defaultTestimonials } from "@/data/testimonials";
 import { site } from "@/data/site";
+import UploadButton from "@/components/admin/UploadButton";
 import type { HeroSlide } from "@/data/hero";
 
 /* ---------------- types & defaults ---------------- */
@@ -147,13 +148,18 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const setPromo = setList(setPromos);
   const setTestimonial = setList(setTestimonials);
 
-  const setFeature = (i: number, fi: number, patch: { icon?: string; label?: string }) =>
+  const upsertFeature = (i: number, fi: number, patch: { icon?: string; label?: string }) =>
     setHero((list) =>
-      list.map((s, idx) =>
-        idx === i
-          ? { ...s, features: (s.features ?? []).map((f, x) => (x === fi ? { ...f, ...patch } : f)) }
-          : s
-      )
+      list.map((s, idx) => {
+        if (idx !== i) return s;
+        const feats = s.features ?? [];
+        const arr = Array.from(
+          { length: Math.max(feats.length, 4, fi + 1) },
+          (_, x) => feats[x] ?? { icon: "bolt", label: "" }
+        );
+        arr[fi] = { ...arr[fi], ...patch };
+        return { ...s, features: arr };
+      })
     );
 
   function move<T>(setter: React.Dispatch<React.SetStateAction<T[]>>, i: number, dir: -1 | 1) {
@@ -306,20 +312,49 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                     <Field label="Button 2"><input className={input} value={s.cta2Label ?? ""} onChange={(e) => setSlide(i, { cta2Label: e.target.value })} /></Field>
                     <Field label="Button 2 link"><input className={input} value={s.cta2Href ?? ""} onChange={(e) => setSlide(i, { cta2Href: e.target.value })} /></Field>
                     <div className="sm:col-span-2">
-                      <Field label="Image path">
-                        <input className={input} value={s.image} onChange={(e) => setSlide(i, { image: e.target.value })} placeholder="/images/hero/fan-ad.jpg" />
-                        <p className="mt-1 text-xs text-slate-400">Put your banner in <code>public/images/hero/</code> and enter its path here.</p>
+                      <Field label="Image (banner)">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                          <input
+                            className={input}
+                            value={s.image}
+                            onChange={(e) => setSlide(i, { image: e.target.value })}
+                            placeholder="/images/hero/fan-ad.jpg or upload below"
+                          />
+                          <UploadButton
+                            value={s.image}
+                            onChange={(url) => setSlide(i, { image: url })}
+                            label="Upload image"
+                          />
+                        </div>
+                        <p className="mt-1 text-xs text-slate-400">
+                          Upload a banner, or put a file in{" "}
+                          <code>public/images/hero/</code> and type its path.
+                        </p>
                       </Field>
                     </div>
                     <div className="sm:col-span-2">
-                      <p className={lbl}>Feature chips</p>
+                      <p className={lbl}>
+                        Feature chips — names shown under your buttons
+                      </p>
                       <div className="grid gap-2 sm:grid-cols-2">
-                        {(s.features ?? []).map((f, fi) => (
-                          <div key={fi} className="flex gap-2">
-                            <IconPick icons={FEATURE_ICONS} value={f.icon} onChange={(v) => setFeature(i, fi, { icon: v })} />
-                            <input className={input} value={f.label} onChange={(e) => setFeature(i, fi, { label: e.target.value })} placeholder="Short claim" />
-                          </div>
-                        ))}
+                        {[0, 1, 2, 3].map((fi) => {
+                          const f = (s.features ?? [])[fi];
+                          return (
+                            <div key={fi} className="flex gap-2">
+                              <IconPick
+                                icons={FEATURE_ICONS}
+                                value={f?.icon ?? "bolt"}
+                                onChange={(v) => upsertFeature(i, fi, { icon: v })}
+                              />
+                              <input
+                                className={input}
+                                value={f?.label ?? ""}
+                                onChange={(e) => upsertFeature(i, fi, { label: e.target.value })}
+                                placeholder={`Feature ${fi + 1} name (e.g. Energy saving)`}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                     <div className="flex items-center justify-between border-t border-slate-100 pt-3 sm:col-span-2">
@@ -338,13 +373,35 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
           })}
           <AddButton
             label="Add hero slide"
-            onClick={() => pushAt(setHero, {
-              id: `s-${Date.now()}`, badge: "", eyebrow: "", titleA: "Headline", titleHighlight: "highlight",
-              titleB: "", description: "", ctaLabel: "Shop Now", ctaHref: "/products", cta2Label: "", cta2Href: "",
-              image: "/images/hero/fan-ad.jpg", imageAlt: "Product",
-              features: [{ icon: "bolt", label: "" }, { icon: "star", label: "" }, { icon: "shield", label: "" }, { icon: "truck", label: "" }],
-              bg: DEFAULT_BG,
-            } as HeroSlide)}
+            onClick={() => {
+              const idx = heroSlides.length;
+              setHero((list) => [
+                ...list,
+                {
+                  id: `s-${Date.now()}`,
+                  badge: "",
+                  eyebrow: "",
+                  titleA: "Headline",
+                  titleHighlight: "highlight",
+                  titleB: "",
+                  description: "",
+                  ctaLabel: "Shop Now",
+                  ctaHref: "/products",
+                  cta2Label: "",
+                  cta2Href: "",
+                  image: "/images/hero/fan-ad.jpg",
+                  imageAlt: "Product",
+                  features: [
+                    { icon: "bolt", label: "" },
+                    { icon: "star", label: "" },
+                    { icon: "shield", label: "" },
+                    { icon: "truck", label: "" },
+                  ],
+                  bg: DEFAULT_BG,
+                } as HeroSlide,
+              ]);
+              setOpen(idx);
+            }}
           />
         </div>
       </Group>

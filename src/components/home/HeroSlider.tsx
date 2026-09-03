@@ -213,28 +213,6 @@ export default function HeroSlider({
                         </span>
                       </div>
                     </div>
-
-                    {/* floating trusted-shop card (desktop only) */}
-                    <motion.div
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{
-                        duration: 4.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.4,
-                      }}
-                      className="absolute -left-8 bottom-8 hidden items-center gap-3 rounded-2xl bg-white p-3 pr-4 text-primary shadow-xl lg:flex"
-                    >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20 text-accent">
-                        <FaStore />
-                      </span>
-                      <div>
-                        <p className="text-xs font-extrabold">Trusted since 2015</p>
-                        <p className="text-[0.62rem] text-slate-500">
-                          Two shops in Peshawar
-                        </p>
-                      </div>
-                    </motion.div>
                   </div>
                 </motion.div>
               </div>

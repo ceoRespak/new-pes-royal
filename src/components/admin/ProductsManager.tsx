@@ -375,24 +375,46 @@ export default function ProductsManager({ products, categories }: Props) {
           <form
             onSubmit={save}
             onClick={(e) => e.stopPropagation()}
-            className="my-6 w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
+            className="my-6 w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl"
           >
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-xl font-bold text-primary">
-                {editing ? "Edit product" : "Add product"}
-              </h2>
+            {/* gradient header */}
+            <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-[#E11D2A] via-[#b8111f] to-[#7a0f16] px-6 py-5 text-white">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-lg backdrop-blur">
+                  {editing ? <FaEdit /> : <FaPlus />}
+                </span>
+                <div>
+                  <h2 className="font-display text-lg font-bold leading-tight">
+                    {editing ? "Edit product" : "Add new product"}
+                  </h2>
+                  <p className="text-[0.7rem] text-white/80">
+                    {editing
+                      ? "Update the product — changes save to the live store."
+                      : "Create a product — it will appear on the live store."}
+                  </p>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={close}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"
+                aria-label="Close"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-white transition hover:bg-white/35"
               >
                 <FaTimes />
               </button>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <label className="sm:col-span-2">
-                <span className="field">Name *</span>
+            <div className="grid gap-x-5 gap-y-5 bg-slate-50/60 p-5 sm:grid-cols-2 sm:p-7">
+            {/* 1 · Basic details */}
+            <div className="flex items-center gap-2 text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-indigo-700 sm:col-span-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[0.6rem] text-white">
+                1
+              </span>
+              Basic details &amp; pricing
+              <span className="h-px flex-1 bg-indigo-200" />
+            </div>
+            <label className="sm:col-span-2">
+              <span className="field">Name *</span>
                 <input
                   required
                   value={form.name}
@@ -479,13 +501,20 @@ export default function ProductsManager({ products, categories }: Props) {
               </label>
 
               {/* Multiple variants */}
-              <div className="sm:col-span-2">
+              <div className="mt-2 rounded-2xl border-2 border-violet-200 bg-white p-4 shadow-sm sm:col-span-2">
+                <div className="mb-3 flex items-center gap-2 text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-violet-700">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-violet-600 text-[0.6rem] text-white">
+                    2
+                  </span>
+                  Options &amp; variants (optional)
+                  <span className="h-px flex-1 bg-violet-200" />
+                </div>
                 <div className="flex items-center justify-between">
-                  <span className="field !mb-0">Multiple variants (optional)</span>
+                  <span className="field !mb-0">Multiple variants</span>
                   <button
                     type="button"
                     onClick={addVariant}
-                    className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-white hover:bg-primary-800"
+                    className="flex items-center gap-1.5 rounded-full bg-violet-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-violet-700"
                   >
                     <FaPlus /> Add variant
                   </button>
@@ -574,7 +603,7 @@ export default function ProductsManager({ products, categories }: Props) {
                     type="checkbox"
                     checked={form.on_sale}
                     onChange={(e) => set("on_sale", e.target.checked)}
-                    className="h-4 w-4 accent-[#003366]"
+                    className="h-4 w-4 accent-violet-600"
                   />
                   On sale
                 </label>
@@ -583,7 +612,7 @@ export default function ProductsManager({ products, categories }: Props) {
                     type="checkbox"
                     checked={form.featured}
                     onChange={(e) => set("featured", e.target.checked)}
-                    className="h-4 w-4 accent-[#003366]"
+                    className="h-4 w-4 accent-amber-500"
                   />
                   Featured
                 </label>
@@ -591,7 +620,7 @@ export default function ProductsManager({ products, categories }: Props) {
             </div>
 
             {form.image && (
-              <div className="mt-4 flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
+              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-sky-200 bg-sky-50/70 p-3">
                 <Image
                   src={toAbs(form.image)}
                   alt="preview"
@@ -605,10 +634,18 @@ export default function ProductsManager({ products, categories }: Props) {
             )}
 
             <div className="mt-6 flex justify-end gap-3">
-              <button type="button" onClick={close} className="btn-outline !py-2.5 text-sm">
+              <button
+                type="button"
+                onClick={close}
+                className="rounded-xl border-2 border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:border-slate-300 hover:bg-slate-100"
+              >
                 Cancel
               </button>
-              <button type="submit" disabled={busy} className="btn-primary !py-2.5 text-sm">
+              <button
+                type="submit"
+                disabled={busy}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#E11D2A] to-[#7a0f16] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 disabled:opacity-60"
+              >
                 {busy ? "Saving…" : editing ? "Save changes" : "Create product"}
               </button>
             </div>

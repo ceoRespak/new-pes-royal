@@ -1,23 +1,37 @@
 import { NextResponse } from "next/server";
 import {
   ADMIN_COOKIE,
-  checkLocalPassword,
   issueSessionToken,
 } from "@/lib/admin/session";
+import { isMasterLogin, verifyUser } from "@/lib/admin/users-store";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const username = String(body?.username ?? "admin").trim();
     const password = String(body?.password ?? "");
-    if (!checkLocalPassword(password)) {
+
+    let userId: string | null = null;
+
+    // 1) stored admin users (created via Admin → Users)
+    const stored = verifyUser(username, password);
+    if (stored) {
+      userId = stored.id;
+    } else if (isMasterLogin(username, password)) {
+      // 2) env master owner (username `admin` + ADMIN_PASSWORD)
+      userId = "env-admin";
+    }
+
+    if (!userId) {
       return NextResponse.json(
-        { ok: false, error: "Incorrect password." },
+        { ok: false, error: "Incorrect username or password." },
         { status: 401 }
       );
     }
-    const token = issueSessionToken();
+
+    const token = issueSessionToken(userId);
     const res = NextResponse.json({ ok: true });
     res.cookies.set(ADMIN_COOKIE, token, {
       httpOnly: true,

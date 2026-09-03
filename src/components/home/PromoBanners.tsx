@@ -3,8 +3,14 @@ import { FaArrowRight } from "react-icons/fa";
 import AnimatedSectionWrapper from "@/components/ui/AnimatedSectionWrapper";
 import { site } from "@/data/site";
 
-export default function PromoBanners() {
-  const promos = site.promoBanners.slice(0, 3);
+export default function PromoBanners({
+  banners,
+}: {
+  banners?: { title: string; subtitle?: string; image?: string; link: string }[];
+}) {
+  const promos = (
+    banners && banners.length ? banners : site.promoBanners
+  ).slice(0, 3);
 
   if (promos.length === 0) return null;
 

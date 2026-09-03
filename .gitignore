@@ -32,6 +32,9 @@ yarn-error.log*
 # local admin runtime data (product variants etc.)
 public/data/
 
+# local runtime data (content overrides, admin users — never commit)
+/.data/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  FaArrowRight,
   FaCheckCircle,
   FaChevronRight,
   FaFilePdf,
@@ -148,16 +149,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div className="lg:col-span-3">
               {hasFeatures && (
                 <AnimatedSectionWrapper>
-                  <h2 className="font-display text-2xl font-bold text-primary">
+                  <h2 className="font-display text-2xl font-bold text-slate-900">
                     Key Features
                   </h2>
                   <ul className="mt-5 grid gap-3 sm:grid-cols-2">
                     {(product.features ?? []).map((f) => (
                       <li
                         key={f}
-                        className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-light/50 p-4 text-sm text-slate-600 transition hover:border-accent/40"
+                        className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm transition hover:border-[#E11D2A]/40"
                       >
-                        <FaCheckCircle className="mt-0.5 shrink-0 text-accent" />
+                        <FaCheckCircle className="mt-0.5 shrink-0 text-[#E11D2A]" />
                         {f}
                       </li>
                     ))}
@@ -166,7 +167,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               )}
 
               <AnimatedSectionWrapper delay={hasFeatures ? 0.1 : 0}>
-                <h2 className="mt-12 font-display text-2xl font-bold text-primary">
+                <h2 className="mt-12 font-display text-2xl font-bold text-slate-900">
                   About this product
                 </h2>
                 <div className="mt-4 space-y-4 leading-relaxed text-slate-600">
@@ -181,7 +182,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       href={askWhatsapp(product.name)}
                       target="_blank"
                       rel="noreferrer"
-                      className="font-semibold text-primary underline underline-offset-4 hover:text-accent"
+                      className="font-semibold text-[#E11D2A] underline underline-offset-4 hover:text-[#b8111f]"
                     >
                       confirm on WhatsApp
                     </a>
@@ -192,23 +193,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
               {/* Shopping note */}
               <AnimatedSectionWrapper delay={0.15}>
-                <div className="mt-8 grid gap-3 rounded-3xl bg-primary-gradient p-6 text-white sm:grid-cols-2">
+                <div className="mt-8 grid gap-4 rounded-3xl border border-slate-200 bg-slate-50/70 p-6 sm:grid-cols-2">
                   <div>
-                    <h4 className="font-display text-base font-bold">
+                    <h4 className="font-display text-base font-bold text-slate-900">
                       {site.deliveryInfo || "Fast local delivery"}
                     </h4>
-                    <p className="mt-1 text-sm text-white/70">
+                    <p className="mt-1 text-sm text-slate-500">
                       {site.returnPolicy || "7-day return policy."}
                     </p>
                   </div>
-                  <div className="sm:border-l sm:border-white/15 sm:pl-6">
-                    <h4 className="font-display text-base font-bold">
+                  <div className="sm:border-l sm:border-slate-200 sm:pl-6">
+                    <h4 className="font-display text-base font-bold text-slate-900">
                       Visit our shop
                     </h4>
-                    <p className="mt-1 text-sm text-white/70">{site.address}</p>
+                    <p className="mt-1 text-sm text-slate-500">{site.address}</p>
                     <Link
                       href="/contact"
-                      className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
+                      className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#E11D2A] hover:underline"
                     >
                       <FaStore /> Get Directions
                     </Link>
@@ -220,7 +221,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {/* Right rail: specs + details */}
             <div className="lg:col-span-2">
               <AnimatedSectionWrapper>
-                <h2 className="font-display text-2xl font-bold text-primary">
+                <h2 className="font-display text-2xl font-bold text-slate-900">
                   Technical Specifications
                 </h2>
                 <div className="mt-5">
@@ -243,10 +244,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         href={askWhatsapp(product.name)}
                         target="_blank"
                         rel="noreferrer"
-                        className="btn-primary mt-4 !px-5 !py-2.5 text-xs"
+                        className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#E11D2A] px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#b8111f]"
                       >
-                        <FaWhatsapp className="text-[#25D366]" /> Ask on
-                        WhatsApp
+                        <FaWhatsapp /> Ask on WhatsApp
                       </a>
                     </div>
                   )}
@@ -254,7 +254,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </AnimatedSectionWrapper>
 
               <AnimatedSectionWrapper delay={0.1}>
-                <h2 className="mt-12 font-display text-2xl font-bold text-primary">
+                <h2 className="mt-12 font-display text-2xl font-bold text-slate-900">
                   Details &amp; Support
                 </h2>
                 <div className="mt-5 space-y-3">
@@ -264,7 +264,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         key={d.url + d.label}
                         href={d.url}
                         download
-                        className="group flex items-center justify-between rounded-2xl border border-slate-100 bg-light/50 p-4 transition hover:border-accent/50 hover:bg-accent/5"
+                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#E11D2A]/40 hover:bg-[#E11D2A]/5"
                       >
                         <span className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-lg text-red-500">
@@ -272,7 +272,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           </span>
                           {d.label}
                         </span>
-                        <span className="text-xs font-bold text-slate-400 group-hover:text-accent">
+                        <span className="text-xs font-bold text-slate-400 group-hover:text-[#E11D2A]">
                           {d.size} ↓
                         </span>
                       </a>
@@ -295,7 +295,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           Live chat →
                         </span>
                       </a>
-                      <p className="rounded-2xl bg-primary/5 p-4 text-xs leading-relaxed text-slate-500">
+                      <p className="rounded-2xl bg-[#E11D2A]/5 p-4 text-xs leading-relaxed text-slate-500">
                         Need bulk / project pricing, exact stock or a datasheet?
                         Message us and a member of our Peshawar team will reply
                         promptly.
@@ -311,20 +311,29 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
       {/* Related */}
       {related.length > 0 && (
-        <section className="section-pad bg-light/60">
+        <section className="bg-slate-50 py-14 md:py-20">
           <div className="container-px">
-            <SectionHeading
-              eyebrow="You May Also Like"
-              title={
-                <>
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-3 border-b-2 border-slate-100 pb-3">
+              <div>
+                <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
+                  You May Also Like
+                </p>
+                <h2 className="font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
                   More in{" "}
-                  <span className="text-accent">
+                  <span className="text-[#E11D2A]">
                     {categoryLabel(product.category)}
                   </span>
-                </>
-              }
-            />
-            <ProductsGrid products={related} cols={4} />
+                </h2>
+              </div>
+              <Link
+                href={`/products?category=${product.category}`}
+                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+              >
+                View All
+                <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+            <ProductsGrid products={related} cols={4} storefront />
           </div>
         </section>
       )}

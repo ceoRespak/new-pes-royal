@@ -14,10 +14,27 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import Logo from "./Logo";
-import { navLinks, site, categoryNavLinks } from "@/data/site";
+import { navLinks, site as siteBase, categoryNavLinks } from "@/data/site";
 import { cn } from "@/lib/utils";
 
-export default function Navbar() {
+export default function Navbar({
+  info,
+}: {
+  info?: {
+    phone?: string;
+    email?: string;
+    hours?: string;
+    address?: string;
+    footerAbout?: string;
+    announcement?: string;
+  };
+}) {
+  const site = {
+    ...siteBase,
+    phone: info?.phone || siteBase.phone,
+    email: info?.email || siteBase.email,
+    hours: info?.hours || siteBase.hours,
+  };
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);

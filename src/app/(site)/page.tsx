@@ -16,6 +16,7 @@ import {
   products as snapshotProducts,
 } from "@/data/products";
 import { getLiveProducts, getLiveCategories } from "@/lib/store/live";
+import { getContent } from "@/lib/content/store";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -66,10 +67,16 @@ export default async function HomePage() {
   const newLive = liveProducts.filter((p) => p.newArrival).slice(0, 8);
   const featured = curated.length >= 4 ? curated : newLive;
 
+  const content = getContent();
+  const heroSlides =
+    content.heroSlides && (content.heroSlides as unknown[]).length
+      ? (content.heroSlides as typeof import("@/data/hero").heroSlides)
+      : undefined;
+
   return (
     <>
-      <HeroSlider />
-      <TrustStrip />
+      <HeroSlider slides={heroSlides} />
+      <TrustStrip items={content.trustStrip} />
       <CategoryCards cats={liveCats} />
       <BestSellersBand best={best} />
       <ProductShowcase
@@ -80,10 +87,13 @@ export default async function HomePage() {
         viewAllHref="/products"
         viewAllLabel="View All Products"
       />
-      <PromoBanners />
-      <SloganBanner />
-      <TestimonialsSlider />
-      <WhyChoose />
+      <PromoBanners banners={content.promoBanners} />
+      <SloganBanner content={content.slogan} />
+      <TestimonialsSlider items={content.testimonials} />
+      <WhyChoose
+        heading={content.whyChoose?.heading}
+        items={content.whyChoose?.items}
+      />
       <ExportCta />
     </>
   );

@@ -39,13 +39,29 @@ function verifySigned(value: string): boolean {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-export function issueSessionToken(): string {
-  return sign(randomBytes(24).toString("hex"));
+/** Issue a signed session token for the given user id (default: env owner). */
+export function issueSessionToken(userId = "env-admin"): string {
+  const nonce = randomBytes(18).toString("hex");
+  return sign(`${userId}#${nonce}`);
 }
 
 export function validateSession(value: string | undefined | null): boolean {
   if (!value) return false;
   return verifySigned(value);
+}
+
+/**
+ * Resolve the user id embedded in a valid token.
+ * Old tokens (before multi-user) have no `#` → treated as legacy admin.
+ */
+export function getSessionUserId(
+  value: string | undefined | null
+): string | null {
+  if (!value || !verifySigned(value)) return null;
+  const body = value.slice(0, value.lastIndexOf("."));
+  const idx = body.indexOf("#");
+  if (idx < 0) return null; // legacy token
+  return body.slice(0, idx) || null;
 }
 
 export function readSessionCookie(header: string | null | undefined): string | null {

@@ -10,7 +10,7 @@ import {
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
 import { categories } from "@/data/categories";
-import { navLinks, site } from "@/data/site";
+import { navLinks, site as siteBase } from "@/data/site";
 
 const supportLinks = [
   { label: "Return Policy", href: "/support#warranty" },
@@ -21,11 +21,32 @@ const supportLinks = [
 ];
 
 const socialIcons = [
-  { href: site.social.facebook, label: "Facebook", Icon: FaFacebookF },
-  { href: site.social.whatsapp, label: "WhatsApp", Icon: FaWhatsapp },
+  { href: siteBase.social.facebook, label: "Facebook", Icon: FaFacebookF },
+  { href: siteBase.social.whatsapp, label: "WhatsApp", Icon: FaWhatsapp },
 ].filter((s) => s.href);
 
-export default function Footer() {
+export default function Footer({
+  info,
+}: {
+  info?: {
+    phone?: string;
+    email?: string;
+    hours?: string;
+    address?: string;
+    footerAbout?: string;
+    announcement?: string;
+  };
+}) {
+  const site = {
+    ...siteBase,
+    phone: info?.phone || siteBase.phone,
+    email: info?.email || siteBase.email,
+    hours: info?.hours || siteBase.hours,
+    address: info?.address || siteBase.address,
+    footerAbout:
+      info?.footerAbout ||
+      "Pearl Electric Solutions crafts premium fans, LED lighting, smart sensors and trusted electrical accessories. Proudly powering homes and businesses across Pakistan since 2015.",
+  };
   return (
     <footer className="relative overflow-hidden bg-[#001a33] text-slate-300">
       {/* Decorative glow */}
@@ -58,9 +79,7 @@ export default function Footer() {
             <Logo variant="light" />
           </Link>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-400">
-            Pearl Electric Solutions crafts premium fans, LED lighting, smart
-            sensors and trusted electrical accessories. Proudly powering homes
-            and businesses across Pakistan since 1998.
+            {site.footerAbout}
           </p>
           <div className="mt-6 space-y-3 text-sm">
             <p className="flex items-start gap-3">

@@ -8,6 +8,7 @@ import {
   FaCogs,
   FaExternalLinkAlt,
   FaTags,
+  FaUsers,
 } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,9 @@ const links = [
   { href: "/admin/dashboard", label: "Dashboard", icon: FaChartPie },
   { href: "/admin/products", label: "Products", icon: FaBoxOpen },
   { href: "/admin/categories", label: "Categories", icon: FaTags },
-  { href: "/admin/settings", label: "Site & Banners", icon: FaCogs },
+  { href: "/admin/content", label: "Site Content", icon: FaCogs },
+  { href: "/admin/settings", label: "Live Store Settings", icon: FaTags },
+  { href: "/admin/users", label: "Admin Users", icon: FaUsers },
 ];
 
 export default function AdminNav() {

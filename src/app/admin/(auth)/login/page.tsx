@@ -3,10 +3,11 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaLock, FaSignInAlt } from "react-icons/fa";
+import { FaLock, FaSignInAlt, FaUser } from "react-icons/fa";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -19,7 +20,7 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok) {
@@ -59,7 +60,22 @@ export default function AdminLoginPage() {
           <form onSubmit={submit} className="mt-8 space-y-4">
             <label className="block">
               <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">
-                Admin password
+                Username
+              </span>
+              <div className="relative">
+                <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="admin"
+                  className="w-full rounded-xl border border-slate-200 bg-light/50 py-3 pl-11 pr-4 text-sm transition focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10"
+                />
+              </div>
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-600">
+                Password
               </span>
               <div className="relative">
                 <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />

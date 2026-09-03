@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
 import { site } from "@/data/site";
 
-export default function WhatsAppButton() {
+export default function WhatsAppButton({ number }: { number?: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function WhatsAppButton() {
   const message = encodeURIComponent(
     "Hello PES! I would like to ask about your products."
   );
-  const href = `https://wa.me/${site.whatsapp}?text=${message}`;
+  const href = `https://wa.me/${number || site.whatsapp}?text=${message}`;
 
   return (
     <AnimatePresence>

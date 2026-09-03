@@ -9,7 +9,12 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import "swiper/css";
 import "swiper/css/pagination";
 
-export default function TestimonialsSlider() {
+export default function TestimonialsSlider({
+  items,
+}: {
+  items?: typeof testimonials;
+}) {
+  const list = items && items.length ? items : testimonials;
   return (
     <section className="section-pad relative overflow-hidden bg-primary-gradient text-white">
       <div className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
@@ -41,7 +46,7 @@ export default function TestimonialsSlider() {
           loop
           className="!pb-14"
         >
-          {testimonials.map((t) => (
+          {list.map((t) => (
             <SwiperSlide key={t.id} className="h-auto">
               <figure className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/[0.07] p-7 backdrop-blur transition-colors duration-300 hover:bg-white/[0.12]">
                 <FaQuoteLeft className="text-3xl text-accent/70" />

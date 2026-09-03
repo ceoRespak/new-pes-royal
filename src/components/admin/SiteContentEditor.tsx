@@ -71,6 +71,15 @@ const PAGES: { id: string; label: string }[] = [
   { id: "dealers", label: "Dealers" },
 ];
 
+const resolveImg = (src?: string) =>
+  !src
+    ? ""
+    : /^https?:\/\//i.test(src)
+      ? src
+      : src.startsWith("/storage/")
+        ? `https://api.pespeshawar.pk${src}`
+        : src;
+
 const input =
   "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#E11D2A]";
 const lbl = "mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500";
@@ -122,6 +131,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const [siteInfo, setSiteInfo] = useState<Record<string, string>>(
     (initial.siteInfo as Record<string, string> | undefined) || {}
   );
+  const [imgV, setImgV] = useState(0);
   const setInfo = (k: string, v: string) =>
     setSiteInfo((s) => ({ ...s, [k]: v }));
   const [pages, setPages] = useState<Record<string, Record<string, string>>>(
@@ -284,7 +294,14 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                 <button type="button" onClick={() => setOpen(isOpen ? null : i)} className="flex w-full items-center gap-3 p-4 text-left">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                     {s.image ? (
-                      <Image src={s.image} alt="" width={44} height={44} unoptimized className="h-full w-full object-cover" />
+                      <Image
+                        src={resolveImg(s.image)}
+                        alt=""
+                        width={44}
+                        height={44}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <FaPlus className="text-slate-300" />
                     )}
@@ -322,10 +339,29 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                           />
                           <UploadButton
                             value={s.image}
-                            onChange={(url) => setSlide(i, { image: url })}
+                            onChange={(url) => {
+                              setSlide(i, { image: url });
+                              setImgV((v) => v + 1);
+                            }}
                             label="Upload image"
                           />
                         </div>
+                        {s.image && (
+                          <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-2">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              key={`${s.image}-${imgV}`}
+                              src={`${resolveImg(s.image)}${
+                                resolveImg(s.image).includes("?") ? "&" : "?"
+                              }v=${imgV}`}
+                              alt="Preview"
+                              className="h-16 w-16 rounded-lg border border-slate-200 object-cover"
+                            />
+                            <p className="text-xs text-slate-400">
+                              Image preview — updates instantly after upload.
+                            </p>
+                          </div>
+                        )}
                         <p className="mt-1 text-xs text-slate-400">
                           Upload a banner, or put a file in{" "}
                           <code>public/images/hero/</code> and type its path.

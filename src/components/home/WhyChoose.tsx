@@ -55,7 +55,7 @@ export default function WhyChoose({
       <div className="container-px">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
-            Why Choose Pearl Electric?
+            Why Choose Respak Express?
           </p>
           <h2 className="mt-1 font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
             {heading || "Your Trusted Electrical Partner"}

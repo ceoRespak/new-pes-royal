@@ -65,7 +65,7 @@ export default function ProductView({ product, category }: Props) {
   const longDesc =
     product.description ||
     category?.description ||
-    `Genuine ${catName} product available at Pearl Electric Solutions, Peshawar.`;
+    `Genuine ${catName} product available at Respak Express, Peshawar.`;
   const features = (product.features ?? []).slice(0, 5);
 
   const unit = activeUnit ?? product.salePrice ?? product.price;

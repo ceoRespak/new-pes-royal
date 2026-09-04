@@ -15,7 +15,7 @@ const defaults: SloganContent = {
   title: "Everything Electrical for",
   highlight: "Every Space & Season",
   description:
-    "From one ceiling fan to a complete building installation — genuine products, honest prices and trusted advice at Pearl Electric Solutions, Peshawar.",
+    "From one ceiling fan to a complete building installation — genuine products, honest prices and trusted advice at Respak Express, Peshawar.",
   ctaLabel: "Explore Products",
   ctaHref: "/products",
 };

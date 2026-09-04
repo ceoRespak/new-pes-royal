@@ -202,7 +202,7 @@ function productArt({
     </g>
   </g>
   <rect x="40" y="40" width="150" height="46" rx="23" fill="${c1}" opacity="0.92"/>
-  <text x="115" y="70" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" letter-spacing="3" fill="#ffffff" text-anchor="middle">PES</text>
+  <text x="115" y="70" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="800" letter-spacing="2" fill="#ffffff" text-anchor="middle">RESPAK</text>
   <circle cx="850" cy="66" r="26" fill="#ffffff" opacity="0.85"/>
   <text x="850" y="74" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" fill="${c1}" text-anchor="middle">${angle + 1}</text>
   <text x="450" y="700" font-family="Arial,Helvetica,sans-serif" font-size="${fs}" font-weight="700" fill="#12263a" text-anchor="middle">${esc(label)}</text>
@@ -329,7 +329,7 @@ PRODUCTS.forEach(([slug, label, family, accent], idx) => {
         tint: tone,
         family,
         label,
-        sub: "PES QUALITY RANGE",
+        sub: "RESPAK EXPRESS",
         angle: v,
       })
     );
@@ -357,7 +357,7 @@ write(
   "images/brand/story.svg",
   sceneArt({
     file: "story.svg", w: 720, h: 560, accent: "#d4af37", family: "panel",
-    headline: "PES Experience Centre", sub: "Showroom · Peshawar",
+    headline: "Respak Express", sub: "Experience Centre · Peshawar",
   })
 );
 write(
@@ -371,7 +371,7 @@ write(
   "images/about/company.svg",
   sceneArt({
     file: "company.svg", w: 640, h: 480, accent: "#d4af37", family: "electrical",
-    headline: "Pearl Electric Solutions", sub: "Head Office & R&D",
+    headline: "Respak Express", sub: "Head Office & R&D",
   })
 );
 

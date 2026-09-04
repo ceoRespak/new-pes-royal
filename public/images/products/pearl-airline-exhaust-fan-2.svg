@@ -35,11 +35,11 @@
     </g>
   </g>
   <rect x="40" y="40" width="150" height="46" rx="23" fill="#7ec8a8" opacity="0.92"/>
-  <text x="115" y="70" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" letter-spacing="3" fill="#ffffff" text-anchor="middle">PES</text>
+  <text x="115" y="70" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="800" letter-spacing="2" fill="#ffffff" text-anchor="middle">RESPAK</text>
   <circle cx="850" cy="66" r="26" fill="#ffffff" opacity="0.85"/>
   <text x="850" y="74" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" fill="#7ec8a8" text-anchor="middle">2</text>
   <text x="450" y="700" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="700" fill="#12263a" text-anchor="middle">Pearl Airline Exhaust Fan 12in</text>
-  <text x="450" y="738" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="6" fill="#7ec8a8" text-anchor="middle">PES QUALITY RANGE</text>
+  <text x="450" y="738" font-family="Arial,Helvetica,sans-serif" font-size="19" letter-spacing="6" fill="#7ec8a8" text-anchor="middle">RESPAK EXPRESS</text>
   <line x1="310" y1="776" x2="590" y2="776" stroke="#7ec8a8" stroke-opacity="0.35" stroke-width="3"/>
   <text x="450" y="812" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="2" fill="#6b7a90" text-anchor="middle">Studio Angle · placeholder artwork</text>
 </svg>

@@ -2,7 +2,7 @@
   "name": "pes-website",
   "version": "1.0.0",
   "private": true,
-  "description": "Pearl Electric Solutions (PES) - Official website. Premium fans, lights, sensors & electrical items.",
+  "description": "Respak Express - Official website. Premium fans, lights, sensors & electrical items.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

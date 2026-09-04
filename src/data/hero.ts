@@ -48,7 +48,7 @@ export const heroSlides: HeroSlide[] = [
     cta2Label: "Explore All",
     cta2Href: "/products",
     image: "/images/hero/fan-ad.jpg",
-    imageAlt: "Genuine ceiling fan at Pearl Electric Solutions",
+    imageAlt: "Genuine ceiling fan at Respak Express",
     features: [
       { icon: "bolt", label: "Energy saving" },
       { icon: "star", label: "Copper motor" },
@@ -70,7 +70,7 @@ export const heroSlides: HeroSlide[] = [
     cta2Label: "View All",
     cta2Href: "/products",
     image: "/images/hero/light-ad.jpg",
-    imageAlt: "Energy-saving LED downlights at Pearl Electric Solutions",
+    imageAlt: "Energy-saving LED downlights at Respak Express",
     features: [
       { icon: "bolt", label: "Up to 90% saving" },
       { icon: "sun", label: "Warm & bright" },
@@ -92,7 +92,7 @@ export const heroSlides: HeroSlide[] = [
     cta2Label: "Talk to Us",
     cta2Href: "/contact",
     image: "/images/hero/smart-ad.jpg",
-    imageAlt: "BlueDot smart touch switch at Pearl Electric Solutions",
+    imageAlt: "BlueDot smart touch switch at Respak Express",
     features: [
       { icon: "wifi", label: "WiFi switches" },
       { icon: "bolt", label: "Circuit protection" },

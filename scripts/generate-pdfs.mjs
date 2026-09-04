@@ -51,7 +51,7 @@ function buildPdf(title, blocks) {
   const startPage = () => {
     ops = [];
     y = top;
-    ops.push(`BT /F2 ${14} Tf 0.01 Tw ${left} ${y} Td (PEARL ELECTRIC SOLUTIONS (PES)) Tj ET`);
+    ops.push(`BT /F2 ${14} Tf 0.01 Tw ${left} ${y} Td (RESPAK EXPRESS) Tj ET`);
     ops.push(`BT /F1 ${8.5} Tf ${left} ${y - 13} Td (Premium Fans - LED Lighting - Smart Sensors - Electrical Accessories) Tj ET`);
     ops.push(`0.35 0.69 0.93 RG ${left} ${y - 20} m 556 ${y - 20} l S`); // thin line
     y -= 30;
@@ -140,7 +140,7 @@ function buildPdf(title, blocks) {
     objects[id - 1] = text;
   });
 
-  const infoId = add(`<< /Title (${escapeText(title)}) /Producer (PES) /Creator (PES) >>`);
+  const infoId = add(`<< /Title (${escapeText(title)}) /Producer (Respak Express) /Creator (Respak Express) >>`);
   objects[catalogId - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
 
   // offsets
@@ -215,7 +215,7 @@ const catBlocks = [
 ];
 [...fanList, ...lightList, ...sensorList, ...elecList].forEach((p) => {
   catBlocks.push({ type: "head", text: `${p.name} - Rs ${p.specs[0][1] ? "" : ""} (see spec sheets)` });
-  catBlocks.push({ type: "body", text: `Category specs & warranty available on the PES website. Warranty: ${p.warranty}.` });
+  catBlocks.push({ type: "body", text: `Category specs & warranty available on the Respak Express website. Warranty: ${p.warranty}.` });
   catBlocks.push({ type: "rule" });
 });
 
@@ -223,14 +223,14 @@ const catBlocks = [
 const warrantyBlocks = [
   { type: "sub", text: "Effective from 1 January 2026" },
   { type: "rule" },
-  { type: "body", text: "1. Pearl Electric Solutions (PES) warrants its products to be free from defects in materials and workmanship under normal domestic use for the period stated on the product's warranty card." },
+  { type: "body", text: "1. Respak Express warrants its products to be free from defects in materials and workmanship under normal domestic use for the period stated on the product's warranty card." },
   { type: "body", text: "2. Warranty periods: Ceiling fans, exhaust fans, MCBs, RCDs, stabilizers and copper wiring - 2 years. LED lighting, sensors, pedestal and wall fans - 1 year." },
   { type: "body", text: "3. Coverage: manufacturing defects only. Excludes damage from misuse, voltage fluctuation, tampering, water damage, or repairs by unauthorized persons." },
-  { type: "body", text: "4. Claim procedure: present the original receipt and completed warranty card at any authorized PES dealer or service center." },
-  { type: "body", text: "5. Resolution: PES will repair or, at its discretion, replace the defective product. No cash refunds are provided under this policy." },
+  { type: "body", text: "4. Claim procedure: present the original receipt and completed warranty card at any authorized Respak Express dealer or service center." },
+  { type: "body", text: "5. Resolution: Respak Express will repair or, at its discretion, replace the defective product. No cash refunds are provided under this policy." },
   { type: "body", text: "6. This warranty is in addition to any statutory rights the customer may have under applicable law." },
   { type: "rule" },
-  { type: "body", text: "For support contact: +92 91 525 6789 | info@pearlelectric.pk | www.pearlelectric.pk" },
+  { type: "body", text: "For support contact: +92 345 9398834 | info@respakexpress.pk | www.respakexpress.pk" },
 ];
 
 /* write out */

@@ -132,7 +132,7 @@ export default function Navbar({
         )}
       >
         <div className="container-px flex items-center justify-between py-3">
-          <Link href="/" aria-label="Pearl Electric Solutions — Home">
+          <Link href="/" aria-label="Respak Express — Home">
             <Logo variant={solid ? "dark" : "light"} />
           </Link>
 

@@ -26,7 +26,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Pearl Electric Solutions — Peshawar's trusted electrical supply shop since 2015. Approved distributor of Pakistan Cables, AGE & Fast; genuine fans, lighting, switchgear & smart home.",
+    "Respak Express — Peshawar's trusted electrical supply shop since 2015. Approved distributor of Pakistan Cables, AGE & Fast; genuine fans, lighting, switchgear & smart home.",
   alternates: { canonical: "/about" },
 };
 
@@ -36,7 +36,7 @@ const milestones = [
   {
     year: "2015",
     title: "The shop opens",
-    text: "Pearl Electric Solutions opens its doors at Shop No. 1, Haroon Market, Karkhano Bazar, Peshawar — with one promise: genuine products at fair prices.",
+    text: "Respak Express opens its doors at Shop No. 1, Haroon Market, Karkhano Bazar, Peshawar — with one promise: genuine products at fair prices.",
   },
   {
     year: "Growing",
@@ -56,7 +56,7 @@ const milestones = [
   {
     year: "Today",
     title: "Peshawar's trusted electric shop",
-    text: "From wires and circuit breakers to fans, lighting, DBs and smart home — customers across the city rely on Pearl Electric Solutions every day.",
+    text: "From wires and circuit breakers to fans, lighting, DBs and smart home — customers across the city rely on Respak Express every day.",
   },
 ];
 
@@ -115,7 +115,7 @@ export default function AboutPage() {
             <div className="relative">
               <Image
                 src={site.shopFront || "/images/about/company.svg"}
-                alt="Pearl Electric Solutions shop front"
+                alt="Respak Express shop front"
                 width={640}
                 height={480}
                 className="w-full rounded-3xl object-cover shadow-card-hover"

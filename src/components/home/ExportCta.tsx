@@ -29,7 +29,7 @@ const items = [
 /** Royalfans-style closing "Export / Bulk" CTA band. */
 export default function ExportCta() {
   const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(
-    "Hello Pearl Electric Solutions! I have a bulk / trade enquiry."
+    "Hello Respak Express! I have a bulk / trade enquiry."
   )}`;
   return (
     <section className="bg-white py-12 md:py-16">

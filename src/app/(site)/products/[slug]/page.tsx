@@ -59,7 +59,7 @@ export async function generateMetadata({
     }`,
     alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
-      title: `${product.name} | Pearl Electric Solutions`,
+      title: `${product.name} | Respak Express`,
       description: product.tagline || product.name,
       images: [{ url: product.images[0] }],
     },
@@ -68,7 +68,7 @@ export async function generateMetadata({
 
 const askWhatsapp = (productName: string) =>
   `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(
-    `Hello PES! Please confirm details & price of: ${productName}`
+    `Hello Respak Express! Please confirm details & price of: ${productName}`
   )}`;
 
 export default async function ProductDetailPage({ params }: PageProps) {
@@ -108,7 +108,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     category?.description ||
     `Genuine ${categoryLabel(
       product.category
-    )} product available at Pearl Electric Solutions, Peshawar.`;
+    )} product available at Respak Express, Peshawar.`;
 
   return (
     <>

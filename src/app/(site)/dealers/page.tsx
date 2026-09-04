@@ -11,7 +11,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "Dealers & Retail Network",
   description:
-    "Find an authorized Pearl Electric Solutions dealer near you. Search our retail network across Peshawar, Mardan, Islamabad, Lahore and more.",
+    "Find an authorized Respak Express dealer near you. Search our retail network across Peshawar, Mardan, Islamabad, Lahore and more.",
   alternates: { canonical: "/dealers" },
 };
 
@@ -24,7 +24,7 @@ const perks = [
   {
     icon: FaHandshake,
     title: "Become a Dealer",
-    text: "Partner with PES — attractive margins, training and marketing support.",
+    text: "Partner with Respak Express — attractive margins, training and marketing support.",
   },
   {
     icon: FaHeadset,
@@ -39,7 +39,7 @@ export default function DealersPage() {
     <>
       <PageHero
         crumb="Dealers"
-        title={pg.title || "Find a PES Dealer"}
+        title={pg.title || "Find a Respak Express Dealer"}
         highlight={pg.highlight || "Near You"}
         description="Search our authorized retail network across Pakistan — or become a partner and grow with us."
       />
@@ -82,7 +82,7 @@ export default function DealersPage() {
               </h2>
             </div>
             <p className="max-w-md text-sm leading-relaxed text-slate-500">
-              Want to stock PES in your store? Call{" "}
+              Want to stock Respak Express in your store? Call{" "}
               <a
                 href={`tel:${site.phone.replace(/\s/g, "")}`}
                 className="font-bold text-primary hover:underline"

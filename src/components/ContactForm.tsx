@@ -48,7 +48,7 @@ export default function ContactForm() {
       setForm((f) => ({ ...f, [key]: e.target.value }));
 
   const waMessage = encodeURIComponent(
-    `Hello PES! I'm ${form.name || "a visitor"}.\nSubject: ${form.subject}\n\n${form.message}\n\nPhone: ${form.phone} | Email: ${form.email}`
+    `Hello Respak Express! I'm ${form.name || "a visitor"}.\nSubject: ${form.subject}\n\n${form.message}\n\nPhone: ${form.phone} | Email: ${form.email}`
   );
 
   const onSubmit = (e: FormEvent) => {

@@ -1,7 +1,7 @@
 import type { Product } from "@/types";
 
 /**
- * REAL Pearl Electric Solutions catalog — imported from www.pespeshawar.pk
+ * REAL Respak Express catalog — imported from www.pespeshawar.pk
  * (public API, 100 products) by scripts/import-pes.mjs.
  * Product photos are hotlinked from the live backend (api.pespeshawar.pk).
  */

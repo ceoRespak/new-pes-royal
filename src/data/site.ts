@@ -2,18 +2,18 @@ import type { NavLink } from "@/types";
 import { categories, categoryNavIds } from "./categories";
 
 export const site = {
-  "name": "Pearl Electric Solutions",
-  "shortName": "PES",
-  "shopName": "Pearl Electric",
+  "name": "Respak Express",
+  "shortName": "Respak Express",
+  "shopName": "Respak Express",
   "tagline": "Bringing Light to Every Home",
-  "description": "Your trusted electrical supply shop in Peshawar. Quality products at affordable prices.",
+  "description": "Your trusted electrical supply shop in Peshawar. Quality products at affordable prices, delivered fast.",
   "logo": "/logo.png",
   "shopFront": "https://api.pespeshawar.pk/storage/images/product-1784356708071.jpg",
-  "phone": "+92 323 5677090",
-  "contactPhone": "+92 300 1234567",
-  "whatsapp": "923001234567",
-  "email": "info@pearlectrics.pk",
-  "salesEmail": "pespearlelectricsolutions@gmail.com",
+  "phone": "+92 345 9398834",
+  "contactPhone": "",
+  "whatsapp": "923459398834",
+  "email": "info@respakexpress.pk",
+  "salesEmail": "",
   "address": "Shop No. 01 Haroon Market, Karkhano Bazar Peshawar.",
   "contactAddress": "Shop #5, Khyber Bazaar, Peshawar, Pakistan",
   "hours": "Mon-Sat: 9:00 AM - 8:00 PM, Sun: Closed",
@@ -23,7 +23,7 @@ export const site = {
   "social": {
     "facebook": "https://www.facebook.com/share/18sHhMnFha/?mibextid=wwXIfr",
     "instagram": "",
-    "whatsapp": "https://wa.me/923235677090",
+    "whatsapp": "https://wa.me/923459398834",
     "youtube": "",
     "linkedin": "",
     "twitter": ""
@@ -31,7 +31,7 @@ export const site = {
   "socialLinks": [
     {
       "name": "Whatsapp",
-      "url": "https://wa.me/923235677090"
+      "url": "https://wa.me/923459398834"
     },
     {
       "name": "whatsapp channel",
@@ -45,8 +45,8 @@ export const site = {
   "about": {
     "heading": "Peshawar's Most",
     "headingHighlight": "Trusted Electric Shop",
-    "short": "Pearl Electric Solutions has been serving Peshawar since 2015. We provide high-quality electrical products ranging from wires and cables to smart home solutions.",
-    "p1": "Pearl Electric Solutions has been serving the people of Peshawar for over a decade from our location at Shop No. 1, Haroon Market, Karkhano Bazar. We are approved distributors of Pakistan Cables, AGE Cables, and Fast Cables, and stock premium brands including Philips, Schneider, ABB, Opal, Royal Fans, Voldam Fan, Lahore Fan, Pak Fan, BlueDot Smart Home, and more.",
+    "short": "Respak Express has been serving Peshawar since 2015. We provide high-quality electrical products ranging from wires and cables to smart home solutions.",
+    "p1": "Respak Express has been serving the people of Peshawar for over a decade from our location at Shop No. 1, Haroon Market, Karkhano Bazar. We are approved distributors of Pakistan Cables, AGE Cables, and Fast Cables, and stock premium brands including Philips, Schneider, ABB, Opal, Royal Fans, Voldam Fan, Lahore Fan, Pak Fan, BlueDot Smart Home, and more.",
     "p2": "Whether you're an electrician, contractor, or homeowner, we provide expert advice and genuine products at the best prices in town. Now you can also shop online - browse our catalog, place your order, and get same-day delivery across Peshawar."
   },
   "returnPolicy": "7-day return policy for defective items. Original packaging required.",

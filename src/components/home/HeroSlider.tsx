@@ -206,7 +206,7 @@ export default function HeroSlider({
                       {/* subtle brand strip (desktop only) */}
                       <div className="absolute inset-x-0 bottom-0 hidden items-center justify-between bg-gradient-to-t from-white via-white/80 to-transparent px-5 pb-3 pt-10 lg:flex">
                         <p className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-slate-800">
-                          Pearl Electric
+                          Respak Express
                         </p>
                         <span className="rounded-full bg-primary px-3 py-1 text-[0.6rem] font-bold uppercase tracking-wider text-white">
                           Peshawar

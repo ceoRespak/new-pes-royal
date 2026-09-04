@@ -31,7 +31,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const discount = discountPercent(product.price, product.salePrice);
   const waMessage = encodeURIComponent(
-    `Hello PES! I'm interested in the ${product.name} (${formatPrice(
+    `Hello Respak Express! I'm interested in the ${product.name} (${formatPrice(
       product.price
     )}). Please share more details.`
   );

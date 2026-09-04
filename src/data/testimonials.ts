@@ -38,7 +38,7 @@ export const testimonials: Testimonial[] = [
     city: "Mardan",
     rating: 5,
     quote:
-      "The Royal Energy Saver stabilizers have protected my freezers for two summers now. PES after-sales service is quick and genuinely helpful.",
+      "The Royal Energy Saver stabilizers have protected my freezers for two summers now. Respak Express after-sales service is quick and genuinely helpful.",
     initials: "FM",
   },
   {
@@ -58,7 +58,7 @@ export const testimonials: Testimonial[] = [
     city: "Peshawar",
     rating: 4.5,
     quote:
-      "From LED battens to RCDs, PES supplies our entire facility. Consistent quality, fair pricing and they always deliver on time.",
+      "From LED battens to RCDs, Respak Express supplies our entire facility. Consistent quality, fair pricing and they always deliver on time.",
     initials: "BH",
   },
 ];

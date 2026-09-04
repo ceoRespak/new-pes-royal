@@ -1,5 +1,5 @@
 /* ============================================================
-   Pearl Electric Solutions (PES) — Domain types
+   Respak Express — Domain types
    ============================================================ */
 
 export interface NavLink {

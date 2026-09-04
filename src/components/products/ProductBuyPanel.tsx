@@ -46,7 +46,7 @@ export default function ProductBuyPanel({
     ? `${activeVariant.label} — ${formatPrice(unit)}`
     : null;
   const waMessage = encodeURIComponent(
-    `Hello PES! I would like to order:\n\n📦 ${product.name}${
+    `Hello Respak Express! I would like to order:\n\n📦 ${product.name}${
       choice ? `\nOption: ${choice}` : ""
     }\nQuantity: ${qty}\nEstimated total: ${formatPrice(
       total

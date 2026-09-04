@@ -16,7 +16,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with Pearl Electric Solutions — head office in Peshawar, sales & support, WhatsApp and a quick contact form. We reply within one business day.",
+    "Get in touch with Respak Express — head office in Peshawar, sales & support, WhatsApp and a quick contact form. We reply within one business day.",
   alternates: { canonical: "/contact" },
 };
 
@@ -59,7 +59,7 @@ export default function ContactPage() {
         crumb="Contact Us"
         title={pg.title || "Let's Start a"}
         highlight={pg.highlight || "Conversation"}
-        description="Questions, quotations, partnerships or project support — the PES team is ready to help. Reach out through any channel below."
+        description="Questions, quotations, partnerships or project support — the Respak Express team is ready to help. Reach out through any channel below."
       />
 
       {/* Info cards */}
@@ -76,7 +76,7 @@ export default function ContactPage() {
                     {c.title}
                   </h3>
                   <div className="mt-2 flex-1 space-y-1">
-                    {c.lines.map((l) => (
+                    {c.lines.filter(Boolean).map((l) => (
                       <p key={l} className="text-sm text-slate-500">
                         {l}
                       </p>
@@ -124,7 +124,7 @@ export default function ContactPage() {
               <h2 className="heading heading-underline">On the map</h2>
               <div className="mt-6 flex-1 overflow-hidden rounded-3xl border border-slate-100 shadow-card">
                 <iframe
-                  title="Pearl Electric Solutions location map"
+                  title="Respak Express location map"
                   src={site.mapEmbed}
                   className="h-full min-h-[420px] w-full"
                   loading="lazy"

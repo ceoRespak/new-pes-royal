@@ -1,7 +1,7 @@
 import "server-only";
 
 /**
- * Server-side proxy to the live Pearl Electric Solutions backend
+ * Server-side proxy to the live Respak Express backend
  * (www.pespeshawar.pk / api.pespeshawar.pk).
  *
  * All calls happen Node→Node, so browser CORS never applies. For writes we

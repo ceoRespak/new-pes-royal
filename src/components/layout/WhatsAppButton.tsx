@@ -16,7 +16,7 @@ export default function WhatsAppButton({ number }: { number?: string }) {
   }, []);
 
   const message = encodeURIComponent(
-    "Hello PES! I would like to ask about your products."
+    "Hello Respak Express! I would like to ask about your products."
   );
   const href = `https://wa.me/${number || site.whatsapp}?text=${message}`;
 

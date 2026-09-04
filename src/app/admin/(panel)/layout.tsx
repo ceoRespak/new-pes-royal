@@ -9,7 +9,7 @@ import {
   validateSession,
 } from "@/lib/admin/session";
 
-export const metadata = { title: "Admin | Pearl Electric Solutions" };
+export const metadata = { title: "Admin | Respak Express" };
 
 export default function AdminPanelLayout({
   children,
@@ -26,15 +26,15 @@ export default function AdminPanelLayout({
           <div className="relative h-10 w-10 overflow-hidden rounded-lg">
             <Image
               src="/logo.png"
-              alt="PES"
+              alt="Respak Express"
               fill
               className="object-contain"
             />
           </div>
           <div className="leading-tight">
-            <p className="font-display text-sm font-bold">PES Admin</p>
+            <p className="font-display text-sm font-bold">Respak Express</p>
             <p className="text-[0.65rem] uppercase tracking-widest text-white/50">
-              Pearl Electric Solutions
+              Admin Panel
             </p>
           </div>
         </div>
@@ -50,9 +50,9 @@ export default function AdminPanelLayout({
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between bg-[#001a33] px-4 py-3 text-white lg:hidden">
         <div className="flex items-center gap-2">
           <div className="relative h-8 w-8 overflow-hidden rounded">
-            <Image src="/logo.png" alt="PES" fill className="object-contain" />
+            <Image src="/logo.png" alt="Respak Express" fill className="object-contain" />
           </div>
-          <span className="font-display text-sm font-bold">PES Admin</span>
+          <span className="font-display text-sm font-bold">Respak Express</span>
         </div>
         <AdminLogoutButton />
       </div>

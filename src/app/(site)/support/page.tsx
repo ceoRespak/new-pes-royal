@@ -24,7 +24,7 @@ import { serviceCenters } from "@/data/dealers";
 export const metadata: Metadata = {
   title: "Support & Warranty",
   description:
-    "PES support — warranty policy, how to claim, FAQs, authorized service centers and downloadable specification sheets.",
+    "Respak Express support — warranty policy, how to claim, FAQs, authorized service centers and downloadable specification sheets.",
   alternates: { canonical: "/support" },
 };
 
@@ -52,7 +52,7 @@ const steps = [
   {
     n: "02",
     title: "Contact support",
-    text: "Call our helpline or visit any authorized PES service center with the product.",
+    text: "Call our helpline or visit any authorized Respak Express service center with the product.",
   },
   {
     n: "03",
@@ -183,7 +183,7 @@ export default function SupportPage() {
               Authorized Service Centers
             </h2>
             <p className="mx-auto mt-5 max-w-xl text-slate-500">
-              Find your nearest PES service center for repairs, spare parts and
+              Find your nearest Respak Express service center for repairs, spare parts and
               warranty support.
             </p>
           </AnimatedSectionWrapper>

@@ -71,7 +71,7 @@ function buildPdf(title, blocks) {
   const startPage = () => {
     ops = [];
     y = top;
-    ops.push(`BT /F2 14 Tf ${left} ${y} Td (PEARL ELECTRIC SOLUTIONS (PES) - Peshawar) Tj ET`);
+    ops.push(`BT /F2 14 Tf ${left} ${y} Td (RESPAK EXPRESS - Peshawar) Tj ET`);
     ops.push(`BT /F1 8.5 Tf ${left} ${y - 13} Td (Genuine electrical products | Same-day delivery in Peshawar) Tj ET`);
     ops.push(`0.35 0.69 0.93 RG ${left} ${y - 20} m 556 ${y - 20} l S`);
     y -= 30;
@@ -132,7 +132,7 @@ function buildPdf(title, blocks) {
       `/Resources << /Font << /F1 ${fontIds.F1} 0 R /F2 ${fontIds.F2} 0 R >> >> ` +
       `/Contents ${contentIds[i]} 0 R >>`;
   });
-  const infoId = add(`<< /Title (${esc(title)}) /Producer (PES) >>`);
+  const infoId = add(`<< /Title (${esc(title)}) /Producer (Respak Express) >>`);
   objects[catalogId - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
 
   let pdf = "%PDF-1.4\n";

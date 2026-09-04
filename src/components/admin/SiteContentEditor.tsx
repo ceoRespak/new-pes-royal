@@ -47,7 +47,7 @@ const DEFAULT_SLOGAN: Slogan = {
   title: "Everything Electrical for",
   highlight: "Every Space & Season",
   description:
-    "From one ceiling fan to a complete building installation — genuine products, honest prices and trusted advice at Pearl Electric Solutions, Peshawar.",
+    "From one ceiling fan to a complete building installation — genuine products, honest prices and trusted advice at Respak Express, Peshawar.",
   ctaLabel: "Explore Products",
   ctaHref: "/products",
 };
@@ -552,10 +552,10 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
             Leave a field blank to keep the current value.
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Phone"><input className={input} value={siteInfo.phone ?? ""} onChange={(e) => setInfo("phone", e.target.value)} placeholder="+92 323 5677090" /></Field>
-            <Field label="Email"><input className={input} value={siteInfo.email ?? ""} onChange={(e) => setInfo("email", e.target.value)} placeholder="info@pearlectrics.pk" /></Field>
+            <Field label="Phone"><input className={input} value={siteInfo.phone ?? ""} onChange={(e) => setInfo("phone", e.target.value)} placeholder="+92 345 9398834" /></Field>
+            <Field label="Email"><input className={input} value={siteInfo.email ?? ""} onChange={(e) => setInfo("email", e.target.value)} placeholder="info@respakexpress.pk" /></Field>
             <Field label="Hours"><input className={input} value={siteInfo.hours ?? ""} onChange={(e) => setInfo("hours", e.target.value)} placeholder="Mon-Sat: 9:00 AM - 8:00 PM" /></Field>
-            <Field label="WhatsApp number"><input className={input} value={siteInfo.whatsapp ?? ""} onChange={(e) => setInfo("whatsapp", e.target.value)} placeholder="923001234567" /></Field>
+            <Field label="WhatsApp number"><input className={input} value={siteInfo.whatsapp ?? ""} onChange={(e) => setInfo("whatsapp", e.target.value)} placeholder="923459398834" /></Field>
             <div className="sm:col-span-2">
               <Field label="Shop address"><input className={input} value={siteInfo.address ?? ""} onChange={(e) => setInfo("address", e.target.value)} placeholder="Shop No. 01 Haroon Market…" /></Field>
             </div>

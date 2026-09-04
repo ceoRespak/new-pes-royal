@@ -4,7 +4,7 @@ export const faqs: Faq[] = [
   {
     id: "f1",
     category: "warranty",
-    question: "How long is the warranty on PES products?",
+    question: "How long is the warranty on Respak Express products?",
     answer:
       "Warranty periods vary by product line: ceiling and exhaust fans carry a 2-year warranty, LED lighting and sensors carry a 1-year warranty, and electrical protection items such as MCBs, RCDs and stabilizers carry a 2-year warranty. The exact period is printed on your product's warranty card.",
   },
@@ -13,7 +13,7 @@ export const faqs: Faq[] = [
     category: "warranty",
     question: "How do I register or claim my warranty?",
     answer:
-      "Simply present your original receipt along with the filled warranty card at any PES authorized dealer or service center. Our service centers are listed on the Support page. For a faster process, you can also contact our support line with your product serial number.",
+      "Simply present your original receipt along with the filled warranty card at any Respak Express authorized dealer or service center. Our service centers are listed on the Support page. For a faster process, you can also contact our support line with your product serial number.",
   },
   {
     id: "f3",
@@ -27,12 +27,12 @@ export const faqs: Faq[] = [
     category: "products",
     question: "Are your fans really energy efficient?",
     answer:
-      "Yes. Every PES fan is built around a high-grade pure-copper motor which runs cooler and draws significantly less power than conventional aluminum-wound fans — up to 30% energy saving at the same airflow.",
+      "Yes. Every Respak Express fan is built around a high-grade pure-copper motor which runs cooler and draws significantly less power than conventional aluminum-wound fans — up to 30% energy saving at the same airflow.",
   },
   {
     id: "f5",
     category: "products",
-    question: "Can I use PES LED lights on a stabilizer?",
+    question: "Can I use Respak Express LED lights on a stabilizer?",
     answer:
       "Our LED drivers are designed to handle normal voltage fluctuation (180–265V). For areas with severe fluctuation we still recommend using a stabilizer to protect the driver and extend lamp life.",
   },
@@ -53,7 +53,7 @@ export const faqs: Faq[] = [
   {
     id: "f8",
     category: "support",
-    question: "Where can I get my PES fan serviced?",
+    question: "Where can I get my Respak Express fan serviced?",
     answer:
       "We have authorized service centers in major cities. You can find the nearest service center using the Service Centers section on our Support page, or call our helpline and we will direct you.",
   },

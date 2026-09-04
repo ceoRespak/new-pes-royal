@@ -31,7 +31,7 @@ export default function BrandStory() {
             {site.shopFront ? (
               <Image
                 src={site.shopFront}
-                alt="Pearl Electric Solutions shop front"
+                alt="Respak Express shop front"
                 width={720}
                 height={540}
                 className="h-auto w-full object-cover"
@@ -39,7 +39,7 @@ export default function BrandStory() {
             ) : (
               <Image
                 src="/images/about/company.svg"
-                alt="Pearl Electric Solutions"
+                alt="Respak Express"
                 width={720}
                 height={540}
                 className="h-auto w-full object-cover"

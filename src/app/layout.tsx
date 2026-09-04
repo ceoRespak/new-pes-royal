@@ -3,18 +3,17 @@ import { inter, poppins } from "@/lib/fonts";
 import { site } from "@/data/site";
 import "./globals.css";
 
-const SITE_URL = "https://pearlelectric.pk";
+const SITE_URL = "https://respakexpress.pk";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${site.name} (PES) | ${site.tagline}`,
-    template: `%s | ${site.name} (PES)`,
+    default: `${site.name} | ${site.tagline}`,
+    template: `%s | ${site.name}`,
   },
   description: site.description,
   keywords: [
-    "Pearl Electric Solutions",
-    "PES",
+    "Respak Express",
     "ceiling fans Pakistan",
     "LED lights Pakistan",
     "motion sensors",
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
     locale: "en_PK",
     url: SITE_URL,
     siteName: site.name,
-    title: `${site.name} (PES) | ${site.tagline}`,
+    title: `${site.name} | ${site.tagline}`,
     description: site.description,
     images: [
       {
@@ -41,13 +40,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} (PES) | ${site.tagline}`,
+    title: `${site.name} | ${site.tagline}`,
     description: site.description,
     images: ["/og/og-image.svg"],
   },
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png" }],
-    apple: "/favicon.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 

@@ -8,7 +8,7 @@ import GalleryGrid from "@/components/GalleryGrid";
 export const metadata: Metadata = {
   title: "Gallery",
   description:
-    "Explore Pearl Electric Solutions installations and projects — residential fans, premium lighting, security systems and more across Pakistan.",
+    "Explore Respak Express installations and projects — residential fans, premium lighting, security systems and more across Pakistan.",
   alternates: { canonical: "/gallery" },
 };
 
@@ -20,7 +20,7 @@ export default function GalleryPage() {
         crumb="Gallery"
         title={pg.title || "Our Work in"}
         highlight={pg.highlight || "Action"}
-        description="A look at real PES installations — from cosy living rooms to large commercial projects across Pakistan."
+        description="A look at real Respak Express installations — from cosy living rooms to large commercial projects across Pakistan."
       />
 
       <section className="section-pad bg-light/60">

@@ -47,7 +47,7 @@ export const galleryItems: GalleryItem[] = [
     id: "g7",
     title: "Showroom Display & Experience Zone",
     category: "Brand",
-    location: "PES Head Office, Peshawar",
+    location: "Respak Express Head Office, Peshawar",
     image: "/images/gallery/project-7.svg",
   },
   {

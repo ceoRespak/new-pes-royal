@@ -29,7 +29,7 @@ export default function CtaSection() {
               </h2>
               <p className="mt-4 text-white/75">
                 Whether you need one fan or lighting for an entire building, our
-                team is ready to help you find the perfect PES solution.
+                team is ready to help you find the perfect Respak Express solution.
               </p>
 
               <div className="mt-9 flex flex-wrap items-center justify-center gap-4">

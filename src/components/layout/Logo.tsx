@@ -7,15 +7,15 @@ interface LogoProps {
 }
 
 /**
- * Official Pearl Electric Solutions logo — same artwork as pespeshawar.pk.
- * The source PNG already contains the full emblem + wordmark on white.
+ * Official Respak Express logo.
+ * The source PNG contains the full navy/orange emblem + wordmark.
  */
 export default function Logo({ variant = "dark", className }: LogoProps) {
   return (
     <span className={cn("inline-flex items-center", className)}>
       <Image
         src="/logo.png"
-        alt="Pearl Electric Solutions"
+        alt="Respak Express"
         width={1024}
         height={1024}
         priority

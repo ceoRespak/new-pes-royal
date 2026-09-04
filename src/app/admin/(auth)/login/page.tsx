@@ -44,13 +44,13 @@ export default function AdminLoginPage() {
             <div className="relative h-20 w-20 overflow-hidden rounded-2xl shadow-lg">
               <Image
                 src="/logo.png"
-                alt="Pearl Electric Solutions"
+                alt="Respak Express"
                 fill
                 className="object-contain"
               />
             </div>
             <h1 className="mt-5 font-display text-2xl font-bold text-primary">
-              PES Admin Panel
+              Respak Express Admin Panel
             </h1>
             <p className="mt-1 text-sm text-slate-500">
               Manage products, categories &amp; site settings.

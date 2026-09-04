@@ -30,7 +30,7 @@ export default function TestimonialsSlider({
               Loved by <span className="text-accent">Thousands</span>
             </>
           }
-          description="Real stories from homeowners, contractors and businesses who trust Pearl Electric Solutions."
+          description="Real stories from homeowners, contractors and businesses who trust Respak Express."
         />
 
         <Swiper

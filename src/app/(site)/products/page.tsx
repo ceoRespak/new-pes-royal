@@ -9,7 +9,7 @@ import type { Category, CategoryMeta, Product } from "@/types";
 export const metadata: Metadata = {
   title: "Products",
   description:
-    "Browse the complete PES range — ceiling, pedestal and wall fans, LED lighting, smart sensors and trusted electrical accessories.",
+    "Browse the complete Respak Express range — ceiling, pedestal and wall fans, LED lighting, smart sensors and trusted electrical accessories.",
   alternates: { canonical: "/products" },
 };
 
@@ -55,7 +55,7 @@ export default async function ProductsPage({
         description={
           valid !== "all" && activeCategory
             ? activeCategory.description
-            : "From energy-saving fans and brilliant LED lighting to smart sensors and safety-first electricals — discover the full Pearl Electric Solutions catalogue."
+            : "From energy-saving fans and brilliant LED lighting to smart sensors and safety-first electricals — discover the full Respak Express catalogue."
         }
       />
 

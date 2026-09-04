@@ -45,7 +45,7 @@ export default function Footer({
     address: info?.address || siteBase.address,
     footerAbout:
       info?.footerAbout ||
-      "Pearl Electric Solutions crafts premium fans, LED lighting, smart sensors and trusted electrical accessories. Proudly powering homes and businesses across Pakistan since 2015.",
+      "Respak Express crafts premium fans, LED lighting, smart sensors and trusted electrical accessories. Proudly powering homes and businesses across Pakistan since 2015.",
   };
   return (
     <footer className="relative overflow-hidden bg-[#001a33] text-slate-300">
@@ -58,7 +58,7 @@ export default function Footer({
         <div className="container-px flex flex-col items-center justify-between gap-6 py-10 lg:flex-row">
           <div>
             <h3 className="font-display text-2xl font-bold text-white">
-              Join the <span className="text-accent">PES family</span>
+              Join the <span className="text-accent">Respak Express family</span>
             </h3>
             <p className="mt-1 text-sm text-slate-400">
               New product launches, offers and energy-saving tips — straight to
@@ -190,8 +190,8 @@ export default function Footer({
       <div className="relative border-t border-white/10">
         <div className="container-px flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} Pearl Electric Solutions (PES). All
-            rights reserved.
+            © {new Date().getFullYear()} Respak Express. All rights
+            reserved.
           </p>
           <p className="flex items-center gap-4">
             <Link href="/support#warranty" className="transition hover:text-accent">

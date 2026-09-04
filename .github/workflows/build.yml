@@ -26,3 +26,4 @@ jobs:
           path: |
             .next
             public
+            include-hidden-files: true

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate:pdfs": "node scripts/generate-store-pdfs.mjs"
+    "generate:pdfs": "node scripts/generate-store-pdfs.mjs",
+    "migrate:own": "node scripts/own-backend-migrate.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",

@@ -3,6 +3,9 @@ import type { CategoryMeta, Product } from "@/types";
 import HeroSlider from "@/components/home/HeroSlider";
 import TrustStrip from "@/components/home/TrustStrip";
 import CategoryCards from "@/components/home/CategoryCards";
+import CategorySections from "@/components/home/CategorySections";
+import ShopByBrand from "@/components/home/ShopByBrand";
+import type { BrandBlock } from "@/components/home/ShopByBrand";
 import BestSellersBand from "@/components/home/BestSellersBand";
 import ProductShowcase from "@/components/home/ProductShowcase";
 import PromoBanners from "@/components/home/PromoBanners";
@@ -64,8 +67,48 @@ export default async function HomePage() {
     .map((slug) => bySlug.get(slug))
     .filter((p): p is Product => p !== undefined && !bestSlugs.has(p.slug))
     .slice(0, 8);
-  const newLive = liveProducts.filter((p) => p.newArrival).slice(0, 8);
-  const featured = curated.length >= 4 ? curated : newLive;
+  const newLive = liveProducts.filter((p) => p.newArrival).slice(0, 10);
+  // Show 10 (two tidy rows of 5 on the dense desktop grid), topping up the
+  // curated picks with new arrivals if needed.
+  const baseFeatured = curated.length >= 4 ? curated : newLive;
+  const seenFeatured = new Set(baseFeatured.map((p) => p.slug));
+  const fillFeatured = newLive
+    .filter(
+      (p) => !seenFeatured.has(p.slug) && !bestSlugs.has(p.slug)
+    )
+    .slice(0, Math.max(0, 10 - baseFeatured.length));
+  const featured = [...baseFeatured, ...fillFeatured].slice(0, 10);
+
+  // Every category (with products) → section with its first 10 products.
+  const categoryBlocks = liveCats
+    .filter((c) => c.count > 0)
+    .map((c) => ({
+      cat: c,
+      products: liveProducts
+        .filter((p) => p.category === c.id)
+        .slice(0, 10),
+    }))
+    .filter((b) => b.products.length > 0);
+
+  // Auto-detected brands → Shop by Brand band (only brands with ≥2 items).
+  const brandMap = new Map<string, BrandBlock>();
+  liveProducts.forEach((p) => {
+    if (!p.brand) return;
+    const cur = brandMap.get(p.brand.id);
+    if (cur) {
+      cur.count += 1;
+      if (!cur.image && p.images[0]) cur.image = p.images[0];
+    } else {
+      brandMap.set(p.brand.id, {
+        brand: p.brand,
+        count: 1,
+        image: p.images[0] ?? "",
+      });
+    }
+  });
+  const brandBlocks = [...brandMap.values()]
+    .filter((b) => b.count >= 2)
+    .sort((a, b) => b.count - a.count);
 
   const content = getContent();
   const heroSlides =
@@ -87,6 +130,10 @@ export default async function HomePage() {
         viewAllHref="/products"
         viewAllLabel="View All Products"
       />
+      {/* Auto-detected brands, scrollable tiles → brand-filtered listing. */}
+      <ShopByBrand brands={brandBlocks} />
+      {/* Every category: first 10 products + View All button. */}
+      <CategorySections blocks={categoryBlocks} />
       <PromoBanners banners={content.promoBanners} />
       <SloganBanner content={content.slogan} />
       <TestimonialsSlider items={content.testimonials} />

@@ -58,9 +58,8 @@ export default async function AdminProductsPage() {
       <header className="mb-6">
         <h1 className="font-display text-2xl font-bold text-primary">Products</h1>
         <p className="mt-1 text-sm text-slate-500">
-          {products.length} products live on pespeshawar.pk. Add, edit or hide
-          items — changes are saved to the live backend (variants are stored
-          locally on this site).
+          {products.length} products in your self-hosted store. Add, edit or
+          hide items — changes are saved to this site.
         </p>
       </header>
       {error && (

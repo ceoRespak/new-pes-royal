@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   FaBoxOpen,
   FaChartPie,
+  FaClipboardList,
   FaCogs,
   FaExternalLinkAlt,
   FaTags,
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/admin/dashboard", label: "Dashboard", icon: FaChartPie },
   { href: "/admin/products", label: "Products", icon: FaBoxOpen },
+  { href: "/admin/orders", label: "Orders", icon: FaClipboardList },
   { href: "/admin/categories", label: "Categories", icon: FaTags },
   { href: "/admin/content", label: "Site Content", icon: FaCogs },
   { href: "/admin/settings", label: "Live Store Settings", icon: FaTags },

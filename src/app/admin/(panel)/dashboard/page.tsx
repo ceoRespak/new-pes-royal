@@ -8,7 +8,6 @@ import {
   FaTags,
 } from "react-icons/fa";
 import { backendGet } from "@/lib/admin/backend";
-import { products as localProducts } from "@/data/products";
 import { site } from "@/data/site";
 import { formatPrice } from "@/lib/utils";
 
@@ -54,17 +53,17 @@ export default async function AdminDashboardPage() {
   }[] = [
     {
       icon: FaBoxOpen,
-      label: "Products (live)",
+      label: "Products (local)",
       value: liveProducts.length,
-      sub: `${localProducts.length} products in this site’s preview`,
+      sub: "Stored on this site",
       href: "/admin/products",
       tone: "from-primary to-primary-600",
     },
     {
       icon: FaTags,
-      label: "Categories (live)",
+      label: "Categories (local)",
       value: liveCats.length,
-      sub: "Shop categories on pespeshawar.pk",
+      sub: "Shop categories in your local store",
       href: "/admin/categories",
       tone: "from-accent to-accent-600",
     },
@@ -78,9 +77,9 @@ export default async function AdminDashboardPage() {
     },
     {
       icon: FaInfoCircle,
-      label: "What you edit",
-      value: "Goes LIVE",
-      sub: "Changes save to the pespeshawar.pk backend",
+      label: "Where edits go",
+      value: "Local",
+      sub: "Changes save to your self-hosted store",
       href: "/admin/settings",
       tone: "from-slate-600 to-slate-800",
     },
@@ -183,10 +182,10 @@ export default async function AdminDashboardPage() {
       </div>
 
       <p className="mt-6 rounded-2xl bg-primary/5 p-4 text-xs leading-relaxed text-slate-500">
-        Editing here saves straight to the <b>live pespeshawar.pk backend</b>.
-        To refresh this premium site’s static preview with the latest data, run{" "}
-        <code className="rounded bg-slate-100 px-1">node scripts/import-pes.mjs</code>{" "}
-        and restart the dev/build.
+        Editing here saves straight to your <b>self-hosted store</b>{" "}
+        (<code className="rounded bg-slate-100 px-1">/.data/store.json</code>).
+        To re-seed from the old data, run{" "}
+        <code className="rounded bg-slate-100 px-1">npm run migrate:own</code>.
       </p>
     </div>
   );

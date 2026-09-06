@@ -43,7 +43,9 @@ body {
 /* ---------- Reusable component classes ---------- */
 @layer components {
   .container-px {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    /* Full-width page gutter — spans the whole screen so there is no empty
+       space on either side; only a small edge padding remains. */
+    @apply mx-auto w-full max-w-full px-4 sm:px-6 lg:px-8;
   }
 
   .section-pad {
@@ -116,4 +118,17 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ---- Category marquee (auto-scrolling chips) ---- */
+@keyframes respak-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: respak-marquee 45s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
 }

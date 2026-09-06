@@ -1,5 +1,4 @@
 import type { NavLink } from "@/types";
-import { categories, categoryNavIds } from "./categories";
 
 export const site = {
   "name": "Respak Express",
@@ -8,7 +7,7 @@ export const site = {
   "tagline": "Bringing Light to Every Home",
   "description": "Your trusted electrical supply shop in Peshawar. Quality products at affordable prices, delivered fast.",
   "logo": "/logo.png",
-  "shopFront": "https://api.pespeshawar.pk/storage/images/product-1784356708071.jpg",
+  "shopFront": "/api/files/product-1784356708071.jpg",
   "phone": "+92 345 9398834",
   "contactPhone": "",
   "whatsapp": "923459398834",
@@ -57,25 +56,25 @@ export const site = {
     {
       "title": "Smart Switches",
       "subtitle": "Bluedot Switches",
-      "image": "https://api.pespeshawar.pk/storage/images/product-1785863117230.png",
+      "image": "/api/files/product-1785863117230.png",
       "link": "/products"
     },
     {
       "title": "Distribution Boards",
       "subtitle": "All Type of Dbs",
-      "image": "https://api.pespeshawar.pk/storage/images/product-1785863056430.png",
+      "image": "/api/files/product-1785863056430.png",
       "link": "/products"
     },
     {
       "title": "Fans",
       "subtitle": "Cieling Fans, Bracket Fans",
-      "image": "https://api.pespeshawar.pk/storage/images/product-1785862216713.png",
+      "image": "/api/files/product-1785862216713.png",
       "link": "/products/?category=fan"
     },
     {
       "title": "Switch & Sockets",
       "subtitle": "All Type of Switch & Sockets",
-      "image": "https://api.pespeshawar.pk/storage/images/product-1785568143216.PNG",
+      "image": "/api/files/product-1785568143216.PNG",
       "link": "/products/?category=switches-sockets"
     }
   ]
@@ -90,7 +89,4 @@ export const navLinks: NavLink[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-/** Primary categories surfaced in the navbar dropdown. */
-export const categoryNavLinks: NavLink[] = categories
-  .filter((c) => categoryNavIds.includes(c.id))
-  .map((c) => ({ label: c.shortName, href: `/products?category=${c.id}` }));
+

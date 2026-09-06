@@ -1,24 +1,73 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 import type { CategoryMeta } from "@/types";
 import { categories as snapshotCategories } from "@/data/categories";
 
-export default function CategoryCards({ cats }: { cats?: CategoryMeta[] }) {
-  // Only surface categories that actually contain products.
-  const visible = (cats ?? snapshotCategories)
+interface CategoryCardsProps {
+  cats?: CategoryMeta[];
+}
+
+/**
+ * Compact, auto-scrolling category marquee.
+ *
+ * Categories are small pills that scroll in one horizontal row and loop
+ * seamlessly — so the section stays small even as the catalog grows to 100+
+ * categories. Hovering pauses the scroll. Users who prefer reduced motion get
+ * a normal manually-scrollable row instead (no duplicated content).
+ */
+export default function CategoryCards({ cats }: CategoryCardsProps) {
+  const items = (cats ?? snapshotCategories)
     .filter((c) => c.count > 0)
-    .slice(0, 8);
+    .sort((a, b) => b.count - a.count);
+
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  if (items.length === 0) return null;
+
+  const pill = (cat: CategoryMeta, i: number, dup: boolean) => (
+    <Link
+      key={`${cat.id}-${dup ? "b" : "a"}`}
+      href={`/products?category=${cat.id}`}
+      tabIndex={dup ? -1 : undefined}
+      aria-hidden={dup}
+      className="group flex min-w-max items-center gap-2.5 rounded-2xl border border-slate-200 bg-white py-2 pl-3 pr-4 shadow-sm transition hover:-translate-y-0.5 hover:border-[#E11D2A]/40 hover:shadow-md"
+    >
+      <span
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[0.65rem] font-extrabold uppercase text-white"
+        style={{ background: cat.accent ?? "#003366" }}
+      >
+        {cat.shortName.slice(0, 2)}
+      </span>
+      <span className="text-left">
+        <span className="block max-w-[10rem] truncate text-sm font-bold leading-tight text-slate-800 group-hover:text-[#E11D2A]">
+          {cat.shortName}
+        </span>
+        <span className="block text-[0.66rem] font-semibold text-slate-400">
+          {cat.count} item{cat.count === 1 ? "" : "s"}
+        </span>
+      </span>
+    </Link>
+  );
 
   return (
-    <section className="bg-light/40 py-12 md:py-16">
+    <section className="border-y border-slate-100 bg-light/40 py-8 md:py-12">
       <div className="container-px">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-3 border-b-2 border-slate-100 pb-3">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
               Shop by Category
             </p>
-            <h2 className="font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
+            <h2 className="font-display text-xl font-extrabold text-slate-900 md:text-2xl">
               Popular Categories
             </h2>
           </div>
@@ -30,38 +79,30 @@ export default function CategoryCards({ cats }: { cats?: CategoryMeta[] }) {
             <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
-
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-5">
-          {visible.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/products?category=${cat.id}`}
-              className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-slate-100"
-            >
-              {cat.image ? (
-                <Image
-                  src={cat.image}
-                  alt={cat.shortName}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              ) : null}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/85 via-slate-900/20 to-transparent" />
-              {/* red edge on hover */}
-              <span className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-[#E11D2A] transition-transform duration-500 group-hover:scale-x-100" />
-              <div className="absolute inset-x-0 bottom-0 p-4">
-                <p className="text-[0.65rem] font-bold uppercase tracking-wider text-white/70">
-                  {cat.count} Products
-                </p>
-                <p className="mt-0.5 font-display text-lg font-bold leading-tight text-white">
-                  {cat.shortName}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
       </div>
+
+      {reduced ? (
+        <div className="container-px">
+          <div className="no-scrollbar flex gap-3 overflow-x-auto pb-1">
+            {items.map((c) => pill(c, 0, false))}
+          </div>
+        </div>
+      ) : (
+        <div className="relative w-full overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-light/60 to-transparent sm:w-16"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-light/60 to-transparent sm:w-16"
+          />
+          <div className="marquee-track flex w-max items-center gap-3 px-2">
+            {items.map((c, i) => pill(c, i, false))}
+            {items.map((c, i) => pill(c, i, true))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

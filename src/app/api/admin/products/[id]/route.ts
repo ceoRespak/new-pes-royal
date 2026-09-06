@@ -23,7 +23,7 @@ export async function PUT(
 
   const productId = params.id;
   const variants = normalizeVariants(body.variants);
-  // Variants are owned by this site (the live backend can't persist them).
+  // Variants are owned by this site and persist in /.data.
   saveVariantsForProduct(productId, variants);
   clearCache();
   clearLiveCache();
@@ -39,15 +39,20 @@ export async function PUT(
     image: String(body.image ?? ""),
     category: String(body.category ?? ""),
     featured: Boolean(body.featured),
+    features: body.features,
+    specs: body.specs,
+    downloads: body.downloads,
+    videos: body.videos,
+    warranty: String(body.warranty ?? ""),
   };
 
-  // The live backend updates products via PUT /api/products (id inside body).
+  // Local store updates products via PUT /api/products (id inside body).
   const result = await backendPut("/api/products", payload);
   if (!result.ok) {
     return NextResponse.json(
       {
         ok: false,
-        error: `${result.error || "Live update failed"}. (Variants were saved locally and will appear on this site.)`,
+        error: `${result.error || "Save failed (local store)"}`, 
       },
       { status: result.status || 500 }
     );

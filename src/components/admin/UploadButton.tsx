@@ -10,8 +10,8 @@ interface Props {
 }
 
 /**
- * Uploads an image to the live backend (/api/upload via /api/admin/upload)
- * and fills the field with the returned URL (relative /storage/images/...).
+ * Uploads an image to this site's own storage (via /api/admin/upload) and
+ * fills the field with the returned local URL (/api/files/...).
  */
 export default function UploadButton({
   value,

@@ -1,26 +1,30 @@
 import "server-only";
 import type { CategoryMeta, Product } from "@/types";
+import {
+  getRawCategories,
+  getRawProducts,
+  storeFileMtime,
+  type RawCategory,
+  type RawProduct,
+} from "@/lib/catalog/store";
+import { detectBrand } from "@/data/brands";
+import { getProductSub } from "@/data/subcategories";
+import { subNameOverride, subcatsMetaMtime } from "@/lib/catalog/subcats";
 
 /**
- * Runtime catalog loader for LOCALHOST dev.
+ * Runtime catalog loader — now backed by THIS SITE'S OWN local store
+ * (`/.data/store.json`, see src/lib/catalog/store.ts).
  *
- * Public pages that used to read the frozen snapshot (src/data/*.ts) read the
- * LIVE pespeshawar.pk backend through this module instead, so admin-panel
- * edits (which are written to the live backend) show up on localhost within
- * the short cache window — no re-import / rebuild needed.
- *
- * Variants are still stored locally (public/data/variants.json) because the
- * live product_variants table cannot persist them (see variants-store.ts).
+ * Public pages read the normalized Product/CategoryMeta shapes through this
+ * module (kept for compatibility with the old live-API loader). Admin edits
+ * write to the same store, so changes show up immediately — no remote
+ * backend, no API fetch, no stale cache.
  */
 
-const BASE = process.env.PES_API_BASE || "https://api.pespeshawar.pk";
-const TTL = Number(process.env.PES_LIVE_CACHE_TTL || 15_000); // ms
+// Local image resolver: stored urls are already served by this site
+// (`/api/files/...`); absolute legacy urls pass through unchanged.
+const abs = (p?: string | null) => (!p ? "" : p);
 
-const abs = (p?: string | null) =>
-  !p ? "" : /^https?:\/\//.test(p) ? p : `${BASE}${p}`;
-
-// NOTE: replicate scripts/import-pes.mjs slugify (strips ' & too) so slugs
-// match the slugs baked into categories.ts / links.
 const slugify = (s = "") =>
   String(s)
     .toLowerCase()
@@ -43,7 +47,7 @@ const clean = (s: string | null | undefined = "") =>
 
 const sentence = (s?: string) => (s ? clean(s) : "");
 
-/* Editorial category meta (mirrors scripts/import-pes.mjs CATEGORY_META). */
+/* Editorial category meta (mirrors the old import script). */
 const CATEGORY_META: Record<string, Partial<CategoryMeta>> = {
   FAN: { icon: "fan", accent: "#d4af37", tagline: "Ceiling & bracket fans from Pakistan's top brands" },
   "Exhaust Fans": { icon: "fan", accent: "#5aa7d6", tagline: "Kitchen, bath & industrial ventilation" },
@@ -59,69 +63,6 @@ const CATEGORY_META: Record<string, Partial<CategoryMeta>> = {
   "Earthing Accessories": { icon: "earthing", accent: "#b3922a", tagline: "Copper rods & grounding gear" },
   Others: { icon: "other", accent: "#8ab6f0", tagline: "Everyday electrical essentials" },
 };
-
-/* ---------------- tiny fetch + cache ---------------- */
-const cache = new Map<string, { at: number; data: unknown }>();
-
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(15_000),
-    headers: { Accept: "application/json" },
-  });
-  if (!res.ok) throw new Error(`Live API ${res.status} for ${url}`);
-  return (await res.json()) as T;
-}
-
-async function cached<T>(key: string, loader: () => Promise<T>): Promise<T> {
-  const hit = cache.get(key);
-  if (hit && Date.now() - hit.at < TTL) return hit.data as T;
-  const data = await loader();
-  cache.set(key, { at: Date.now(), data });
-  return data;
-}
-
-export function clearLiveCache(): void {
-  cache.clear();
-}
-
-/* ---------------- raw types from the live API ---------------- */
-interface RawProduct {
-  id: string | number;
-  name: string;
-  desc?: string;
-  price?: string | number;
-  sale_price?: string | number | null;
-  on_sale?: boolean;
-  badge?: string | null;
-  image?: string | null;
-  category?: string | null;
-  featured?: boolean;
-}
-
-interface RawCategory {
-  id: number;
-  name: string;
-  image?: string | null;
-}
-
-interface ProductsResponse extends Array<RawProduct> {}
-interface CategoriesResponse {
-  categories: RawCategory[];
-}
-
-/* ---------------- normalization ---------------- */
-async function loadRaw() {
-  const [productsRaw, catsRaw] = await Promise.all([
-    cached<ProductsResponse>("products", () =>
-      fetchJson<ProductsResponse>(`${BASE}/api/products`)
-    ),
-    cached<CategoriesResponse>("categories", () =>
-      fetchJson<CategoriesResponse>(`${BASE}/api/categories`)
-    ),
-  ]);
-  return { productsRaw, catsRaw: catsRaw.categories };
-}
 
 function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
   const catNameToSlug = new Map<string, string>();
@@ -168,6 +109,16 @@ function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
         : null;
     const salePrice = sale !== null && sale > 0 && sale < price ? sale : undefined;
 
+    const nameCleaned = clean(name);
+    const detectedBrand = detectBrand(nameCleaned);
+    const detectedSub = getProductSub(catName, nameCleaned);
+    const subRef = detectedSub
+      ? {
+          id: detectedSub.id,
+          name: subNameOverride(catName, detectedSub.id, detectedSub.name),
+        }
+      : undefined;
+
     const desc = sentence(p.desc);
     const isDup =
       desc.replace(/\.+$/, "").trim().toLowerCase() ===
@@ -194,10 +145,30 @@ function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
       ...(salePrice !== undefined ? { salePrice } : {}),
       tagline: isDup ? "" : desc.split(/[.!?]/)[0].slice(0, 130),
       description: effectiveDesc,
-      features: [],
-      specs: {},
+      features: Array.isArray(p.features) ? p.features.map((f) => String(f)) : [],
+      specs:
+        p.specs && typeof p.specs === "object"
+          ? (p.specs as Record<string, string>)
+          : {},
       images: [abs(p.image)].filter(Boolean) as string[],
-      downloads: [],
+      downloads: Array.isArray(p.downloads)
+        ? p.downloads
+            .map((d) => ({
+              label: String(d?.label ?? ""),
+              url: abs(d?.url) || "",
+              size: d?.size ? String(d.size) : undefined,
+            }))
+            .filter((d) => d.url)
+        : [],
+      videos: Array.isArray(p.videos)
+        ? p.videos
+            .map((v) => ({
+              label: v?.label ? String(v.label) : undefined,
+              url: v?.url ? String(v.url) : undefined,
+              link: v?.link ? String(v.link) : undefined,
+            }))
+            .filter((v) => v.url || v.link)
+        : undefined,
       badge: shortBadge,
       featured: Boolean(p.featured),
       bestSeller: (badge || "").toLowerCase().includes("bestseller"),
@@ -205,7 +176,10 @@ function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
       inStock: true,
       rating: 0,
       reviews: 0,
-      warranty: "",
+      warranty: p.warranty ? String(p.warranty) : "",
+      ...(detectedBrand ? { brand: detectedBrand.brand } : {}),
+      ...(detectedBrand?.line ? { brandLine: detectedBrand.line.name } : {}),
+      ...(subRef ? { sub: subRef } : {}),
     } as Product;
   });
 
@@ -221,14 +195,30 @@ function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
   return { products, categories };
 }
 
-/* ---------------- public API ---------------- */
-export async function getLiveCatalog(): Promise<{
+/* ---------------- in-memory catalog (refreshed on writes) ---------------- */
+
+let catalogMemo: { products: Product[]; categories: CategoryMeta[] } | null = null;
+let catalogStamp = "";
+
+export function clearLiveCache(): void {
+  catalogMemo = null;
+}
+
+async function getLiveCatalog(): Promise<{
   products: Product[];
   categories: CategoryMeta[];
 }> {
-  const { productsRaw, catsRaw } = await loadRaw();
-  return buildCatalog(productsRaw, catsRaw);
+  // store.json + subcategory-meta.json mtimes double as change stamps across
+  // module instances (route handlers and pages compile into separate bundles).
+  const stamp = `${storeFileMtime()}|${subcatsMetaMtime()}`;
+  if (!catalogMemo || stamp !== catalogStamp) {
+    catalogMemo = buildCatalog(getRawProducts(), getRawCategories());
+    catalogStamp = stamp;
+  }
+  return catalogMemo;
 }
+
+/* ---------------- public API ---------------- */
 
 export async function getLiveProducts(): Promise<Product[]> {
   return (await getLiveCatalog()).products;

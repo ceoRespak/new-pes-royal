@@ -1,11 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   FaArrowRight,
+  FaCheck,
+  FaShoppingCart,
   FaWhatsapp,
-  FaRegHeart,
 } from "react-icons/fa";
 import type { Product } from "@/types";
+import { useCart } from "@/components/cart/CartProvider";
 import RatingStars from "@/components/ui/RatingStars";
 import { categoryLabel } from "@/data/categories";
 import { site } from "@/data/site";
@@ -35,6 +40,21 @@ export default function ProductCard({
       product.price
     )}). Please share more details.`
   );
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+  const quickAdd = () => {
+    if (!product.inStock) return;
+    add({
+      productId: product.id,
+      slug: product.slug,
+      name: product.name,
+      image: product.images[0],
+      unitPrice: product.salePrice ?? product.price,
+      regularPrice: product.price,
+    });
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1600);
+  };
 
   // ---- Royalfans-style storefront card (used on the home page) ----
   if (storefront) {
@@ -57,9 +77,17 @@ export default function ProductCard({
               fill
               priority={priority}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+              className={cn(
+                "object-contain p-3 transition-transform duration-500 group-hover:scale-105",
+                !product.inStock && "opacity-60 grayscale"
+              )}
             />
           </Link>
+          {!product.inStock && (
+            <span className="absolute inset-x-0 top-1/2 mx-auto w-fit -translate-y-1/2 rounded-full bg-slate-800 px-3 py-1.5 text-[0.62rem] font-extrabold uppercase tracking-wider text-white shadow-lg">
+              Out of Stock
+            </span>
+          )}
           {/* Badges */}
           <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
             {product.badge && (
@@ -89,6 +117,15 @@ export default function ProductCard({
           <p className="text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-slate-400">
             {categoryLabel(product.category)}
           </p>
+          {product.brand && (
+            <Link
+              href={`/products?brand=${product.brand.id}`}
+              className="mt-0.5 inline-flex w-fit items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-[#E11D2A] transition hover:underline"
+            >
+              {product.brand.name}
+              {product.brandLine ? ` · ${product.brandLine}` : ""}
+            </Link>
+          )}
           <h3 className="mt-1">
             <Link
               href={`/products/${product.slug}`}
@@ -113,27 +150,41 @@ export default function ProductCard({
                 {formatPrice(product.price)}
               </span>
             )}
-            <span className="text-lg font-extrabold text-slate-900">
+            <span className="text-base font-extrabold text-slate-900">
               {formatPrice(product.salePrice ?? product.price)}
             </span>
           </div>
 
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-3 grid gap-2">
+            <button
+              type="button"
+              onClick={quickAdd}
+              disabled={!product.inStock}
+              className={cn(
+                "flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-[0.7rem] font-bold uppercase tracking-wider transition disabled:cursor-not-allowed",
+                added
+                  ? "bg-emerald-600 text-white"
+                  : "bg-[#E11D2A] text-white hover:bg-[#b8111f] disabled:bg-slate-200 disabled:text-slate-400"
+              )}
+            >
+              {added ? (
+                <>
+                  <FaCheck /> Added
+                </>
+              ) : product.inStock ? (
+                <>
+                  <FaShoppingCart /> Add to Cart
+                </>
+              ) : (
+                <>Out of Stock</>
+              )}
+            </button>
             <Link
               href={`/products/${product.slug}`}
-              className="flex-1 rounded-lg bg-[#E11D2A] py-2.5 text-center text-[0.7rem] font-bold uppercase tracking-wider text-white transition hover:bg-[#b8111f]"
+              className="flex w-full items-center justify-center gap-1 rounded-lg border border-slate-200 py-2 text-[0.68rem] font-bold text-slate-600 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
             >
               View Details
             </Link>
-            <a
-              href={`https://wa.me/${site.whatsapp}?text=${waMessage}`}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Order on WhatsApp"
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500 text-white transition hover:bg-emerald-600"
-            >
-              <FaWhatsapp />
-            </a>
           </div>
         </div>
       </article>
@@ -161,9 +212,19 @@ export default function ProductCard({
             fill
             priority={priority}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className={cn(
+              "object-cover transition-transform duration-700 ease-out group-hover:scale-110",
+              !product.inStock && "opacity-60 grayscale"
+            )}
           />
         </Link>
+
+        {/* out-of-stock overlay */}
+        {!product.inStock && (
+          <span className="absolute inset-x-0 top-1/2 z-10 mx-auto w-fit -translate-y-1/2 rounded-full bg-slate-800 px-3 py-1.5 text-[0.65rem] font-extrabold uppercase tracking-wider text-white shadow-lg">
+            Out of Stock
+          </span>
+        )}
 
         {/* top gradient for legibility */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -193,12 +254,6 @@ export default function ProductCard({
           >
             <FaWhatsapp />
           </a>
-          <button
-            aria-label="Save to wishlist"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow transition hover:bg-primary hover:text-white"
-          >
-            <FaRegHeart />
-          </button>
         </div>
 
         {/* Hover bottom bar */}
@@ -217,6 +272,15 @@ export default function ProductCard({
         <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-accent">
           {categoryLabel(product.category)}
         </p>
+        {product.brand && (
+          <Link
+            href={`/products?brand=${product.brand.id}`}
+            className="mt-0.5 inline-flex w-fit items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-primary/80 transition hover:text-primary"
+          >
+            {product.brand.name}
+            {product.brandLine ? ` · ${product.brandLine}` : ""}
+          </Link>
+        )}
         <h3 className="mt-1.5">
           <Link
             href={`/products/${product.slug}`}
@@ -240,8 +304,8 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="mt-auto flex items-end justify-between pt-3">
-          <div>
+        <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+          <div className="min-w-0">
             {product.salePrice && (
               <p className="text-xs text-slate-400 line-through">
                 {formatPrice(product.price)}
@@ -251,7 +315,7 @@ export default function ProductCard({
               {formatPrice(product.salePrice ?? product.price)}
             </p>
           </div>
-          <span className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[0.68rem] font-bold text-emerald-600">
+          <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[0.68rem] font-bold text-emerald-600">
             <span
               className={cn(
                 "h-1.5 w-1.5 rounded-full",
@@ -261,6 +325,30 @@ export default function ProductCard({
             {product.inStock ? "In Stock" : "Call us"}
           </span>
         </div>
+
+        <button
+          type="button"
+          onClick={quickAdd}
+          disabled={!product.inStock}
+          className={cn(
+            "mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[0.68rem] font-bold uppercase tracking-widest transition disabled:cursor-not-allowed",
+            added
+              ? "bg-emerald-600 text-white"
+              : "bg-primary text-white hover:bg-primary-800 disabled:bg-slate-200 disabled:text-slate-400"
+          )}
+        >
+          {added ? (
+            <>
+              <FaCheck /> Added to Cart
+            </>
+          ) : product.inStock ? (
+            <>
+              <FaShoppingCart /> Add to Cart
+            </>
+          ) : (
+            <>Out of Stock</>
+          )}
+        </button>
       </div>
     </article>
   );

@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const productId = String(body.id ?? Date.now());
   const variants = normalizeVariants(body.variants);
 
-  // Live payload (the backend's variant table can't persist — kept locally)
+  // Local-store payload.
   const payload = {
     id: productId,
     name: String(body.name ?? ""),
@@ -33,6 +33,11 @@ export async function POST(req: Request) {
     image: String(body.image ?? ""),
     category: String(body.category ?? ""),
     featured: Boolean(body.featured),
+    features: body.features,
+    specs: body.specs,
+    downloads: body.downloads,
+    videos: body.videos,
+    warranty: String(body.warranty ?? ""),
   };
 
   const result = await backendPost("/api/products", payload);
@@ -42,7 +47,7 @@ export async function POST(req: Request) {
       { status: result.status || 500 }
     );
   }
-  // Only keep variants once the product itself exists on the live side.
+  // Persist variants only after the product exists in the local store.
   if (variants.length) saveVariantsForProduct(productId, variants);
   clearCache();
   clearLiveCache();

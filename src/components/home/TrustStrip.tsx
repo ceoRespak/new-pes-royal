@@ -24,23 +24,23 @@ const iconMap: Record<string, ComponentType> = {
 const defaults: TrustItem[] = [
   {
     icon: "truck",
-    title: "Fast Delivery",
-    text: "Same-day in Peshawar · Nationwide courier",
+    title: "Nationwide Delivery",
+    text: "Fast courier all over Pakistan",
   },
   {
     icon: "shield",
-    title: "Genuine Warranty",
-    text: "Official brand products & warranties",
+    title: "100% Genuine",
+    text: "Brand products & official warranties",
   },
   {
     icon: "money",
     title: "Cash on Delivery",
-    text: "Pay at your doorstep",
+    text: "Pay when your order arrives",
   },
   {
     icon: "check",
     title: "Secure Ordering",
-    text: "Order via WhatsApp or call",
+    text: "Online cart, bank transfer & more",
   },
   {
     icon: "headset",

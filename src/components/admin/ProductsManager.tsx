@@ -12,6 +12,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import UploadButton from "./UploadButton";
+import { resolveImage } from "@/lib/images";
 
 export interface AdminVariant {
   title?: string;
@@ -33,8 +34,63 @@ export interface AdminProduct {
   image?: string;
   category?: string | null;
   featured?: boolean;
+  warranty?: string;
+  features?: string[];
+  specs?: Record<string, string>;
+  downloads?: { label?: string; url?: string; size?: string }[];
+  videos?: { label?: string; url?: string; link?: string }[];
   /** Multiple options for the same product, e.g. Standard / Premium / Pro. */
   variants?: AdminVariant[];
+}
+
+/* ----- textarea <-> structured helpers for the rich fields ----- */
+const splitLines = (s: string): string[] =>
+  String(s || "")
+    .split(/\r?\n/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+function parseFeaturesText(s: string): string[] {
+  return splitLines(s);
+}
+
+function parseSpecsText(s: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const line of splitLines(s)) {
+    const eq = line.indexOf("=");
+    if (eq > 0) out[line.slice(0, eq).trim()] = line.slice(eq + 1).trim();
+    else out[line] = "";
+  }
+  return out;
+}
+
+function parseDownloadsText(
+  s: string
+): { label: string; url: string; size?: string }[] {
+  return splitLines(s)
+    .map((line) => {
+      const parts = line.split("|").map((x) => x.trim());
+      return { label: parts[0] ?? "", url: parts[1] ?? "", size: parts[2] || undefined };
+    })
+    .filter((d) => d.url);
+}
+
+function parseVideosText(
+  s: string
+): { label?: string; url?: string; link?: string }[] {
+  const out: { label?: string; url?: string; link?: string }[] = [];
+  for (const line of splitLines(s)) {
+    const parts = line.split("|").map((x) => x.trim());
+    const target = parts[1] ?? "";
+    if (!target) continue;
+    const isLink = /^https?:/i.test(target);
+    out.push({
+      label: parts[0] || undefined,
+      link: isLink ? target : undefined,
+      url: isLink ? undefined : target,
+    });
+  }
+  return out;
 }
 
 interface Props {
@@ -44,12 +100,8 @@ interface Props {
 
 const BADGES = ["", "Sale", "Top Brand", "New", "Bestseller"];
 
-/** Backend returns relative image paths — resolve for display only. */
-const API_ORIGIN = "https://api.pespeshawar.pk";
-function toAbs(src?: string): string {
-  if (!src) return "";
-  return /^https?:\/\//.test(src) ? src : `${API_ORIGIN}${src}`;
-}
+/** Image paths are stored locally — resolve for display. */
+const toAbs = resolveImage;
 
 interface FormState {
   name: string;
@@ -61,6 +113,11 @@ interface FormState {
   image: string;
   category: string;
   featured: boolean;
+  warranty: string;
+  featuresText: string;
+  specsText: string;
+  downloadsText: string;
+  videosText: string;
   variants: AdminVariant[];
 }
 
@@ -74,6 +131,11 @@ const emptyForm = (categories: string[]): FormState => ({
   image: "",
   category: categories[0] ?? "",
   featured: true,
+  warranty: "",
+  featuresText: "",
+  specsText: "",
+  downloadsText: "",
+  videosText: "",
   variants: [],
 });
 
@@ -88,6 +150,23 @@ function toForm(p: AdminProduct): FormState {
     image: p.image ?? "",
     category: p.category ?? "",
     featured: Boolean(p.featured),
+    warranty: p.warranty ?? "",
+    featuresText: Array.isArray(p.features) ? p.features.join("\n") : "",
+    specsText: p.specs
+      ? Object.entries(p.specs)
+          .map(([k, v]) => `${k} = ${v}`)
+          .join("\n")
+      : "",
+    downloadsText: Array.isArray(p.downloads)
+      ? p.downloads
+          .map((d) => [d.label ?? "", d.url ?? "", d.size ?? ""].filter(Boolean).join(" | "))
+          .join("\n")
+      : "",
+    videosText: Array.isArray(p.videos)
+      ? p.videos
+          .map((v) => [v.label ?? "", v.link ?? v.url ?? ""].filter(Boolean).join(" | "))
+          .join("\n")
+      : "",
     // backend/live display uses `label`; our editor uses `title`
     variants: (Array.isArray(p.variants) ? p.variants : []).map((v) => ({
       title: v.title ?? v.label ?? "",
@@ -159,6 +238,38 @@ export default function ProductsManager({ products, categories }: Props) {
     }));
   }
 
+  async function uploadMedia(
+    field: "downloadsText" | "videosText",
+    defaultLabel: string
+  ) {
+    const accept =
+      field === "downloadsText"
+        ? "application/pdf,.pdf"
+        : "video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = accept;
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      try {
+        const fd = new FormData();
+        fd.append("image", file);
+        const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json.url) {
+          const current = form[field];
+          set(field, `${current ? current + "\n" : ""}${defaultLabel} | ${json.url}`);
+        } else {
+          flash("err", json.error || "Upload failed");
+        }
+      } catch {
+        flash("err", "Upload failed — try again.");
+      }
+    };
+    input.click();
+  }
+
   function flash(kind: "ok" | "err", text: string) {
     setNotice({ kind, text });
     setTimeout(() => setNotice(null), 5000);
@@ -171,10 +282,17 @@ export default function ProductsManager({ products, categories }: Props) {
     const url = editing ? `/api/admin/products/${editing.id}` : "/api/admin/products";
     const method = editing ? "PUT" : "POST";
     try {
+      const body = {
+        ...form,
+        features: parseFeaturesText(form.featuresText),
+        specs: parseSpecsText(form.specsText),
+        downloads: parseDownloadsText(form.downloadsText),
+        videos: parseVideosText(form.videosText),
+      };
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -369,16 +487,19 @@ export default function ProductsManager({ products, categories }: Props) {
       {/* Modal */}
       {(creating || editing) && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-primary/40 p-4 backdrop-blur-sm sm:items-center"
+          // The modal shell has a FIXED height (max-h = viewport). The header
+          // and footer never move; only the middle (fields) scrolls. This keeps
+          // every field + the Save button reachable at any viewport size.
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-primary/40 p-4 backdrop-blur-sm sm:p-6"
           onClick={close}
         >
           <form
             onSubmit={save}
             onClick={(e) => e.stopPropagation()}
-            className="my-6 w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl"
+            className="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
           >
-            {/* gradient header */}
-            <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-[#E11D2A] via-[#b8111f] to-[#7a0f16] px-6 py-5 text-white">
+            {/* gradient header — fixed (never scrolls away) */}
+            <div className="flex shrink-0 items-center justify-between gap-3 bg-gradient-to-r from-[#E11D2A] via-[#b8111f] to-[#7a0f16] px-6 py-5 text-white">
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-lg backdrop-blur">
                   {editing ? <FaEdit /> : <FaPlus />}
@@ -390,7 +511,7 @@ export default function ProductsManager({ products, categories }: Props) {
                   <p className="text-[0.7rem] text-white/80">
                     {editing
                       ? "Update the product — changes save to the live store."
-                      : "Create a product — it will appear on the live store."}
+                      : "Create a product — it will appear in your store."}
                   </p>
                 </div>
               </div>
@@ -404,7 +525,9 @@ export default function ProductsManager({ products, categories }: Props) {
               </button>
             </div>
 
-            <div className="grid gap-x-5 gap-y-5 bg-slate-50/60 p-5 sm:grid-cols-2 sm:p-7">
+            {/* scrollable body — only this middle section scrolls */}
+            <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50/60">
+            <div className="grid gap-x-5 gap-y-5 p-5 sm:grid-cols-2 sm:p-7">
             {/* 1 · Basic details */}
             <div className="flex items-center gap-2 text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-indigo-700 sm:col-span-2">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[0.6rem] text-white">
@@ -499,6 +622,95 @@ export default function ProductsManager({ products, categories }: Props) {
                   placeholder="Short product description…"
                 />
               </label>
+
+              {/* 3 · Specs, brochure & video */}
+              <div className="mt-2 rounded-2xl border-2 border-teal-200 bg-white p-4 shadow-sm sm:col-span-2">
+                <div className="mb-3 flex items-center gap-2 text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-teal-700">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-600 text-[0.6rem] text-white">
+                    3
+                  </span>
+                  Specs, brochure &amp; video
+                  <span className="h-px flex-1 bg-teal-200" />
+                </div>
+
+                <label className="block">
+                  <span className="field !mb-0">Warranty</span>
+                  <input
+                    value={form.warranty}
+                    onChange={(e) => set("warranty", e.target.value)}
+                    className="inp"
+                    placeholder="e.g. 1 Year Brand Warranty"
+                  />
+                </label>
+
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="field !mb-0">Key features (one per line)</span>
+                    <textarea
+                      rows={3}
+                      value={form.featuresText}
+                      onChange={(e) => set("featuresText", e.target.value)}
+                      className="inp resize-none"
+                      placeholder={"Pure copper motor\nEnergy efficient"}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="field !mb-0">Technical specs (one per line: Key = Value)</span>
+                    <textarea
+                      rows={3}
+                      value={form.specsText}
+                      onChange={(e) => set("specsText", e.target.value)}
+                      className="inp resize-none"
+                      placeholder={"Blade size = 56 inch\nSpeed = 5 speeds"}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="field !mb-0">
+                      Brochures / PDFs (one per line: Label | url)
+                    </span>
+                    <textarea
+                      rows={3}
+                      value={form.downloadsText}
+                      onChange={(e) => set("downloadsText", e.target.value)}
+                      className="inp resize-none"
+                      placeholder={"Catalogue | /api/files/catalogue.pdf\nDatasheet | https://…/sheet.pdf"}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="field !mb-0">
+                      Videos (one per line: Label | url or link)
+                    </span>
+                    <textarea
+                      rows={3}
+                      value={form.videosText}
+                      onChange={(e) => set("videosText", e.target.value)}
+                      className="inp resize-none"
+                      placeholder={"Demo | /api/files/demo.mp4\nYouTube | https://youtu.be/xxxx"}
+                    />
+                  </label>
+                </div>
+                <p className="mt-3 rounded-xl bg-teal-50 px-3 py-2 text-xs leading-relaxed text-teal-700">
+                  One entry per line: <b>Label | /api/files/… url</b> (or a full
+                  https link). Upload a file to get a local url, or paste an
+                  external link.
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => uploadMedia("downloadsText", "Brochure")}
+                    className="rounded-full bg-teal-600 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-teal-700"
+                  >
+                    ↑ Upload brochure (PDF)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => uploadMedia("videosText", "Product video")}
+                    className="rounded-full bg-teal-600 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-teal-700"
+                  >
+                    ↑ Upload video (mp4)
+                  </button>
+                </div>
+              </div>
 
               {/* Multiple variants */}
               <div className="mt-2 rounded-2xl border-2 border-violet-200 bg-white p-4 shadow-sm sm:col-span-2">
@@ -618,6 +830,7 @@ export default function ProductsManager({ products, categories }: Props) {
                 </label>
               </div>
             </div>
+            </div>
 
             {form.image && (
               <div className="mt-4 flex items-center gap-3 rounded-2xl border border-sky-200 bg-sky-50/70 p-3">
@@ -633,7 +846,8 @@ export default function ProductsManager({ products, categories }: Props) {
               </div>
             )}
 
-            <div className="mt-6 flex justify-end gap-3">
+            {/* Footer actions — fixed, always visible */}
+            <div className="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200 bg-white px-6 py-4">
               <button
                 type="button"
                 onClick={close}

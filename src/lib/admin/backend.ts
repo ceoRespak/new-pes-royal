@@ -1,142 +1,31 @@
 import "server-only";
+import { randomBytes } from "node:crypto";
+import { writeFileSync } from "node:fs";
+import { join, extname } from "node:path";
+import {
+  categoryByName,
+  deleteCategory,
+  deleteProduct,
+  getRawCategories,
+  getRawProducts,
+  getSettingsStore,
+  setSettingsStore,
+  uploadsDir,
+  upsertCategory,
+  upsertProduct,
+  type RawCategory,
+  type RawProduct,
+} from "@/lib/catalog/store";
 
 /**
- * Server-side proxy to the live Respak Express backend
- * (www.pespeshawar.pk / api.pespeshawar.pk).
+ * Local, self-hosted data layer.
  *
- * All calls happen Node→Node, so browser CORS never applies. For writes we
- * authenticate against the existing admin account (Sanctum). This mirrors the
- * working dev-proxy approach from the pespeshawar project: it treats the
- * backend as a Sanctum "stateful" app by forcing the Origin/Referer headers,
- * keeps the session + XSRF cookies in a server-side jar, and falls back to
- * bearer tokens when the API returns one.
+ * This used to proxy every read/write to the remote pespeshawar.pk backend.
+ * Now all product / category / settings / upload operations are served from
+ * this site's own store (`/.data/store.json` + `/.data/uploads`). The public
+ * API surface (BackendResult + backendGet/Post/Put/Delete/UploadFile) is kept
+ * identical so the existing admin routes and managers keep working unchanged.
  */
-
-const BASE = process.env.PES_API_BASE || "https://api.pespeshawar.pk";
-const ADMIN_EMAIL = process.env.PES_ADMIN_EMAIL || "admin";
-// Real credentials live only in .env.local (gitignored).
-// PES_ADMIN_PASSWORD must be configured to perform backend writes.
-const ADMIN_PASSWORD = process.env.PES_ADMIN_PASSWORD || "";
-
-const jar = new Set<string>();
-let bearer: string | null = null;
-let authState: "idle" | "trying" | "ok" | "failed" = "idle";
-const getCache = new Map<string, { at: number; data: unknown }>();
-const GET_TTL = 15_000;
-
-function cookieHeader(): string {
-  return Array.from(jar).join("; ");
-}
-
-function xsrfToken(): string | null {
-  for (const c of jar) {
-    if (c.startsWith("XSRF-TOKEN=")) {
-      try {
-        return decodeURIComponent(c.slice("XSRF-TOKEN=".length));
-      } catch {
-        return c.slice("XSRF-TOKEN=".length);
-      }
-    }
-  }
-  return null;
-}
-
-function getSetCookie(res: Response): string[] {
-  const fn = (res.headers as Headers & { getSetCookie?: () => string[] })
-    .getSetCookie;
-  if (typeof fn === "function") {
-    try {
-      return fn.call(res.headers);
-    } catch {
-      /* fall through */
-    }
-  }
-  const raw = res.headers.get("set-cookie");
-  return raw ? [raw] : [];
-}
-
-function captureCookies(res: Response): void {
-  for (const sc of getSetCookie(res)) {
-    const first = sc.split(";")[0];
-    const name = first.split("=")[0];
-    if (!name) continue;
-    // drop any existing cookie with the same name, keep newest
-    for (const c of Array.from(jar)) {
-      if (c.startsWith(name + "=")) jar.delete(c);
-    }
-    jar.add(first);
-  }
-}
-
-function originHeaders(): Record<string, string> {
-  return {
-    Origin: "https://pespeshawar.pk",
-    Referer: "https://pespeshawar.pk/",
-    "Accept": "application/json",
-    "X-Requested-With": "XMLHttpRequest",
-  };
-}
-
-async function doLogin(): Promise<boolean> {
-  const username = process.env.PES_ADMIN_USERNAME || ADMIN_EMAIL;
-  // The live API accepts a `username` field; some installs use `email`.
-  const payloads: Array<Record<string, string>> = [
-    { username, password: ADMIN_PASSWORD },
-    { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
-  ];
-
-  for (const payload of payloads) {
-    try {
-      // prime a fresh CSRF cookie for each attempt
-      const csrf = await fetch(`${BASE}/sanctum/csrf-cookie`, {
-        redirect: "manual",
-        headers: originHeaders(),
-        cache: "no-store",
-      });
-      captureCookies(csrf);
-
-      const login = await fetch(`${BASE}/api/login`, {
-        method: "POST",
-        headers: {
-          ...originHeaders(),
-          "Content-Type": "application/json",
-          "Cookie": cookieHeader(),
-          ...(xsrfToken() ? { "X-XSRF-TOKEN": xsrfToken()! } : {}),
-        },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-      });
-      captureCookies(login);
-
-      let json: Record<string, unknown> | null = null;
-      try {
-        json = (await login.json()) as Record<string, unknown>;
-      } catch {
-        /* not json */
-      }
-      const token =
-        json && (json.token || json.plainTextToken || json.access_token);
-      if (typeof token === "string") bearer = token;
-
-      if (login.ok || bearer) {
-        authState = "ok";
-        return true;
-      }
-      // 422/401 → try the next payload shape
-    } catch (e) {
-      console.error("[pes-admin] login attempt failed:", e);
-    }
-  }
-
-  authState = "failed";
-  return false;
-}
-
-async function ensureAuth(force = false): Promise<boolean> {
-  if (!force && authState === "ok") return true;
-  if (authState !== "trying") authState = "trying";
-  return doLogin();
-}
 
 export interface BackendResult<T = unknown> {
   ok: boolean;
@@ -145,145 +34,191 @@ export interface BackendResult<T = unknown> {
   error?: string;
 }
 
-async function request<T = unknown>(
+const okRes = <T>(data: T): BackendResult<T> => ({
+  ok: true,
+  status: 200,
+  data,
+});
+const errRes = (error: string, status = 500): BackendResult<never> => ({
+  ok: false,
+  status,
+  data: null,
+  error,
+});
+
+/* ---------------- helpers ---------------- */
+
+const cleanStr = (v: unknown): string => String(v ?? "").trim();
+const cleanNullable = (v: unknown): string | null =>
+  v === null || v === undefined || String(v).trim() === "" ? null : String(v);
+
+/** Normalise an admin product payload into a persisted RawProduct. */
+function toRawProduct(body: Record<string, unknown>, id?: string): RawProduct {
+  return {
+    id: String(id ?? body.id ?? Date.now()),
+    name: cleanStr(body.name),
+    desc: cleanStr(body.desc),
+    price:
+      body.price !== undefined && body.price !== ""
+        ? String(body.price)
+        : undefined,
+    sale_price:
+      body.sale_price !== undefined && body.sale_price !== ""
+        ? String(body.sale_price)
+        : null,
+    on_sale: Boolean(body.on_sale),
+    badge: cleanNullable(body.badge),
+    image: cleanNullable(body.image),
+    category: cleanNullable(body.category),
+    category_id:
+      body.category_id !== undefined && body.category_id !== null
+        ? String(body.category_id)
+        : null,
+    featured: Boolean(body.featured),
+    features: Array.isArray(body.features)
+      ? body.features.map((f) => String(f))
+      : undefined,
+    specs:
+      body.specs && typeof body.specs === "object" && !Array.isArray(body.specs)
+        ? (body.specs as Record<string, string>)
+        : undefined,
+    downloads: Array.isArray(body.downloads)
+      ? body.downloads.map((d) => {
+          const o = (d ?? {}) as Record<string, unknown>;
+          return {
+            label: String(o.label ?? ""),
+            url: String(o.url ?? ""),
+            size: o.size != null ? String(o.size) : undefined,
+          };
+        })
+      : undefined,
+    videos: Array.isArray(body.videos)
+      ? body.videos.map((v) => {
+          const o = (v ?? {}) as Record<string, unknown>;
+          return {
+            label: o.label ? String(o.label) : undefined,
+            url: o.url ? String(o.url) : undefined,
+            link: o.link ? String(o.link) : undefined,
+          };
+        })
+      : undefined,
+    warranty: cleanNullable(body.warranty) ?? undefined,
+  };
+}
+
+function toRawCategory(body: Record<string, unknown>, id?: string): RawCategory {
+  const name = cleanStr(body.name);
+  return {
+    id: String(id ?? body.id ?? (name || Date.now())),
+    name,
+    image: cleanNullable(body.image) ?? undefined,
+    sort_order: Number(body.sort_order ?? 0),
+  };
+}
+
+async function handle(
   method: string,
   path: string,
-  body?: unknown,
-  retried = false
+  body?: unknown
+): Promise<BackendResult<unknown>> {
+  const rest = path.replace(/^\/api\//, "");
+  const [entity, rawId] = rest.split("/");
+
+  // ---------- PRODUCTS ----------
+  if (entity === "products") {
+    if (method === "GET") return okRes(getRawProducts());
+
+    const b = (body ?? {}) as Record<string, unknown>;
+    if (method === "POST" || method === "PUT") {
+      const id = String(b.id ?? rawId ?? Date.now());
+      const record = upsertProduct(toRawProduct(b, id));
+      return okRes(record);
+    }
+    if (method === "DELETE") {
+      if (!rawId) return errRes("Missing product id", 400);
+      return deleteProduct(rawId)
+        ? okRes({ ok: true })
+        : errRes("Product not found", 404);
+    }
+    return errRes("Unsupported method", 405);
+  }
+
+  // ---------- CATEGORIES ----------
+  if (entity === "categories") {
+    if (method === "GET") return okRes({ categories: getRawCategories() });
+
+    const b = (body ?? {}) as Record<string, unknown>;
+    if (method === "POST" || method === "PUT") {
+      // Merge with an existing category of the same name (rename-safe).
+      const existing =
+        (b.id
+          ? getRawCategories().find((c) => String(c.id) === String(b.id))
+          : undefined) ?? categoryByName(String(b.name ?? ""));
+      const record = upsertCategory(
+        toRawCategory(b, existing?.id ?? String(b.id ?? ""))
+      );
+      return okRes(record);
+    }
+    if (method === "DELETE") {
+      if (!rawId) return errRes("Missing category id", 400);
+      return deleteCategory(rawId)
+        ? okRes({ ok: true })
+        : errRes("Category not found", 404);
+    }
+    return errRes("Unsupported method", 405);
+  }
+
+  // ---------- SETTINGS ----------
+  if (entity === "settings") {
+    if (method === "GET") return okRes(getSettingsStore() ?? {});
+    if (method === "POST" || method === "PUT") {
+      const settings =
+        body && typeof body === "object"
+          ? (body as Record<string, unknown>)
+          : {};
+      return okRes(setSettingsStore(settings));
+    }
+    return errRes("Unsupported method", 405);
+  }
+
+  return errRes(`Unknown local endpoint: /api/${entity}`, 404);
+}
+
+/* ---------------- public API (same surface as before) ---------------- */
+
+export async function backendGet<T = unknown>(
+  path: string
 ): Promise<BackendResult<T>> {
-  const headers: Record<string, string> = { ...originHeaders() };
-  const isGet = method === "GET";
-
-  if (bearer) {
-    headers.Authorization = `Bearer ${bearer}`;
-  } else {
-    if (jar.size) headers.Cookie = cookieHeader();
-    if (xsrfToken() && !isGet) headers["X-XSRF-TOKEN"] = xsrfToken()!;
-  }
-  if (body !== undefined) headers["Content-Type"] = "application/json";
-
-  let res: Response;
-  try {
-    res = await fetch(`${BASE}${path}`, {
-      method,
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-      cache: isGet ? "no-store" : "no-store",
-    });
-  } catch (e) {
-    return { ok: false, status: 0, data: null, error: String(e) };
-  }
-
-  captureCookies(res);
-
-  // session/token expired → retry once after a fresh login
-  if ((res.status === 401 || res.status === 419) && !retried) {
-    authState = "failed";
-    bearer = null;
-    const ok = await ensureAuth(true);
-    if (ok) return request<T>(method, path, body, true);
-  }
-
-  let data: unknown = null;
-  const text = await res.text();
-  if (text) {
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = null;
-    }
-  }
-
-  if (!res.ok) {
-    const err = extractError(data, text, res.status);
-    return { ok: false, status: res.status, data: null, error: err };
-  }
-  return { ok: true, status: res.status, data: (data as T) ?? null };
-}
-
-function extractError(data: unknown, text: string, status: number): string {
-  if (data && typeof data === "object") {
-    const d = data as Record<string, unknown>;
-    if (d.message) return String(d.message);
-    if (d.error) return String(d.error);
-    if (d.errors) {
-      const e = d.errors as Record<string, string[]>;
-      return Object.values(e)
-        .flat()
-        .join("; ");
-    }
-  }
-  return `Backend error (${status}): ${text.slice(0, 200)}`;
-}
-
-/* ---------------- public API used by admin routes ---------------- */
-
-export async function backendGet<T = unknown>(path: string): Promise<BackendResult<T>> {
-  const hit = getCache.get(path);
-  if (hit && Date.now() - hit.at < GET_TTL) {
-    return { ok: true, status: 200, data: hit.data as T };
-  }
-  const result = await request<T>("GET", path);
-  if (result.ok && result.data !== null) {
-    getCache.set(path, { at: Date.now(), data: result.data });
-  }
-  return result;
-}
-
-export function clearCache(): void {
-  getCache.clear();
+  return (await handle("GET", path)) as BackendResult<T>;
 }
 
 export async function backendPost<T = unknown>(
   path: string,
   body?: unknown
 ): Promise<BackendResult<T>> {
-  const authed = await ensureAuth();
-  if (!authed) {
-    return {
-      ok: false,
-      status: 401,
-      data: null,
-      error: "Could not authenticate with the pespeshawar.pk backend. Check PES_ADMIN_EMAIL / PES_ADMIN_PASSWORD in .env.local.",
-    };
-  }
-  return request<T>("POST", path, body);
+  return (await handle("POST", path, body)) as BackendResult<T>;
 }
 
 export async function backendPut<T = unknown>(
   path: string,
   body?: unknown
 ): Promise<BackendResult<T>> {
-  const authed = await ensureAuth();
-  if (!authed) {
-    return {
-      ok: false,
-      status: 401,
-      data: null,
-      error: "Could not authenticate with the pespeshawar.pk backend. Check PES_ADMIN_EMAIL / PES_ADMIN_PASSWORD in .env.local.",
-    };
-  }
-  return request<T>("PUT", path, body);
+  return (await handle("PUT", path, body)) as BackendResult<T>;
 }
 
 export async function backendDelete<T = unknown>(
   path: string
 ): Promise<BackendResult<T>> {
-  const authed = await ensureAuth();
-  if (!authed) {
-    return {
-      ok: false,
-      status: 401,
-      data: null,
-      error: "Could not authenticate with the pespeshawar.pk backend. Check PES_ADMIN_EMAIL / PES_ADMIN_PASSWORD in .env.local.",
-    };
-  }
-  return request<T>("DELETE", path);
+  return (await handle("DELETE", path)) as BackendResult<T>;
 }
 
-/* Shape helpers -------------------------------------------------- */
+/** Legacy cache-clear hook — the local store is always fresh. */
+export function clearCache(): void {
+  /* no-op */
+}
 
-/** Backend stores arrays/objects as JSON strings — normalize on read. */
+/* Shape helpers (kept for compatibility) -------------------------------- */
+
 export function maybeParse<T>(value: unknown): T | unknown {
   if (typeof value !== "string") return value;
   const t = value.trim();
@@ -295,7 +230,6 @@ export function maybeParse<T>(value: unknown): T | unknown {
   }
 }
 
-/** Round-trip: stringify arrays/objects the way the backend expects. */
 export function maybeStringify(value: unknown): unknown {
   if (Array.isArray(value) || (value && typeof value === "object")) {
     return JSON.stringify(value);
@@ -303,100 +237,41 @@ export function maybeStringify(value: unknown): unknown {
   return value;
 }
 
-/* Connection + upload helpers --------------------------------------- */
+/* Connection + upload helpers ------------------------------------------- */
 
-export function backendConnectionInfo() {
-  const username = process.env.PES_ADMIN_USERNAME || ADMIN_EMAIL;
-  const credsSet = Boolean(
-    process.env.PES_ADMIN_USERNAME ||
-      process.env.PES_ADMIN_EMAIL ||
-      process.env.PES_ADMIN_PASSWORD
-  );
-  return {
-    base: BASE,
-    username,
-    credsSet,
-    usesDefaultPassword: !process.env.PES_ADMIN_PASSWORD,
-  };
-}
 
-export async function backendTestLogin(): Promise<{
-  ok: boolean;
-  info: string;
-}> {
-  const ok = await ensureAuth(true);
-  const who = process.env.PES_ADMIN_USERNAME || ADMIN_EMAIL;
-  return ok
-    ? { ok: true, info: `Connected to ${BASE} as "${who}"` }
-    : {
-        ok: false,
-        info: `Could not log in to ${BASE}. Check PES_ADMIN_USERNAME / PES_ADMIN_PASSWORD in .env.local.`,
-      };
-}
+const EXT_MAP: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".jfif": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+  ".svg": "image/svg+xml",
+  ".pdf": "application/pdf",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".mov": "video/quicktime",
+  ".m4v": "video/mp4",
+};
 
-/** Forward an image file to the backend's /api/upload endpoint. */
+/** Save an uploaded file into this site's own storage and return its local url. */
 export async function backendUploadFile(
   buf: Uint8Array,
   filename: string
 ): Promise<BackendResult<{ url?: string }>> {
-  const authed = await ensureAuth();
-  if (!authed) {
-    return {
-      ok: false,
-      status: 401,
-      data: null,
-      error:
-        "Could not authenticate with the pespeshawar.pk backend for upload. Check PES_ADMIN_USERNAME / PES_ADMIN_PASSWORD in .env.local.",
-    };
+  try {
+    if (!buf || buf.byteLength === 0) {
+      return errRes("Empty file", 400);
+    }
+    const ext = (extname(String(filename || "image")).toLowerCase() ||
+      ".png") as keyof typeof EXT_MAP;
+    const safeExt = EXT_MAP[ext] ? ext : ".png";
+    const name = `${Date.now()}-${randomBytes(4).toString("hex")}${safeExt}`;
+    writeFileSync(join(uploadsDir(), name), Buffer.from(buf));
+    return okRes({ url: `/api/files/${name}` });
+  } catch (e) {
+    return errRes(String(e), 500);
   }
-  // try the common multipart field names the backend may expect
-  const fields = ["image", "file", "photo"];
-  for (const field of fields) {
-    const headers: Record<string, string> = { ...originHeaders() };
-    if (bearer) {
-      headers.Authorization = `Bearer ${bearer}`;
-    } else {
-      if (jar.size) headers.Cookie = cookieHeader();
-      if (xsrfToken()) headers["X-XSRF-TOKEN"] = xsrfToken()!;
-    }
-    const fd = new FormData();
-    fd.append(field, new Blob([buf.slice().buffer]), filename || "upload");
-    let res: Response;
-    try {
-      res = await fetch(`${BASE}/api/upload`, {
-        method: "POST",
-        headers,
-        body: fd,
-      });
-    } catch (e) {
-      return { ok: false, status: 0, data: null, error: String(e) };
-    }
-    const text = await res.text();
-    let data: { url?: string } | null = null;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = null;
-    }
-    if (res.ok && data?.url) {
-      return { ok: true, status: res.status, data };
-    }
-    // a validation error (422) might just mean a different field name —
-    // keep trying; any other error is final.
-    if (res.status !== 422) {
-      return {
-        ok: false,
-        status: res.status,
-        data: null,
-        error: extractError(data, text, res.status),
-      };
-    }
-  }
-  return {
-    ok: false,
-    status: 422,
-    data: null,
-    error:
-      "The backend rejected the upload for every field name (image/file/photo). Check the image type/size.",
-  };
 }

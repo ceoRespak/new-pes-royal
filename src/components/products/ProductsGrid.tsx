@@ -13,10 +13,12 @@ export default function ProductsGrid({
   cols = 4,
   storefront = false,
 }: ProductsGridProps) {
+  // Dense, responsive grid: 2 (mobile) → 3 → 4 → 5 across on large screens.
+  // Keeps product images compact and pages light — essential for big catalogs.
   const colClass =
     cols === 3
-      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-      : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+      ? "grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
+      : "grid grid-cols-2 gap-3.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6";
 
   if (products.length === 0) {
     return (

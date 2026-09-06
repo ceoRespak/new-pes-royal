@@ -10,11 +10,15 @@ import {
   FaEnvelope,
   FaFacebookF,
   FaPhoneAlt,
+  FaShoppingCart,
   FaTimes,
   FaWhatsapp,
 } from "react-icons/fa";
 import Logo from "./Logo";
-import { navLinks, site as siteBase, categoryNavLinks } from "@/data/site";
+import { useCart } from "@/components/cart/CartProvider";
+import type { CategoryMeta } from "@/types";
+import { categories as snapshotCategories } from "@/data/categories";
+import { navLinks, site as siteBase } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 export default function Navbar({
@@ -36,10 +40,32 @@ export default function Navbar({
     hours: info?.hours || siteBase.hours,
   };
   const pathname = usePathname();
+  const { count, ready } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const isHome = pathname === "/";
+
+  // Full live category list for the mega-menu (fetched once, snapshot fallback).
+  const [liveCats, setLiveCats] = useState<CategoryMeta[] | null>(null);
+  useEffect(() => {
+    let on = true;
+    fetch("/api/shop/categories", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (on && d && Array.isArray(d.categories)) setLiveCats(d.categories);
+      })
+      .catch(() => {
+        /* keep snapshot fallback */
+      });
+    return () => {
+      on = false;
+    };
+  }, []);
+
+  const menuCats: CategoryMeta[] = (liveCats ?? snapshotCategories).filter(
+    (c) => c.count > 0
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -131,9 +157,18 @@ export default function Navbar({
             : "bg-transparent"
         )}
       >
-        <div className="container-px flex items-center justify-between py-3">
-          <Link href="/" aria-label="Respak Express — Home">
-            <Logo variant={solid ? "dark" : "light"} />
+        <div className="container-px flex items-center justify-between py-2">
+          <Link
+            href="/"
+            aria-label="Respak Express — Home"
+            // The stretched logo is coloured (navy/orange) so over the dark
+            // transparent hero it sits on a small white chip for visibility.
+            className={cn(
+              "rounded-xl transition",
+              !solid && "bg-white/95 px-2 py-1 shadow-sm"
+            )}
+          >
+            <Logo variant="dark" heightClass="h-11 sm:h-12 lg:h-14" />
           </Link>
 
           {/* Desktop nav */}
@@ -177,6 +212,24 @@ export default function Navbar({
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
+            {/* Cart */}
+            <Link
+              href="/cart"
+              aria-label={`Cart, ${ready ? count : 0} items`}
+              className={cn(
+                "relative flex h-11 w-11 items-center justify-center rounded-full border-2 text-lg transition-all duration-300",
+                solid
+                  ? "border-primary/15 text-primary hover:border-primary hover:bg-primary hover:text-white"
+                  : "border-white/40 text-white hover:border-white hover:bg-white hover:text-primary"
+              )}
+            >
+              <FaShoppingCart />
+              {ready && count > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#E11D2A] px-1 text-[0.62rem] font-extrabold text-white shadow">
+                  {count > 99 ? "99+" : count}
+                </span>
+              )}
+            </Link>
             <Link
               href="/contact"
               className={cn(
@@ -204,7 +257,7 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Category dropdown */}
+      {/* Category dropdown (mega menu) */}
       <AnimatePresence>
         {catOpen && (
           <motion.div
@@ -214,23 +267,37 @@ export default function Navbar({
             transition={{ duration: 0.2 }}
             onMouseEnter={() => setCatOpen(true)}
             onMouseLeave={() => setCatOpen(false)}
-            className="absolute left-1/2 hidden w-64 -translate-x-1/2 rounded-2xl border border-slate-100 bg-white p-2 shadow-2xl shadow-primary/10 lg:block"
+            className="absolute left-1/2 hidden w-[30rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-2xl border border-slate-100 bg-white p-4 shadow-2xl shadow-primary/10 lg:block"
           >
-            {categoryNavLinks.map((c) => (
-              <Link
-                key={c.href}
-                href={c.href}
-                onClick={() => setCatOpen(false)}
-                className="block rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-primary/5 hover:text-primary"
-              >
-                {c.label}
-              </Link>
-            ))}
-            <div className="mt-1 border-t border-slate-100 pt-1">
+            <p className="mb-2 px-1 text-[0.62rem] font-bold uppercase tracking-[0.2em] text-slate-400">
+              Shop by Category
+            </p>
+            <div className="grid max-h-[60vh] grid-cols-2 gap-1 overflow-y-auto pr-1">
+              {menuCats.map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/products?category=${c.id}`}
+                  onClick={() => setCatOpen(false)}
+                  className="group flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-primary/5 hover:text-primary"
+                >
+                  <span
+                    className="h-2 w-2 shrink-0 rounded-full"
+                    style={{ background: c.accent ?? "#003366" }}
+                  />
+                  <span className="truncate">{c.shortName || c.name}</span>
+                  {c.count > 0 && (
+                    <span className="ml-auto shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[0.6rem] font-bold text-slate-400 group-hover:bg-white/70">
+                      {c.count}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-2 border-t border-slate-100 pt-2">
               <Link
                 href="/products"
                 onClick={() => setCatOpen(false)}
-                className="block rounded-xl px-4 py-2.5 text-sm font-bold text-accent transition hover:bg-accent/10"
+                className="block rounded-xl px-3 py-2 text-sm font-bold text-accent transition hover:bg-accent/10"
               >
                 View All Products →
               </Link>
@@ -257,7 +324,7 @@ export default function Navbar({
               transition={{ type: "spring", damping: 30, stiffness: 260 }}
               className="fixed inset-y-0 right-0 z-50 flex w-[19rem] max-w-[85vw] flex-col bg-white shadow-2xl lg:hidden"
             >
-              <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+              <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
                 <Logo variant="dark" />
                 <button
                   onClick={() => setOpen(false)}
@@ -291,19 +358,40 @@ export default function Navbar({
                   Shop by Category
                 </p>
                 <div className="mt-2 space-y-1">
-                  {categoryNavLinks.map((c) => (
+                  {menuCats.map((c) => (
                     <Link
-                      key={c.href}
-                      href={c.href}
-                      className="block rounded-xl px-4 py-2.5 text-sm font-semibold text-accent transition hover:bg-accent/10"
+                      key={c.id}
+                      href={`/products?category=${c.id}`}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-accent transition hover:bg-accent/10"
                     >
-                      {c.label}
+                      {c.shortName || c.name}
+                      {c.count > 0 && (
+                        <span className="ml-auto rounded-full bg-accent/10 px-1.5 py-0.5 text-[0.6rem] font-bold text-slate-500">
+                          {c.count}
+                        </span>
+                      )}
                     </Link>
                   ))}
+                  <Link
+                    href="/products"
+                    onClick={() => setOpen(false)}
+                    className="block rounded-xl px-4 py-2 text-sm font-extrabold text-[#E11D2A]"
+                  >
+                    View All Products →
+                  </Link>
                 </div>
               </nav>
 
               <div className="space-y-3 border-t border-slate-100 px-5 py-5">
+                <Link
+                  href="/cart"
+                  onClick={() => setOpen(false)}
+                  className="relative flex items-center justify-center gap-2 rounded-full bg-[#E11D2A] px-5 py-3 text-sm font-bold text-white"
+                >
+                  <FaShoppingCart />
+                  {ready && count > 0 ? `Cart (${count})` : "Cart"}
+                </Link>
                 <a
                   href={`https://wa.me/${site.whatsapp}`}
                   target="_blank"

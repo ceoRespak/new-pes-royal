@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import {
+  FaCheck,
   FaMinus,
   FaPhoneAlt,
   FaPlus,
+  FaShoppingCart,
   FaWhatsapp,
 } from "react-icons/fa";
 import type { Product, ProductVariant } from "@/types";
+import { useCart } from "@/components/cart/CartProvider";
 import { site } from "@/data/site";
+import { resolveImage } from "@/lib/images";
 import { formatPrice } from "@/lib/utils";
+
+const toAbs = resolveImage;
 
 interface ProductBuyPanelProps {
   product: Product;
@@ -32,6 +38,8 @@ export default function ProductBuyPanel({
   activeVariant,
 }: ProductBuyPanelProps) {
   const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
+  const { add } = useCart();
 
   const variantUnit = activeVariant
     ? toNum(activeVariant.salePrice ?? activeVariant.price)
@@ -41,6 +49,21 @@ export default function ProductBuyPanel({
     ? toNum(activeVariant.price) ?? unit
     : product.price;
   const total = unit * qty;
+
+  const handleAddToCart = () => {
+    add({
+      productId: product.id,
+      slug: product.slug,
+      name: product.name,
+      image: activeVariant?.image ? toAbs(activeVariant.image) : product.images[0],
+      variantLabel: activeVariant ? activeVariant.label : undefined,
+      unitPrice: unit,
+      regularPrice: regularUnit,
+      qty,
+    });
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1800);
+  };
 
   const choice = activeVariant
     ? `${activeVariant.label} — ${formatPrice(unit)}`
@@ -107,20 +130,41 @@ export default function ProductBuyPanel({
 
       {/* CTAs */}
       <div className="mt-5 space-y-2.5">
-        <a
-          href={`https://wa.me/${site.whatsapp}?text=${waMessage}`}
-          target="_blank"
-          rel="noreferrer"
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#E11D2A] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f]"
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className={
+            added
+              ? "flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-emerald-600/25 transition hover:bg-emerald-700"
+              : "flex w-full items-center justify-center gap-2 rounded-xl bg-[#E11D2A] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f]"
+          }
         >
-          <FaWhatsapp className="text-lg" /> Order on WhatsApp
-        </a>
-        <a
-          href={`tel:${site.phone.replace(/\s/g, "")}`}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-6 py-3.5 text-sm font-bold text-slate-700 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
-        >
-          <FaPhoneAlt /> {site.phone}
-        </a>
+          {added ? (
+            <>
+              <FaCheck className="text-lg" /> Added to Cart
+            </>
+          ) : (
+            <>
+              <FaShoppingCart className="text-lg" /> Add to Cart
+            </>
+          )}
+        </button>
+        <div className="grid grid-cols-2 gap-2.5">
+          <a
+            href={`https://wa.me/${site.whatsapp}?text=${waMessage}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl border-2 border-emerald-500/30 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100"
+          >
+            <FaWhatsapp className="text-base" /> WhatsApp Order
+          </a>
+          <a
+            href={`tel:${site.phone.replace(/\s/g, "")}`}
+            className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+          >
+            <FaPhoneAlt /> Call Us
+          </a>
+        </div>
       </div>
 
       <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-center text-xs font-semibold text-emerald-700">

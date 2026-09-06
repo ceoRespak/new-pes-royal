@@ -13,11 +13,10 @@ import type { Product, CategoryMeta } from "@/types";
 import ProductBuyPanel from "./ProductBuyPanel";
 import RatingStars from "@/components/ui/RatingStars";
 import { categoryLabel } from "@/data/categories";
+import { resolveImage } from "@/lib/images";
 import { cn, formatPrice } from "@/lib/utils";
 
-const API_ORIGIN = "https://api.pespeshawar.pk";
-const toAbs = (src?: string) =>
-  !src ? "" : /^https?:\/\//.test(src) ? src : `${API_ORIGIN}${src}`;
+const toAbs = resolveImage;
 
 const toNum = (v: string | number | undefined): number | null => {
   if (v === undefined || v === null || v === "") return null;
@@ -77,9 +76,9 @@ export default function ProductView({ product, category }: Props) {
         : unit;
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
-      {/* ============ Gallery (sticky on desktop) ============ */}
-      <div className="lg:sticky lg:top-28">
+    <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-12">
+      {/* ============ Gallery (full column width, responsive) ============ */}
+      <div className="w-full lg:col-span-6">
         <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-white to-slate-50">
           <Image
             key={mainImage}
@@ -88,7 +87,7 @@ export default function ProductView({ product, category }: Props) {
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-contain p-6 sm:p-10"
+            className="object-cover"
           />
           {/* top-left badges */}
           <div className="pointer-events-none absolute left-4 top-4 flex flex-col items-start gap-2">
@@ -180,8 +179,17 @@ export default function ProductView({ product, category }: Props) {
       </div>
 
       {/* ============ Info / buy area ============ */}
-      <div>
+      <div className="lg:col-span-6">
         <div className="flex flex-wrap items-center gap-2">
+          {product.brand && (
+            <Link
+              href={`/products?brand=${product.brand.id}`}
+              className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-primary hover:text-white"
+            >
+              {product.brand.name}
+              {product.brandLine ? ` · ${product.brandLine}` : ""}
+            </Link>
+          )}
           <Link
             href={`/products?category=${product.category}`}
             className="inline-flex items-center gap-2 rounded-full bg-[#E11D2A]/8 px-4 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#E11D2A] transition hover:bg-[#E11D2A] hover:text-white"

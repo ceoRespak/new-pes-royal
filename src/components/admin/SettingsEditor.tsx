@@ -150,7 +150,7 @@ export default function SettingsEditor({ settings }: Props) {
     });
     const json = await res.json().catch(() => ({}));
     if (res.ok) {
-      setMsg({ kind: "ok", text: "Settings saved to the live backend ✓" });
+      setMsg({ kind: "ok", text: "Settings saved ✓" });
       router.refresh();
     } else {
       setMsg({ kind: "err", text: json.error || "Save failed" });

@@ -1,5 +1,6 @@
 import "server-only";
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -9,19 +10,31 @@ import { join } from "node:path";
 import type { ProductVariant } from "@/types";
 
 /**
- * Local variants store — the live backend's `product_variants` table cannot
- * persist variants (its `id` column has no default and the endpoint doesn't
- * generate one), so this premium site owns variants itself.
- *
- * Stored as:  public/data/variants.json
- *   { "<productId>": ProductVariant[] }
+ * Local variants store — variants are site-owned and persist in /.data
+ * (same place as the product catalog). Stored as:
+ *   .data/variants.json    { "<productId>": ProductVariant[] }
  */
-const FILE = join(process.cwd(), "public", "data", "variants.json");
+const DIR = join(process.cwd(), ".data");
+const FILE = join(DIR, "variants.json");
+// Legacy location (public/data) — copied over once on first read.
+const LEGACY_FILE = join(process.cwd(), "public", "data", "variants.json");
+
+function ensureFile(): void {
+  if (!existsSync(FILE) && existsSync(LEGACY_FILE)) {
+    try {
+      mkdirSync(DIR, { recursive: true });
+      copyFileSync(LEGACY_FILE, FILE);
+    } catch {
+      /* ignore */
+    }
+  }
+}
 
 export type VariantStore = Record<string, ProductVariant[]>;
 
 export function loadVariants(): VariantStore {
   try {
+    ensureFile();
     if (!existsSync(FILE)) return {};
     const raw = readFileSync(FILE, "utf8");
     const parsed = JSON.parse(raw);
@@ -41,7 +54,7 @@ export function saveVariantsForProduct(
 ): void {
   const store = loadVariants();
   store[productId] = variants;
-  mkdirSync(join(process.cwd(), "public", "data"), { recursive: true });
+  mkdirSync(DIR, { recursive: true });
   writeFileSync(FILE, JSON.stringify(store, null, 2), "utf8");
 }
 

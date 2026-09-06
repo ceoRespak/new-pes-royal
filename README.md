@@ -1,227 +1,131 @@
-# Pearl Electric Solutions (PES) — Official Website
+# Respak Express — Official Website & Store
 
-A complete, modern, premium marketing & product website for **Pearl Electric
-Solutions (PES)** built with **Next.js 14 (App Router)**, **TypeScript**,
-**Tailwind CSS**, **Framer Motion** and **Swiper.js**.
+A modern e‑commerce site for **Respak Express** (electrical goods store,
+Peshawar) built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind
+CSS**, **Framer Motion** and **Swiper.js**.
 
-The visual language (clean + royal-blue + gold, product-first layout, smooth
-reveal animations, sticky transparent→solid header) is inspired by modern
-premium e‑commerce brands like royalfans.com — **without copying any of their
-code, copy or imagery**.
+The site is **fully self‑hosted** — products, categories, settings, orders,
+variants and uploaded images all live on this site. There is **no external
+backend**.
 
 ---
 
 ## ✨ Features
 
-- **8 pages** — Home, Products (grid + filters), Product Detail (gallery, specs,
-  features, downloads), About (mission/vision/timeline + animated counters),
-  Contact (form + Google Map), Support (warranty, FAQ, service centres,
-  downloads), Gallery (filterable + lightbox) and Dealers (searchable network).
-- **Sticky animated navbar** — transparent over the hero → solid white on
-  scroll; categories dropdown; animated mobile drawer.
-- **Hero slider** (Swiper.js) with 3 brand slides + floating rating cards.
-- **Framer Motion** scroll reveals, staggered product grids and animated
-  counters.
-- **Product catalogue** with live search, category chips & sorting.
-- **WhatsApp floating chat** button + WhatsApp “order / enquiry” deep links on
-  every product.
-- **Lazy-loaded images**, premium SEO metadata (title templates, OpenGraph,
-  Twitter cards, JSON‑LD‑ready sitemap/robots).
-- **Downloadable PDF** spec sheets & warranty policy.
-- Fully **mobile responsive**, custom fonts (Poppins + Inter via
-  `next/font`).
-
----
+- **Storefront** — home (hero, categories, collection rows, featured / best
+  sellers), full product listing with search, sort, category chips, **price
+  filter** and **Load‑more pagination**, dense responsive grids, product
+  detail pages.
+- **Shopping** — client‑side cart (localStorage), checkout with Cash on
+  Delivery / Bank Transfer (gateway seam for JazzCash/Easypaisa/card),
+  order confirmation pages and WhatsApp ordering alongside the cart.
+- **Admin** at `/admin` — Dashboard, Products, **Orders**, Categories,
+  Site Content, Settings, Users. All edits are stored locally.
+- WhatsApp floating chat + per‑product WhatsApp buttons.
+- Premium SEO (metadata, sitemap, robots), lazy‑loaded images, fully mobile
+  responsive.
 
 ## 🧱 Tech stack
 
-| Tool              | Version |
-| ----------------- | ------- |
-| Next.js (App Router) | 14.2.x |
-| React             | 18.3.x |
-| TypeScript        | 5.x |
-| Tailwind CSS      | 3.4.x |
-| Framer Motion     | 11.x |
-| Swiper            | 11.x |
-| React Icons       | 5.x |
-
----
+| Tool           | Version   |
+| -------------- | --------- |
+| Next.js        | 14.2.x    |
+| React          | 18.3.x    |
+| TypeScript     | 5.x       |
+| Tailwind CSS   | 3.4.x     |
+| Framer Motion  | 11.x      |
+| Swiper         | 11.x      |
 
 ## 🚀 Getting started
 
 ```bash
-# 1. install dependencies
 npm install
-
-# 2. (optional) refresh the real data / PDFs / decorative art
-node scripts/import-pes.mjs            # real catalog from scripts/pes-data/*.json
-node scripts/generate-store-pdfs.mjs   # store PDFs (catalogue, returns, brands)
-node scripts/generate-images.mjs       # decorative placeholder art
-
-# 3. run the dev server
-npm run dev
+cp .env.example .env.local     # set ADMIN_PASSWORD + ADMIN_SESSION_SECRET
+npm run dev                    # http://localhost:3000
 ```
 
-Open **http://localhost:3000** — the site is ready to browse.
-
-Production build / preview:
+Optional — re‑seed products/categories/settings + images from the old data
+(one‑time, only if the local store is empty):
 
 ```bash
-npm run build
-npm start
+npm run migrate:own            # scripts/own-backend-migrate.mjs
 ```
 
----
+Other tooling: `npm run generate:pdfs` (store PDFs), `npm run build` / `start`.
 
-## � Admin panel
+## � Self-hosted data (no external backend)
 
-A password-protected admin lives at **`/admin`** (outside the marketing layout).
+Everything is stored by this site under `/.data/` (gitignored, not served):
 
-- **Sign in** — `http://localhost:3000/admin/login` with the local admin password
-  (env `ADMIN_PASSWORD`, set it in `.env.local` — see `.env.example`). Sessions
-  are signed HMAC cookies.
-- **Pages** — Dashboard (live store overview), Products (add/edit/delete),
-  Categories, and Site & Banners (contact, about, return policy, promo banners,
-  social links).
-- **Where edits go** — every save is written **to the live pespeshawar.pk
-  backend** through a server-side proxy (`src/lib/admin/backend.ts`) that
-  authenticates as the existing PES admin (Sanctum) and handles CSRF/CORS. Reads
-  need no credentials; **writes** need:
+| What                | Where                                    |
+| ------------------- | ---------------------------------------- |
+| Products + categories + settings | `/.data/store.json` (`src/lib/catalog/store.ts`) |
+| Product / upload images | `/.data/uploads/` served at `/api/files/<name>` |
+| Orders              | `/.data/orders.json` (`src/lib/orders/store.ts`) |
+| Product variants    | `/.data/variants.json` (`src/lib/admin/variants-store.ts`) |
+| Admin users         | `/.data/admin-users.json` |
+| Site content overrides | `/.data/site-content.json` (`src/lib/content/store.ts`) |
 
-  ```bash
-  # .env.local  (see .env.example — real values NOT committed)
-  ADMIN_PASSWORD=<your-local-admin-password>
-  PES_API_BASE=https://api.pespeshawar.pk
-  PES_ADMIN_USERNAME=admin   # live API logs in with `username`
-  PES_ADMIN_PASSWORD=<live-pes-backend-password>
-  ```
+- Admin reads/writes go through a **local data layer**
+  (`src/lib/admin/backend.ts`) — same API as before, but backed by the store.
+- Storefront pages read the same store via `src/lib/store/live.ts`.
+- `resolveImage()` (`src/lib/images.ts`) resolves legacy/self-hosted image
+  references to `/api/files/...`.
+- `src/data/*.ts` now serve only as **display/fallback** helpers; the
+  authoritative catalog is the local store.
 
-  API route handlers are in `src/app/api/admin/**`. Product updates go to
-  `PUT /api/products` and category updates to `PUT /api/categories` (id in the
-  body) — those are the routes the live Laravel backend actually exposes.
-  **Variants are stored locally** in `public/data/variants.json` because the
-  live backend’s `product_variants` table can’t persist them (see
-  `src/lib/admin/variants-store.ts`); the public product page reads that file
-  live, so variants you add appear immediately.
-- **Refresh this site's static preview** after live edits:
-  `node scripts/import-pes.mjs` then restart dev/build.
+> ⚠️ **Deploy note:** `/.data/` is not in the GitHub build artifact. After
+> deploying, either run `node scripts/own-backend-migrate.mjs` on the server or
+> upload this machine’s `/.data/` folder (store.json + uploads) to the app root.
 
----
-
-## �📁 Folder structure
+## 🗂 Folder structure (highlights)
 
 ```
-.
-├── public/
-│   ├── logo.svg / favicon.svg            # brand assets
-│   ├── og/og-image.svg                   # OpenGraph share image
-│   ├── images/                           # decorative SVG placeholder art
-│   └── downloads/*.pdf                   # store price catalogue, returns, brands
-├── scripts/
-│   ├── import-pes.mjs                    # real-data importer (from scripts/pes-data/*.json)
-│   ├── generate-store-pdfs.mjs           # real store PDF generator
-│   ├── generate-images.mjs               # deterministic decorative SVG art generator
-│   └── pes-data/*.json                   # API snapshots of www.pespeshawar.pk
-└── src/
-    ├── app/                              # App Router pages
-    │   ├── layout.tsx / globals.css      # root layout + Tailwind
-    │   ├── page.tsx                      # Home
-    │   ├── products/page.tsx             # Product listing
-    │   ├── products/[slug]/page.tsx      # Product detail (+related)
-    │   ├── about/ contact/ support/
-    │   ├── gallery/ dealers/
-    │   ├── not-found.tsx sitemap.ts robots.ts
-    ├── components/
-    │   ├── layout/   Navbar, Footer, Logo, WhatsAppButton, NewsletterForm
-    │   ├── home/     HeroSlider, CategoryCards, ProductShowcase,
-    │   │             BrandStory, TestimonialsSlider, PromoBanners,
-    │   │             TrustStrip, CtaSection
-    │   ├── products/ ProductCard, ProductsGrid, ProductCategorySection,
-    │   │             ProductCatalog, ProductSpecsTable, ImageGallery,
-    │   │             ProductBuyPanel
-    │   ├── ui/       AnimatedSectionWrapper, AnimatedCounter,
-    │   │             SectionHeading, PageHero, RatingStars
-    │   └── ContactForm, FaqAccordion, GalleryGrid, DealerDirectory
-    ├── data/         products.ts, categories.ts, site.ts, testimonials.ts,
-    │                 faqs.ts, dealers.ts, gallery.ts
-    ├── lib/          utils.ts (formatPrice/cn), fonts.ts
-    └── types/        shared TypeScript domain types
+public/images, downloads      # art + generated PDFs (product images NOT here)
+.data/                        # runtime store (gitignored)
+scripts/
+  own-backend-migrate.mjs     # seed store + self-host images (npm run migrate:own)
+  generate-store-pdfs.mjs     # store PDF generator
+  generate-images.mjs         # decorative SVG art
+  pes-data/                   # legacy snapshots used by the PDF generator
+src/
+  app/
+    (site)/                   # Home, Products, Cart, Checkout, Order/[ref],
+                              #   About, Contact, Support, Gallery, Dealers
+    admin/                    # Admin (panel + auth)
+    api/
+      admin/**                # admin CRUD (local store)
+      orders/                 # public order placement
+      files/[name]            # self-hosted image files
+      shop/categories         # category feed for the navbar menu
+  components/
+    layout/  home/  products/ admin/  cart/  ui/
+  lib/
+    catalog/store.ts          # products/categories/settings (JSON store)
+    orders/store.ts           # orders
+    admin/backend.ts          # local data layer used by admin routes
+    admin/variants-store.ts   # local variants
+    admin/users-store.ts      # local admin users
+    content/store.ts          # local site-content overrides
+    store/live.ts             # storefront catalog loader
+    checkout/config.ts        # shipping/payment/bank rules
+    images.ts                 # image resolver
+  data/                       # display defaults / fallbacks
+  types/                      # shared domain types
 ```
-
----
-
-## 🗂 Real data — imported from www.pespeshawar.pk
-
-This site is populated with the **real Pearl Electric Solutions catalog** from
-www.pespeshawar.pk (fetched via its public API on 2026‑09‑02):
-
-- **100 products** across the store's **13 real categories** (FAN, Exhaust
-  Fans, Lighting Solutions, Wires & Cables, Switches & Sockets, Circuit
-  Breakers, Distribution Boards (DBs), Solar Accessories, Smart Home,
-  Conduites & Back Boxes, Shutters & Covers, Earthing Accessories, Others).
-- Real product photos are **hotlinked** from `https://api.pespeshawar.pk`
-  (they load from the live backend — keep it online).
-- Real contact info, phone/WhatsApp, email, hours, socials, promo banners,
-  both shop addresses and brand story.
-
-To refresh from the live site later:
-
-```bash
-# 1. snapshot the API responses into scripts/pes-data/
-#    (products.json = /api/products, categories.json = /api/categories,
-#     settings.json = /api/settings)
-# 2. regenerate data + PDFs
-node scripts/import-pes.mjs
-node scripts/generate-store-pdfs.mjs
-```
-
-The mapper lives in `scripts/import-pes.mjs` and always regenerates:
-
-- **Products** → `src/data/products.ts`
-- **Real categories** → `src/data/categories.ts`
-- **Contact / branding / promos** → `src/data/site.ts`
-- **PDFs** → `public/downloads/` (price catalogue, returns & delivery, brands)
-
-> The live `/api/products` endpoint currently returns the same 100 products on
-> every page (no true pagination), so 100 is the full public catalog. Product
-> descriptions are often just the title — the UI therefore hides empty
-> Features/Specs/Downloads sections and shows an honest “confirm on WhatsApp”
-> helper instead of inventing data.
 
 ## 🗂 Where to change things
 
-- **Products** → `src/data/products.ts` (100 real products; regenerate with
-  `node scripts/import-pes.mjs`).
-- **Categories** → `src/data/categories.ts` (13 real categories + counts).
-- **Contact / branding** → `src/data/site.ts` (phone, WhatsApp, email,
-  addresses, hours, socials, promo banners, about text, map embed).
-- **Dealers / Locations** → `src/data/dealers.ts` (both Peshawar shops).
-- **FAQs / Gallery / Testimonials** → `src/data/*.ts`.
+- **Products / Categories / Settings** → Admin panel (stored in
+  `/.data/store.json`).
+- **Orders** → Admin → Orders.
+- **Shipping fees / payment methods / bank details** →
+  `src/lib/checkout/config.ts` (activate JazzCash/Easypaisa/card here).
+- **Contact / branding / socials / hours** → `src/data/site.ts` + Admin →
+  Site Content.
 - **Colours / fonts** → `tailwind.config.ts` + `src/app/globals.css`
-  (`--primary: #003366`, `--accent: #D4AF37`, `--light: #F5F5F5`).
-- **Decorative placeholder art** (hero visuals, gallery tiles) → generated
-  SVGs under `public/images/` via `scripts/generate-images.mjs`.
+  (`--primary: #003366`, `--accent: #D4AF37`).
+- **Decorative art** → `public/images/` via `scripts/generate-images.mjs`.
 
-> `next.config.mjs` disables image optimisation (`images.unoptimized`) so both
-> the local SVG placeholders **and** the hotlinked product photos are served
-> directly and reliably.
-
----
-
-## ✅ Checklist vs. the brief
-
-- [x] Next.js 14 App Router · Tailwind · TypeScript · Framer Motion ·
-      Swiper · React Icons · SEO/OG metadata
-- [x] Premium white + royal blue + gold theme, large hero, fade/slide-in
-      animations, sticky transparent→solid header, hover product cards,
-      category browsing, modern multi-column footer
-- [x] Home · Products · Product Detail · About · Contact (map embed) ·
-      Support · Gallery · Dealers — all wired to real data
-- [x] Navbar, Footer, HeroSlider, ProductCard, ProductCategorySection,
-      AnimatedSectionWrapper, TestimonialsSlider, ContactForm,
-      ProductSpecsTable, ImageGallery
-- [x] `src/data/products.ts` with id / name / category / price / images[] /
-      features[] / specs{} / downloads[]
-- [x] PES logo placeholder + brand palette
-- [x] Mobile responsive · lazy images · smooth scroll · animated counters ·
-      PDF downloads · WhatsApp floating button
+> `next.config.mjs` disables image optimisation (`images.unoptimized`) so
+> locally-served `/api/files/...` images are delivered directly.

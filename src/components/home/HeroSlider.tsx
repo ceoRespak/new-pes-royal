@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { motion } from "framer-motion";
+import { resolveImage } from "@/lib/images";
 import {
   FaAward,
   FaBolt,
@@ -76,11 +77,7 @@ export default function HeroSlider({
 }) {
   const list = slides && slides.length ? slides : heroSlides;
   const heroImg = (src: string) => {
-    const abs = /^https?:\/\//.test(src)
-      ? src
-      : src.startsWith("/storage/")
-        ? `https://api.pespeshawar.pk${src}`
-        : src;
+    const abs = resolveImage(src);
     return version ? `${abs}${abs.includes("?") ? "&" : "?"}v=${version}` : abs;
   };
   const prevRef = useRef<HTMLButtonElement>(null);
@@ -129,7 +126,7 @@ export default function HeroSlider({
               <div className="pointer-events-none absolute -right-32 top-1/4 h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-3xl" />
               <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-[#E11D2A]/15 blur-3xl" />
 
-              <div className="container-px relative flex w-full flex-col items-center gap-8 pb-20 pt-24 text-center lg:grid lg:grid-cols-2 lg:items-center lg:gap-8 lg:pb-24 lg:pt-24 lg:text-left">
+              <div className="container-px relative flex w-full flex-col items-center gap-8 pb-16 pt-32 text-center lg:grid lg:grid-cols-2 lg:items-center lg:gap-8 lg:pb-24 lg:pt-40 lg:text-left">
                 {/* ============ Copy / ad text ============ */}
                 <motion.div
                   initial={{ opacity: 0, y: 40 }}

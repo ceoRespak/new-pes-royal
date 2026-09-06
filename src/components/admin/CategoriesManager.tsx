@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaEdit, FaImage, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
+import { resolveImage } from "@/lib/images";
 
 export interface AdminCategory {
   id: string;
@@ -18,9 +19,7 @@ interface FormState {
   sort_order: number;
 }
 
-const API_ORIGIN = "https://api.pespeshawar.pk";
-const toAbs = (src?: string) =>
-  !src ? "" : /^https?:\/\//.test(src) ? src : `${API_ORIGIN}${src}`;
+const toAbs = resolveImage;
 
 const empty: FormState = { name: "", image: "", sort_order: 0 };
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { backendGet } from "@/lib/admin/backend";
 import CategoriesManager from "@/components/admin/CategoriesManager";
+import SubTypeCardsManager from "@/components/admin/SubTypeCardsManager";
 
 export const metadata: Metadata = { title: "Categories | Admin" };
 
@@ -27,7 +28,7 @@ export default async function AdminCategoriesPage() {
           Categories
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          {list.length} shop categories on pespeshawar.pk.
+          {list.length} categories in your local store.
         </p>
         {!res.ok && (
           <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
@@ -36,6 +37,7 @@ export default async function AdminCategoriesPage() {
         )}
       </header>
       <CategoriesManager categories={list} />
+      <SubTypeCardsManager />
     </div>
   );
 }

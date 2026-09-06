@@ -22,6 +22,7 @@ import {
 import { heroSlides as defaultHero } from "@/data/hero";
 import { testimonials as defaultTestimonials } from "@/data/testimonials";
 import { site } from "@/data/site";
+import { resolveImage } from "@/lib/images";
 import UploadButton from "@/components/admin/UploadButton";
 import type { HeroSlide } from "@/data/hero";
 
@@ -36,10 +37,10 @@ export interface Slogan {
 }
 
 const DEFAULT_TRUST: TrustItem[] = [
-  { icon: "truck", title: "Fast Delivery", text: "Same-day in Peshawar · Nationwide courier" },
-  { icon: "shield", title: "Genuine Warranty", text: "Official brand products & warranties" },
-  { icon: "money", title: "Cash on Delivery", text: "Pay at your doorstep" },
-  { icon: "check", title: "Secure Ordering", text: "Order via WhatsApp or call" },
+  { icon: "truck", title: "Nationwide Delivery", text: "Fast courier all over Pakistan" },
+  { icon: "shield", title: "100% Genuine", text: "Brand products & official warranties" },
+  { icon: "money", title: "Cash on Delivery", text: "Pay when your order arrives" },
+  { icon: "check", title: "Secure Ordering", text: "Online cart, bank transfer & more" },
   { icon: "headset", title: "Expert Support", text: "Mon–Sat · 9am – 8pm" },
 ];
 const DEFAULT_SLOGAN: Slogan = {
@@ -71,14 +72,7 @@ const PAGES: { id: string; label: string }[] = [
   { id: "dealers", label: "Dealers" },
 ];
 
-const resolveImg = (src?: string) =>
-  !src
-    ? ""
-    : /^https?:\/\//i.test(src)
-      ? src
-      : src.startsWith("/storage/")
-        ? `https://api.pespeshawar.pk${src}`
-        : src;
+const resolveImg = (src?: string) => resolveImage(src);
 
 const input =
   "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#E11D2A]";

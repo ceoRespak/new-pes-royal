@@ -75,8 +75,13 @@ export default function Footer({
       <div className="container-px relative grid grid-cols-2 gap-10 py-14 md:grid-cols-3 lg:grid-cols-5">
         {/* Brand */}
         <div className="col-span-2 md:col-span-3 lg:col-span-2">
-          <Link href="/">
-            <Logo variant="light" />
+          {/* Coloured stretched logo on a white chip so it stays visible on the
+              navy footer. */}
+          <Link
+            href="/"
+            className="inline-block rounded-xl bg-white px-2 py-1.5 shadow-sm"
+          >
+            <Logo variant="dark" heightClass="h-9 sm:h-10" />
           </Link>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-400">
             {site.footerAbout}

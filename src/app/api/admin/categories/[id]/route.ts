@@ -22,7 +22,7 @@ export async function PUT(
     image: String(body.image ?? ""),
     sort_order: Number(body.sort_order ?? 0),
   };
-  // The live backend updates categories via PUT /api/categories (id in body).
+  // Local store updates categories via PUT /api/categories (id in body).
   const result = await backendPut("/api/categories", payload);
   if (!result.ok) {
     return NextResponse.json(

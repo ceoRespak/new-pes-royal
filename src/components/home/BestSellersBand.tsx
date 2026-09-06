@@ -5,6 +5,7 @@ import type { Product } from "@/types";
 import { bestSellers as snapshotBestSellers } from "@/data/products";
 import { getCategory } from "@/data/categories";
 import ProductCard from "@/components/products/ProductCard";
+import CarouselRow from "@/components/ui/CarouselRow";
 
 const promos = [
   {
@@ -106,16 +107,16 @@ export default function BestSellersBand({ best }: { best?: Product[] }) {
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">
               Top-rated by our customers
             </h3>
-            <div className="no-scrollbar -mx-1 flex snap-x gap-4 overflow-x-auto px-1 pb-2">
-              {bestSellers.slice(0, 10).map((product) => (
+            <CarouselRow className="-mx-1">
+              {bestSellers.slice(0, 10).map((product, i) => (
                 <div
                   key={product.id}
                   className="w-[230px] flex-none snap-start sm:w-[250px]"
                 >
-                  <ProductCard product={product} storefront />
+                  <ProductCard product={product} storefront priority={i < 5} />
                 </div>
               ))}
-            </div>
+            </CarouselRow>
           </div>
         )}
       </div>

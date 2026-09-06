@@ -28,6 +28,7 @@ import {
 } from "@/lib/store/live";
 import type { Product } from "@/types";
 import { site } from "@/data/site";
+import { resolveImage } from "@/lib/images";
 import { formatPrice } from "@/lib/utils";
 
 interface PageProps {
@@ -41,7 +42,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  // Prefer the live backend so admin edits (name/price/badge) show up.
+  // Read from the site's own store so admin edits (name/price/badge) show up.
   let product: Product | undefined;
   try {
     product = (await getLiveProductBySlug(params.slug)) ?? getProductBySlug(params.slug);
@@ -72,7 +73,7 @@ const askWhatsapp = (productName: string) =>
   )}`;
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  // Live backend first (admin edits show immediately), snapshot as fallback.
+  // Local store first (admin edits show immediately), static snapshot as fallback.
   let liveProduct: Product | undefined;
   try {
     liveProduct = await getLiveProductBySlug(params.slug);
@@ -252,6 +253,74 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   )}
                 </div>
               </AnimatedSectionWrapper>
+
+              {(product.videos ?? []).length > 0 && (
+                <AnimatedSectionWrapper delay={0.05}>
+                  <h2 className="mt-12 font-display text-2xl font-bold text-slate-900">
+                    Videos
+                  </h2>
+                  <div className="mt-5 space-y-4">
+                    {(product.videos ?? []).map((v, vi) => {
+                      const src = v.url ? resolveImage(v.url) : "";
+                      const embed =
+                        v.link && /(youtube|youtu\.be)/i.test(v.link)
+                          ? v.link.replace(
+                              /(youtube\.com\/watch\?v=|youtu\.be\/)/i,
+                              "youtube.com/embed/"
+                            )
+                          : v.link && /vimeo\.com\/(\d+)/i.test(v.link)
+                            ? v.link.replace(/vimeo\.com\/(\d+)/i, "player.vimeo.com/video/$1")
+                            : null;
+                      if (src || embed) {
+                        return (
+                          <div key={vi}>
+                            {v.label ? (
+                              <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-slate-500">
+                                {v.label}
+                              </p>
+                            ) : null}
+                            {src ? (
+                              <video
+                                src={src}
+                                controls
+                                preload="metadata"
+                                className="aspect-video w-full rounded-2xl border border-slate-200 bg-black shadow-sm"
+                              />
+                            ) : (
+                              <iframe
+                                src={embed!}
+                                title={v.label || "Product video"}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="aspect-video w-full rounded-2xl border border-slate-200 bg-black shadow-sm"
+                              />
+                            )}
+                          </div>
+                        );
+                      }
+                      return v.link ? (
+                        <a
+                          key={vi}
+                          href={v.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#E11D2A]/40"
+                        >
+                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E11D2A]/10 text-[#E11D2A]">
+                            ▶
+                          </span>
+                          <span className="text-sm font-semibold text-slate-700">
+                            {v.label || "Watch video"}
+                          </span>
+                          <span className="ml-auto text-xs font-bold text-slate-400">
+                            Open →
+                          </span>
+                        </a>
+                      ) : null;
+                    })}
+                  </div>
+                </AnimatedSectionWrapper>
+              )}
 
               <AnimatedSectionWrapper delay={0.1}>
                 <h2 className="mt-12 font-display text-2xl font-bold text-slate-900">

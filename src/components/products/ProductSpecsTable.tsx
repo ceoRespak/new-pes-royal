@@ -11,6 +11,15 @@ export default function ProductSpecsTable({
   warranty,
 }: ProductSpecsTableProps) {
   const entries = Object.entries(specs);
+  const warrantyKey = entries.find(([k]) => k.toLowerCase() === "warranty");
+  // If a separate warranty string is provided, fold it into the specs rows so
+  // we never show two "Warranty" lines.
+  const displayEntries: [string, string][] = warrantyKey
+    ? entries.map(([k, v]) =>
+        k.toLowerCase() === "warranty" && warranty ? [k, warranty] : [k, v]
+      )
+    : entries;
+  const showWarrantyRow = Boolean(warranty && !warrantyKey);
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200">
       <table className="w-full border-collapse text-left text-sm">
@@ -25,7 +34,7 @@ export default function ProductSpecsTable({
           </tr>
         </thead>
         <tbody>
-          {entries.map(([key, value], idx) => (
+          {displayEntries.map(([key, value], idx) => (
             <tr
               key={key}
               className={
@@ -40,7 +49,7 @@ export default function ProductSpecsTable({
               </td>
             </tr>
           ))}
-          {warranty && (
+          {showWarrantyRow && (
             <tr className="bg-accent/5">
               <td className="border-t border-slate-100 px-5 py-3.5 font-semibold text-primary">
                 Warranty

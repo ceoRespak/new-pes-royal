@@ -59,7 +59,7 @@ export default function DealerDirectory({ dealers: propDealers }: { dealers?: De
 
   const directions = (d: Dealer) =>
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      `${d.name}, ${d.address}, ${d.city}`
+      `${d.name}, ${d.address || d.area}, ${d.city}`
     )}`;
 
   return (
@@ -150,9 +150,11 @@ export default function DealerDirectory({ dealers: propDealers }: { dealers?: De
               <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-accent">
                 <FaMapMarkerAlt /> {d.city} — {d.area}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                {d.address}
-              </p>
+              {d.address && (
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                  {d.address}
+                </p>
+              )}
 
               <div className="mt-4 flex items-center gap-2 text-sm text-slate-600">
                 <FaPhoneAlt className="text-xs text-accent" />

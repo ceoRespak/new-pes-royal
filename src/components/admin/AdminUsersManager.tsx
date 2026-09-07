@@ -325,17 +325,19 @@ export default function AdminUsersManager({
         )}
       </div>
 
-      {/* modal */}
+      {/* modal — scroll wrapper (outer) + centered card (inner) so tall forms
+          never get their top/bottom clipped. */}
       {(creating || editing) && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-primary/40 p-4 backdrop-blur-sm sm:items-center"
+          className="fixed inset-0 z-50 overflow-y-auto bg-primary/40 p-4 backdrop-blur-sm"
           onClick={close}
         >
-          <form
-            onSubmit={save}
-            onClick={(e) => e.stopPropagation()}
-            className="my-6 w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-7"
-          >
+          <div className="flex min-h-full items-center justify-center py-4 sm:py-8">
+            <form
+              onSubmit={save}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-7"
+            >
             <div className="flex items-center justify-between">
               <h2 className="flex items-center gap-2 font-display text-xl font-bold text-primary">
                 <FaShieldAlt className="text-accent" />
@@ -568,7 +570,8 @@ export default function AdminUsersManager({
                 {busy ? "Saving…" : editing ? "Save changes" : "Create user"}
               </button>
             </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
 

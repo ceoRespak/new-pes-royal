@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { backendGet, maybeParse } from "@/lib/admin/backend";
 import SettingsEditor from "@/components/admin/SettingsEditor";
+import { requireSection } from "@/lib/admin/access";
 
 export const metadata: Metadata = { title: "Settings | Admin" };
 
 export default async function AdminSettingsPage() {
+  requireSection("settings");
   const res = await backendGet<Record<string, unknown>>("/api/settings");
   const raw = res.data ?? {};
   const settings: Record<string, unknown> = {};

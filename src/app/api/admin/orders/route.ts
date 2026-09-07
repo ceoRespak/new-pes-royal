@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
+import { unauthorizedResponse } from "@/lib/admin/route-guard";
 import {
   countOrdersByStatus,
   getAllOrders,
   updateOrder,
 } from "@/lib/orders/store";
 import type { OrderStatus, PaymentStatus } from "@/types";
+import { adminForSection } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 
@@ -20,13 +21,13 @@ const ORDER_STATUSES: OrderStatus[] = [
 const PAYMENT_STATUSES: PaymentStatus[] = ["pending", "paid", "refunded"];
 
 export async function GET(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "orders")) return unauthorizedResponse();
   const orders = getAllOrders();
   return NextResponse.json({ ok: true, orders, counts: countOrdersByStatus() });
 }
 
 export async function PATCH(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "orders")) return unauthorizedResponse();
   let body: { ref?: unknown; status?: unknown; paymentStatus?: unknown };
   try {
     body = await req.json();

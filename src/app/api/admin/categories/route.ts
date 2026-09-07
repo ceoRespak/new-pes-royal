@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
+import { unauthorizedResponse } from "@/lib/admin/route-guard";
 import { backendPost, clearCache } from "@/lib/admin/backend";
 import { clearLiveCache } from "@/lib/store/live";
+import { adminForSection } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "categories")) return unauthorizedResponse();
   let body: Record<string, unknown>;
   try {
     body = await req.json();

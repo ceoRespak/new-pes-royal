@@ -8,8 +8,18 @@ import {
   ADMIN_COOKIE,
   validateSession,
 } from "@/lib/admin/session";
+import { accessFromToken } from "@/lib/admin/access";
+import { isOwnerLike } from "@/lib/admin/users-store";
+import { FaUserShield, FaUserTie, FaUserCog } from "react-icons/fa";
 
 export const metadata = { title: "Admin | Respak Express" };
+
+const ROLE_LABEL: Record<string, string> = {
+  owner: "Owner",
+  admin: "Admin",
+  manager: "Manager",
+};
+const ROLE_ICON = { owner: FaUserShield, admin: FaUserTie, manager: FaUserCog };
 
 export default function AdminPanelLayout({
   children,
@@ -17,6 +27,10 @@ export default function AdminPanelLayout({
   const cookieStore = cookies();
   const token = cookieStore.get(ADMIN_COOKIE)?.value;
   if (!validateSession(token)) redirect("/admin/login");
+
+  const access = accessFromToken(token) ?? null;
+  const sections = access?.sections ?? [];
+  const RoleIcon = access ? ROLE_ICON[access.role] : FaUserCog;
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -38,8 +52,28 @@ export default function AdminPanelLayout({
             </p>
           </div>
         </div>
+        {access && (
+          <div className="mx-3 mt-3 flex items-center gap-2.5 rounded-xl bg-white/5 px-3 py-2.5">
+            <RoleIcon
+              className={
+                access.role === "owner"
+                  ? "text-amber-400"
+                  : access.role === "admin"
+                    ? "text-sky-300"
+                    : "text-emerald-300"
+              }
+            />
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-xs font-bold text-white">{access.name}</p>
+              <p className="text-[0.6rem] uppercase tracking-widest text-white/50">
+                {ROLE_LABEL[access.role] ?? access.role}
+                {access.isMaster ? " · Master" : ""}
+              </p>
+            </div>
+          </div>
+        )}
         <div className="flex-1">
-          <AdminNav />
+          <AdminNav sections={sections} />
         </div>
         <div className="border-t border-white/10 p-3">
           <AdminLogoutButton />
@@ -61,10 +95,10 @@ export default function AdminPanelLayout({
       <div className="w-full lg:pl-64">
         {/* mobile nav */}
         <div className="border-b border-slate-200 bg-white px-4 pb-2 pt-16 lg:hidden">
-          <AdminNav />
+          <AdminNav sections={sections} />
         </div>
         <main className="p-4 sm:p-6 lg:p-8">
-          <AdminBackendStatus />
+          <AdminBackendStatus isOwner={access ? isOwnerLike(access.role) : false} />
           {children}
         </main>
       </div>

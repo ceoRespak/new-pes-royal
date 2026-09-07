@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
+import { unauthorizedResponse } from "@/lib/admin/route-guard";
 import { getRawCategories } from "@/lib/catalog/store";
 import {
   mergedTypesFor,
   saveSubcatsCategory,
 } from "@/lib/catalog/subcats";
+import { adminForSection } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,7 @@ export const runtime = "nodejs";
  * current state without knowing the code defaults).
  */
 export async function GET(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "categories")) return unauthorizedResponse();
   try {
     const cats = getRawCategories();
     const categories = cats.map((c) => ({
@@ -35,7 +36,7 @@ export async function GET(req: Request) {
  * Persists the type-card overrides (images / display names) for one category.
  */
 export async function PUT(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "categories")) return unauthorizedResponse();
   try {
     const body = (await req.json()) as {
       category?: string;

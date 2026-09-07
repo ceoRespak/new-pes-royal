@@ -1,22 +1,25 @@
 import { NextResponse } from "next/server";
-import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
+import { unauthorizedResponse } from "@/lib/admin/route-guard";
 import { backendPost, clearCache } from "@/lib/admin/backend";
 import {
   normalizeVariants,
   saveVariantsForProduct,
 } from "@/lib/admin/variants-store";
 import { clearLiveCache } from "@/lib/store/live";
+import { adminForProductCategory } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
-  let body: Record<string, unknown>;
+  let body: Record<string, unknown> | null = null;
   try {
-    body = await req.json();
+    body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
   } catch {
-    return NextResponse.json({ ok: false, error: "Bad JSON" }, { status: 400 });
+    body = null;
   }
+  const access = adminForProductCategory(req, String(body?.category ?? ""));
+  if (!access) return unauthorizedResponse();
+  body = body ?? {};
 
   const productId = String(body.id ?? Date.now());
   const variants = normalizeVariants(body.variants);

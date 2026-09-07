@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { backendGet } from "@/lib/admin/backend";
 import { loadVariants } from "@/lib/admin/variants-store";
 import ProductsManager from "@/components/admin/ProductsManager";
+import { requireSection, scopedCategories } from "@/lib/admin/access";
 
 export const metadata: Metadata = { title: "Products | Admin" };
 
@@ -19,6 +20,7 @@ interface LiveProduct {
 }
 
 export default async function AdminProductsPage() {
+  const access = requireSection("products");
   const prodRes = await backendGet<LiveProduct[]>("/api/products");
   const catRes = await backendGet<
     { categories?: { id: string; name: string }[] } | { id: string; name: string }[]
@@ -34,8 +36,23 @@ export default async function AdminProductsPage() {
     .map((c) => c.name)
     .filter(Boolean);
 
+  // Category-scoped staff (e.g. "chandeliers + lighting + fans" manager) only
+  // see & can edit the product categories the owner assigned to them.
+  const scope = scopedCategories(access);
+  const visibleCategories = scope
+    ? categories.filter((c) =>
+        scope.some((s) => s.toLowerCase() === c.toLowerCase())
+      )
+    : categories;
+
   const store = loadVariants();
-  const live = prodRes.ok && Array.isArray(prodRes.data) ? prodRes.data : [];
+  let live = prodRes.ok && Array.isArray(prodRes.data) ? prodRes.data : [];
+  if (scope) {
+    const lower = scope.map((s) => s.toLowerCase());
+    live = live.filter((p) =>
+      lower.includes(String(p.category ?? "").toLowerCase())
+    );
+  }
   // Overlay locally-owned variants so they can be edited & counted.
   const products = live.map((p) => {
     const local = store[p.id] ?? [];
@@ -67,7 +84,7 @@ export default async function AdminProductsPage() {
           Could not load products: {error}
         </div>
       )}
-      <ProductsManager products={products} categories={categories} />
+      <ProductsManager products={products} categories={visibleCategories} />
     </div>
   );
 }

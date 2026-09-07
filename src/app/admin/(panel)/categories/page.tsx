@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { backendGet } from "@/lib/admin/backend";
 import CategoriesManager from "@/components/admin/CategoriesManager";
 import SubTypeCardsManager from "@/components/admin/SubTypeCardsManager";
+import { requireSection } from "@/lib/admin/access";
 
 export const metadata: Metadata = { title: "Categories | Admin" };
 
@@ -13,6 +14,7 @@ interface LiveCat {
 }
 
 export default async function AdminCategoriesPage() {
+  requireSection("categories");
   const res = await backendGet<
     { categories?: LiveCat[] } | LiveCat[]
   >("/api/categories");

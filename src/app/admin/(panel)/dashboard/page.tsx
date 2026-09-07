@@ -10,6 +10,7 @@ import {
 import { backendGet } from "@/lib/admin/backend";
 import { site } from "@/data/site";
 import { formatPrice } from "@/lib/utils";
+import { requireSection, canSection, scopedCategories } from "@/lib/admin/access";
 
 export const metadata: Metadata = { title: "Dashboard | Admin" };
 
@@ -24,13 +25,14 @@ interface LiveProduct {
 }
 
 export default async function AdminDashboardPage() {
+  const access = requireSection("dashboard");
   const [prodRes, catRes, setRes] = await Promise.all([
     backendGet<LiveProduct[]>("/api/products"),
     backendGet<Record<string, unknown>[]>("/api/categories").catch(() => null),
     backendGet<Record<string, unknown>>("/api/settings").catch(() => null),
   ]);
 
-  const liveProducts = prodRes.ok && Array.isArray(prodRes.data) ? prodRes.data : [];
+  let liveProducts = prodRes.ok && Array.isArray(prodRes.data) ? prodRes.data : [];
   const rawCats = catRes?.data as unknown;
   const liveCats = Array.isArray(rawCats)
     ? rawCats
@@ -39,9 +41,22 @@ export default async function AdminDashboardPage() {
     setRes?.ok && typeof setRes.data === "object" ? setRes.data : null;
   const apiError = prodRes.ok ? null : prodRes.error;
 
+  // Category-scoped managers see only their own products.
+  const scope = scopedCategories(access);
+  if (scope) {
+    const lower = scope.map((c) => c.toLowerCase());
+    liveProducts = liveProducts.filter((p) =>
+      lower.includes(String(p.category ?? "").toLowerCase())
+    );
+  }
+
   const recent = [...liveProducts]
     .sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0))
     .slice(0, 6);
+
+  const hasProducts = canSection(access, "products");
+  const hasCats = canSection(access, "categories");
+  const hasSettings = canSection(access, "settings");
 
   const cards: {
     icon: React.ElementType;
@@ -51,38 +66,50 @@ export default async function AdminDashboardPage() {
     href: string;
     tone: string;
   }[] = [
-    {
-      icon: FaBoxOpen,
-      label: "Products (local)",
-      value: liveProducts.length,
-      sub: "Stored on this site",
-      href: "/admin/products",
-      tone: "from-primary to-primary-600",
-    },
-    {
-      icon: FaTags,
-      label: "Categories (local)",
-      value: liveCats.length,
-      sub: "Shop categories in your local store",
-      href: "/admin/categories",
-      tone: "from-accent to-accent-600",
-    },
-    {
-      icon: FaStore,
-      label: "Store",
-      value: String(settings?.siteName ?? site.name),
-      sub: String(settings?.footerTagline ?? site.tagline),
-      href: "/admin/settings",
-      tone: "from-emerald-500 to-teal-600",
-    },
-    {
-      icon: FaInfoCircle,
-      label: "Where edits go",
-      value: "Local",
-      sub: "Changes save to your self-hosted store",
-      href: "/admin/settings",
-      tone: "from-slate-600 to-slate-800",
-    },
+    ...(hasProducts
+      ? [
+          {
+            icon: FaBoxOpen,
+            label: "Products (local)",
+            value: liveProducts.length,
+            sub: "Stored on this site",
+            href: "/admin/products",
+            tone: "from-primary to-primary-600",
+          },
+        ]
+      : []),
+    ...(hasCats
+      ? [
+          {
+            icon: FaTags,
+            label: "Categories (local)",
+            value: liveCats.length,
+            sub: "Shop categories in your local store",
+            href: "/admin/categories",
+            tone: "from-accent to-accent-600",
+          },
+        ]
+      : []),
+    ...(hasSettings
+      ? [
+          {
+            icon: FaStore,
+            label: "Store",
+            value: String(settings?.siteName ?? site.name),
+            sub: String(settings?.footerTagline ?? site.tagline),
+            href: "/admin/settings",
+            tone: "from-emerald-500 to-teal-600",
+          },
+          {
+            icon: FaInfoCircle,
+            label: "Where edits go",
+            value: "Local",
+            sub: "Changes save to your self-hosted store",
+            href: "/admin/settings",
+            tone: "from-slate-600 to-slate-800",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -140,12 +167,14 @@ export default async function AdminDashboardPage() {
           <h2 className="font-display text-lg font-bold text-primary">
             Recently added products
           </h2>
-          <Link
-            href="/admin/products"
-            className="text-sm font-bold text-accent hover:underline"
-          >
-            Manage all →
-          </Link>
+          {hasProducts && (
+            <Link
+              href="/admin/products"
+              className="text-sm font-bold text-accent hover:underline"
+            >
+              Manage all →
+            </Link>
+          )}
         </div>
         {recent.length === 0 ? (
           <p className="mt-6 text-sm text-slate-400">No products found.</p>
@@ -184,8 +213,6 @@ export default async function AdminDashboardPage() {
       <p className="mt-6 rounded-2xl bg-primary/5 p-4 text-xs leading-relaxed text-slate-500">
         Editing here saves straight to your <b>self-hosted store</b>{" "}
         (<code className="rounded bg-slate-100 px-1">/.data/store.json</code>).
-        To re-seed from the old data, run{" "}
-        <code className="rounded bg-slate-100 px-1">npm run migrate:own</code>.
       </p>
     </div>
   );

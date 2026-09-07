@@ -10,7 +10,12 @@ interface Status {
 }
 
 /** Banner showing the status of this site's own self-hosted store. */
-export default function AdminBackendStatus() {
+export default function AdminBackendStatus({
+  isOwner = true,
+}: {
+  /** Whether the signed-in account can see system/owner details. */
+  isOwner?: boolean;
+}) {
   const [state, setState] = useState<Status | null>(null);
 
   useEffect(() => {
@@ -41,15 +46,17 @@ export default function AdminBackendStatus() {
           <b>Self-hosted store active</b> — products, categories, settings and
           uploads are stored on this site.
           {state.login?.info ? ` ${state.login.info}.` : ""}
-          <span className="mt-1 block text-emerald-600">
-            No external backend required. Seed or edit via{" "}
-            <code className="rounded bg-emerald-100 px-1">Admin → Products</code>.
-            {count === 0 && (
-              <span className="ml-1 font-semibold text-amber-700">
-                Catalog is empty — run the migrate script or add products.
-              </span>
-            )}
-          </span>
+          {isOwner && (
+            <span className="mt-1 block text-emerald-600">
+              No external backend required. Seed or edit via{" "}
+              <code className="rounded bg-emerald-100 px-1">Admin → Products</code>.
+              {count === 0 && (
+                <span className="ml-1 font-semibold text-amber-700">
+                  Catalog is empty — run the migrate script or add products.
+                </span>
+              )}
+            </span>
+          )}
         </span>
       </div>
     );

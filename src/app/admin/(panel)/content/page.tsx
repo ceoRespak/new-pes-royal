@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import SiteContentEditor from "@/components/admin/SiteContentEditor";
 import { getContent } from "@/lib/content/store";
+import { requireSection } from "@/lib/admin/access";
 
 export const metadata: Metadata = { title: "Site Content | Admin" };
 
 export default function AdminContentPage() {
+  requireSection("content");
   const content = getContent();
   return (
     <div>

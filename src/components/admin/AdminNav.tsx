@@ -12,22 +12,36 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import { cn } from "@/lib/utils";
+import type { AdminSection } from "@/lib/admin/users-store";
 
-const links = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: FaChartPie },
-  { href: "/admin/products", label: "Products", icon: FaBoxOpen },
-  { href: "/admin/orders", label: "Orders", icon: FaClipboardList },
-  { href: "/admin/categories", label: "Categories", icon: FaTags },
-  { href: "/admin/content", label: "Site Content", icon: FaCogs },
-  { href: "/admin/settings", label: "Live Store Settings", icon: FaTags },
-  { href: "/admin/users", label: "Admin Users", icon: FaUsers },
+const ALL_LINKS: {
+  section: AdminSection;
+  href: string;
+  label: string;
+  icon: (typeof FaChartPie);
+}[] = [
+  { section: "dashboard", href: "/admin/dashboard", label: "Dashboard", icon: FaChartPie },
+  { section: "products", href: "/admin/products", label: "Products", icon: FaBoxOpen },
+  { section: "orders", href: "/admin/orders", label: "Orders", icon: FaClipboardList },
+  { section: "categories", href: "/admin/categories", label: "Categories", icon: FaTags },
+  { section: "content", href: "/admin/content", label: "Site Content", icon: FaCogs },
+  { section: "settings", href: "/admin/settings", label: "Live Store Settings", icon: FaTags },
+  { section: "users", href: "/admin/users", label: "Admin Users", icon: FaUsers },
 ];
 
-export default function AdminNav() {
+export default function AdminNav({
+  sections,
+}: {
+  /** Sections this admin may open. */
+  sections?: AdminSection[];
+}) {
   const pathname = usePathname();
+  const visible = ALL_LINKS.filter(
+    (l) => !sections || sections.includes(l.section)
+  );
   return (
     <nav className="mt-6 space-y-1 px-3">
-      {links.map((l) => {
+      {visible.map((l) => {
         const active =
           pathname === l.href || pathname.startsWith(l.href + "/");
         return (

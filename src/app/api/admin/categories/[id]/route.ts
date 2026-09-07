@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
+import { unauthorizedResponse } from "@/lib/admin/route-guard";
 import { backendDelete, backendPut, clearCache } from "@/lib/admin/backend";
 import { clearLiveCache } from "@/lib/store/live";
+import { adminForSection } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 
@@ -9,7 +10,7 @@ export async function PUT(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "categories")) return unauthorizedResponse();
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -36,10 +37,10 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: { id: string } }
 ) {
-  if (!isAdminRequest(_req)) return unauthorizedResponse();
+  if (!adminForSection(req, "categories")) return unauthorizedResponse();
   const result = await backendDelete(`/api/categories/${params.id}`);
   if (!result.ok) {
     return NextResponse.json(

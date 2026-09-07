@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import OrdersManager from "@/components/admin/OrdersManager";
+import { requireSection } from "@/lib/admin/access";
 
 export const metadata: Metadata = { title: "Orders | Admin" };
 
 export const dynamic = "force-dynamic";
 
 export default function AdminOrdersPage() {
+  requireSection("orders");
   return (
     <div>
       <header className="mb-6">

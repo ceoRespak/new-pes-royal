@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdminRequest, unauthorizedResponse } from "@/lib/admin/route-guard";
+import { unauthorizedResponse } from "@/lib/admin/route-guard";
 import {
   backendGet,
   backendPut,
@@ -8,11 +8,12 @@ import {
   maybeStringify,
 } from "@/lib/admin/backend";
 import { clearLiveCache } from "@/lib/store/live";
+import { adminForSection } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "settings")) return unauthorizedResponse();
   const result = await backendGet<Record<string, unknown>>("/api/settings");
   if (!result.ok || !result.data) {
     return NextResponse.json(
@@ -29,7 +30,7 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  if (!isAdminRequest(req)) return unauthorizedResponse();
+  if (!adminForSection(req, "settings")) return unauthorizedResponse();
   let body: { edits?: Record<string, unknown> };
   try {
     body = await req.json();

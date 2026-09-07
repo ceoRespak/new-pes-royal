@@ -174,8 +174,12 @@ export default function HeroSlider({
               </div>
 
               {/* readability scrims (keeps copy readable over any banner) */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001B45] via-[#001B45]/80 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#001B45]/90 to-transparent lg:h-32" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001B45] via-[#001B45]/70 to-transparent" />
+              {/* Mobile: taller bottom fade + top fade so the photo sits like a
+                  designed banner instead of a raw snapshot (also hides any baked
+                  caption at the photo edge). */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[#001B45] via-[#001B45]/60 to-transparent lg:h-32 lg:from-[#001B45]/90" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#001B45]/60 to-transparent lg:hidden" />
               <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
 
               <div className="container-px relative flex min-h-[520px] flex-col justify-center pb-16 pt-28 lg:min-h-[600px] lg:pb-24 lg:pt-36">

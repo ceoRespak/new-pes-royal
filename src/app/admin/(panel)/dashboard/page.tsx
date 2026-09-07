@@ -34,19 +34,22 @@ export default async function AdminDashboardPage() {
 
   let liveProducts = prodRes.ok && Array.isArray(prodRes.data) ? prodRes.data : [];
   const rawCats = catRes?.data as unknown;
-  const liveCats = Array.isArray(rawCats)
+  let liveCats = Array.isArray(rawCats)
     ? rawCats
     : ((rawCats as { categories?: unknown[] } | null)?.categories ?? []);
   const settings =
     setRes?.ok && typeof setRes.data === "object" ? setRes.data : null;
   const apiError = prodRes.ok ? null : prodRes.error;
 
-  // Category-scoped managers see only their own products.
+  // Category-scoped managers see only their own products AND categories.
   const scope = scopedCategories(access);
   if (scope) {
     const lower = scope.map((c) => c.toLowerCase());
     liveProducts = liveProducts.filter((p) =>
       lower.includes(String(p.category ?? "").toLowerCase())
+    );
+    liveCats = (liveCats as { name?: string }[]).filter((c) =>
+      lower.includes(String(c?.name ?? "").toLowerCase())
     );
   }
 
@@ -209,6 +212,72 @@ export default async function AdminDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Products by category (scoped to what this account may manage) */}
+      {hasProducts && (
+        <div className="mt-8 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-bold text-primary">
+              Products by category
+            </h2>
+            {hasProducts && (
+              <Link
+                href="/admin/products"
+                className="text-sm font-bold text-accent hover:underline"
+              >
+                Manage all →
+              </Link>
+            )}
+          </div>
+          {liveCats.length === 0 ? (
+            <p className="mt-6 text-sm text-slate-400">No categories found.</p>
+          ) : (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {liveCats
+                .filter((c) => c && typeof c === "object")
+                .map((c) => {
+                  const catName = String((c as { name?: string }).name ?? "—");
+                  const count = liveProducts.filter(
+                    (p) =>
+                      String(p.category ?? "").toLowerCase() ===
+                      catName.toLowerCase()
+                  ).length;
+                  const pct =
+                    liveProducts.length > 0
+                      ? Math.round((count / liveProducts.length) * 100)
+                      : 0;
+                  return (
+                    <div
+                      key={String((c as { id?: string }).id ?? catName)}
+                      className="rounded-2xl border border-slate-100 bg-slate-50/40 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-sm font-bold text-slate-700">
+                          {catName}
+                        </p>
+                        <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
+                          {count}
+                        </span>
+                      </div>
+                      <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+                          style={{ width: `${Math.max(pct, count > 0 ? 6 : 0)}%` }}
+                        />
+                      </div>
+                      <p className="mt-1 text-[0.65rem] text-slate-400">
+                        {pct}% of your catalog
+                      </p>
+                    </div>
+                  );
+                })}
+              {liveCats.length === 0 && (
+                <p className="text-sm text-slate-400">No categories yet.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <p className="mt-6 rounded-2xl bg-primary/5 p-4 text-xs leading-relaxed text-slate-500">
         Editing here saves straight to your <b>self-hosted store</b>{" "}

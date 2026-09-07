@@ -4,10 +4,13 @@ import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
+  FaChevronDown,
+  FaChevronRight,
   FaEdit,
   FaImage,
   FaPlus,
   FaSearch,
+  FaTags,
   FaTimes,
   FaTrash,
 } from "react-icons/fa";
@@ -100,6 +103,30 @@ interface Props {
 
 const BADGES = ["", "Sale", "Top Brand", "New", "Bestseller"];
 
+/** Per-category row sort options. */
+type SortKey = "recent" | "name" | "price-asc" | "price-desc";
+
+/** Deterministic accent per category (stays stable while browsing). */
+const CAT_ACCENTS = [
+  { bar: "from-sky-500 to-blue-700", chip: "bg-sky-100 text-sky-700", dot: "bg-sky-500" },
+  { bar: "from-emerald-500 to-teal-700", chip: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
+  { bar: "from-amber-500 to-orange-700", chip: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
+  { bar: "from-rose-500 to-red-700", chip: "bg-rose-100 text-rose-700", dot: "bg-rose-500" },
+  { bar: "from-violet-500 to-purple-700", chip: "bg-violet-100 text-violet-700", dot: "bg-violet-500" },
+  { bar: "from-cyan-500 to-sky-700", chip: "bg-cyan-100 text-cyan-700", dot: "bg-cyan-500" },
+  { bar: "from-lime-500 to-green-700", chip: "bg-lime-100 text-lime-700", dot: "bg-lime-500" },
+  { bar: "from-fuchsia-500 to-pink-700", chip: "bg-fuchsia-100 text-fuchsia-700", dot: "bg-fuchsia-500" },
+];
+function accentFor(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return CAT_ACCENTS[h % CAT_ACCENTS.length];
+}
+
+/** Extract the numeric part of a price string. */
+const priceNum = (s?: string | number) =>
+  Number(String(s ?? "").replace(/[^\d]/g, "")) || 0;
+
 /** Image paths are stored locally — resolve for display. */
 const toAbs = resolveImage;
 
@@ -180,29 +207,87 @@ function toForm(p: AdminProduct): FormState {
 export default function ProductsManager({ products, categories }: Props) {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [catFilter, setCatFilter] = useState("all");
+  /** "all" = every assigned category; otherwise a single category name. */
+  const [activeCat, setActiveCat] = useState<string>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("recent");
+  /** Collapsed per-category sections (only used in the "all" view). */
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  /** Lazy-load: how many rows are shown per category. */
+  const [shownPerCat, setShownPerCat] = useState<Record<string, number>>({});
+  const PAGE = 12;
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm(categories));
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
-  const filtered = useMemo(() => {
-    return products.filter((p) => {
-      const q = query.trim().toLowerCase();
-      const matchesQ =
-        !q ||
-        `${p.name} ${p.category ?? ""} ${p.badge ?? ""}`
-          .toLowerCase()
-          .includes(q);
-      const matchesCat = catFilter === "all" || p.category === catFilter;
-      return matchesQ && matchesCat;
-    });
-  }, [products, query, catFilter]);
+  /** Products per category (only over what this admin can see). */
+  const catCounts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of products) {
+      const k = p.category ?? "";
+      m.set(k, (m.get(k) ?? 0) + 1);
+    }
+    return m;
+  }, [products]);
 
-  function openCreate() {
+  /** Assigned categories that actually contain products, in given order. */
+  const catsWithProducts = useMemo(
+    () => categories.filter((c) => (catCounts.get(c) ?? 0) > 0),
+    [categories, catCounts]
+  );
+
+  /** The categories rendered right now (single category or all). */
+  const shownCats =
+    activeCat === "all"
+      ? catsWithProducts
+      : catsWithProducts.filter((c) => c === activeCat);
+
+  function matches(p: AdminProduct): boolean {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return `${p.name} ${p.category ?? ""} ${p.badge ?? ""}`
+      .toLowerCase()
+      .includes(q);
+  }
+
+  const sortProducts = (list: AdminProduct[]): AdminProduct[] => {
+    const arr = [...list];
+    if (sortKey === "name") return arr.sort((a, b) => a.name.localeCompare(b.name));
+    if (sortKey === "price-asc")
+      return arr.sort((a, b) => priceNum(a.price) - priceNum(b.price));
+    if (sortKey === "price-desc")
+      return arr.sort((a, b) => priceNum(b.price) - priceNum(a.price));
+    // recent = newest id first
+    return arr.sort(
+      (a, b) => (Number(b.id) || 0) - (Number(a.id) || 0)
+    );
+  };
+
+  const itemsFor = (cat: string): AdminProduct[] =>
+    sortProducts(
+      products.filter((p) => (p.category ?? "") === cat && matches(p))
+    );
+
+  function limitFor(cat: string): number {
+    return shownPerCat[cat] ?? PAGE;
+  }
+  function loadMore(cat: string) {
+    setShownPerCat((s) => ({ ...s, [cat]: (s[cat] ?? PAGE) + PAGE }));
+  }
+  function toggleCat(cat: string) {
+    setCollapsed((c) => ({ ...c, [cat]: !c[cat] }));
+  }
+
+  function openCreate(cat?: string) {
     setEditing(null);
-    setForm(emptyForm(categories));
+    const preferred =
+      cat && categories.includes(cat)
+        ? cat
+        : activeCat !== "all" && categories.includes(activeCat)
+          ? activeCat
+          : categories[0] ?? "";
+    setForm({ ...emptyForm(categories), category: preferred });
     setCreating(true);
   }
   function openEdit(p: AdminProduct) {
@@ -338,149 +423,296 @@ export default function ProductsManager({ products, categories }: Props) {
 
   return (
     <div>
-      {/* toolbar */}
-      <div className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <label className="relative flex-1">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products…"
-              className="w-full rounded-xl border border-slate-200 bg-light/50 py-2.5 pl-11 pr-4 text-sm focus:border-primary focus:bg-white focus:outline-none"
-            />
-          </label>
-          <select
-            value={catFilter}
-            onChange={(e) => setCatFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-light/50 px-4 py-2.5 text-sm font-semibold focus:border-primary focus:outline-none"
-          >
-            <option value="all">All categories</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <button onClick={openCreate} className="btn-primary !py-2.5 text-sm">
-            <FaPlus /> Add product
-          </button>
-        </div>
-        {notice && (
-          <p
-            className={`mt-3 rounded-xl px-4 py-2 text-sm font-semibold ${
-              notice.kind === "ok"
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-red-50 text-red-600"
-            }`}
-          >
-            {notice.text}
+      {/* Summary header */}
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 rounded-3xl bg-gradient-to-r from-[#003366] to-[#003a7a] p-5 text-white shadow-sm">
+        <div>
+          <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-white/60">
+            {activeCat === "all" ? "All categories" : activeCat}
           </p>
-        )}
+          <h2 className="font-display text-xl font-bold">
+            Products{" "}
+            <span className="text-white/50">
+              ({products.length} · {catsWithProducts.length} categories)
+            </span>
+          </h2>
+        </div>
+        <button
+          onClick={() => openCreate()}
+          className="inline-flex items-center gap-2 rounded-xl bg-gold-gradient px-5 py-2.5 text-sm font-bold text-primary shadow transition hover:-translate-y-0.5"
+        >
+          <FaPlus /> Add product
+          {activeCat !== "all" ? ` in ${activeCat}` : ""}
+        </button>
       </div>
 
-      {/* table */}
-      <div className="mt-5 overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-400">
-              <tr>
-                <th className="px-5 py-3 font-semibold">Product</th>
-                <th className="px-5 py-3 font-semibold">Category</th>
-                <th className="px-5 py-3 font-semibold">Price</th>
-                <th className="px-5 py-3 font-semibold">Flags</th>
-                <th className="px-5 py-3 text-right font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((p) => (
-                <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50/60">
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
-                        {p.image ? (
-                          <Image
-                            src={toAbs(p.image)}
-                            alt=""
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        ) : (
-                          <span className="flex h-full w-full items-center justify-center text-slate-300">
-                            <FaImage />
-                          </span>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="truncate font-semibold text-slate-700">
-                          {p.name}
-                        </p>
-                        {p.badge && (
-                          <span className="mt-0.5 inline-block rounded-full bg-accent/15 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-wide text-accent">
-                            {p.badge}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-slate-500">{p.category || "—"}</td>
-                  <td className="px-5 py-3">
-                    <p className="font-semibold text-primary">{priceOf(p)}</p>
-                    {p.on_sale && p.sale_price && (
-                      <p className="text-xs text-slate-400 line-through">
-                        {p.price}
+      {notice && (
+        <p
+          className={`mb-5 rounded-2xl px-4 py-2.5 text-sm font-semibold ${
+            notice.kind === "ok"
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-red-50 text-red-600"
+          }`}
+        >
+          {notice.text}
+        </p>
+      )}
+
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+        {/* ---------- Category sidebar ---------- */}
+        <aside className="w-full shrink-0 lg:sticky lg:top-4 lg:w-64">
+          <div className="rounded-3xl border border-slate-100 bg-white p-3 shadow-sm">
+            <p className="px-2 pb-2 pt-1 text-[0.68rem] font-extrabold uppercase tracking-wider text-slate-400">
+              Categories
+            </p>
+            <button
+              onClick={() => setActiveCat("all")}
+              className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition ${
+                activeCat === "all"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <FaTags className={activeCat === "all" ? "text-white/70" : "text-slate-400"} />
+                All products
+              </span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[0.62rem] font-bold ${
+                  activeCat === "all"
+                    ? "bg-white/20 text-white"
+                    : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {products.length}
+              </span>
+            </button>
+
+            <div className="mt-1.5 space-y-0.5">
+              {catsWithProducts.map((c) => {
+                const acc = accentFor(c);
+                const active = activeCat === c;
+                const count = catCounts.get(c) ?? 0;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setActiveCat(c)}
+                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${
+                      active ? "bg-slate-100 text-primary" : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${acc.dot}`} />
+                    <span className="min-w-0 flex-1 truncate">{c}</span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[0.62rem] font-bold text-slate-500">
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+              {catsWithProducts.length === 0 && (
+                <p className="px-3 py-3 text-xs text-slate-400">
+                  No categories with products yet.
+                </p>
+              )}
+            </div>
+          </div>
+        </aside>
+
+        {/* ---------- Grouped product list ---------- */}
+        <div className="min-w-0 flex-1 space-y-5">
+          {/* search + sort */}
+          <div className="flex flex-col gap-3 rounded-3xl border border-slate-100 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+            <label className="relative min-w-0 flex-1">
+              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={
+                  activeCat === "all"
+                    ? "Quick search across all categories…"
+                    : `Search within ${activeCat}…`
+                }
+                className="w-full rounded-xl border border-slate-200 bg-light/50 py-2.5 pl-11 pr-4 text-sm focus:border-primary focus:bg-white focus:outline-none"
+              />
+            </label>
+            <select
+              value={sortKey}
+              onChange={(e) => setSortKey(e.target.value as SortKey)}
+              className="rounded-xl border border-slate-200 bg-light/50 px-3 py-2.5 text-sm font-semibold focus:border-primary focus:outline-none"
+            >
+              <option value="recent">Newest first</option>
+              <option value="name">Name A–Z</option>
+              <option value="price-asc">Price: low → high</option>
+              <option value="price-desc">Price: high → low</option>
+            </select>
+          </div>
+
+          {shownCats.length === 0 && (
+            <div className="rounded-3xl border border-slate-100 bg-white p-12 text-center">
+              <p className="text-sm font-semibold text-slate-400">
+                {query
+                  ? `No products match “${query}”.`
+                  : "No products found in this category."}
+              </p>
+            </div>
+          )}
+
+          {shownCats.map((cat) => {
+            const items = itemsFor(cat);
+            const acc = accentFor(cat);
+            const count = items.length;
+            const total = catCounts.get(cat) ?? 0;
+            const isCollapsed = !!collapsed[cat];
+            const visible = items.slice(0, limitFor(cat));
+            const hasMore = items.length > visible.length;
+            return (
+              <section
+                key={cat}
+                className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
+              >
+                {/* Sticky-ish category header */}
+                <div
+                  className={`flex items-center gap-3 bg-gradient-to-r ${acc.bar} px-5 py-3.5 text-white`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleCat(cat)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 transition hover:bg-white/30"
+                    title={isCollapsed ? "Expand category" : "Collapse category"}
+                  >
+                    {isCollapsed ? <FaChevronRight /> : <FaChevronDown />}
+                  </button>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-display text-base font-bold leading-tight">
+                      {cat}
+                    </h3>
+                    <p className="text-[0.68rem] text-white/75">
+                      {total} product{total === 1 ? "" : "s"}
+                      {query && count !== total ? ` · ${count} match search` : ""}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openCreate(cat)}
+                    className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white/20 px-3 py-1.5 text-xs font-bold transition hover:bg-white/30"
+                  >
+                    <FaPlus /> Add in {cat}
+                  </button>
+                </div>
+
+                {!isCollapsed && (
+                  <div className="divide-y divide-slate-100">
+                    {visible.map((p) => {
+                      const isOnSale = p.on_sale && priceNum(p.sale_price) > 0;
+                      return (
+                        <div
+                          key={p.id}
+                          className="flex items-center gap-3 px-4 py-3 transition hover:bg-slate-50/70 sm:px-5"
+                        >
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
+                            {p.image ? (
+                              <Image
+                                src={toAbs(p.image)}
+                                alt=""
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            ) : (
+                              <span className="flex h-full w-full items-center justify-center text-slate-300">
+                                <FaImage />
+                              </span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <p className="truncate font-semibold text-slate-700">
+                                {p.name}
+                              </p>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide ${acc.chip}`}
+                              >
+                                {p.category || "Uncategorised"}
+                              </span>
+                              {p.badge && (
+                                <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-accent">
+                                  {p.badge}
+                                </span>
+                              )}
+                            </div>
+                            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.68rem] text-slate-400">
+                              <span className="font-bold text-primary">
+                                {priceOf(p)}
+                              </span>
+                              {isOnSale && (
+                                <span className="line-through">{p.price}</span>
+                              )}
+                              {p.on_sale && (
+                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-bold text-emerald-600">
+                                  On sale
+                                </span>
+                              )}
+                              {p.featured && (
+                                <span className="rounded-full bg-primary/10 px-2 py-0.5 font-bold text-primary">
+                                  Featured
+                                </span>
+                              )}
+                              {Array.isArray(p.variants) &&
+                                p.variants.length > 0 && (
+                                  <span className="rounded-full bg-accent/15 px-2 py-0.5 font-bold text-accent">
+                                    {p.variants.length} options
+                                  </span>
+                                )}
+                            </div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <button
+                              onClick={() => openEdit(p)}
+                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary transition hover:bg-primary hover:text-white"
+                              title="Edit"
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              onClick={() => remove(p)}
+                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-500 transition hover:bg-red-500 hover:text-white"
+                              title="Delete"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {visible.length === 0 && (
+                      <p className="px-5 py-8 text-center text-sm text-slate-400">
+                        No products match your search in this category.
                       </p>
                     )}
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex flex-wrap gap-1.5">
-                      {p.on_sale && (
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[0.62rem] font-bold text-emerald-600">
-                          On sale
-                        </span>
-                      )}
-                      {p.featured && (
-                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[0.62rem] font-bold text-primary">
-                          Featured
-                        </span>
-                      )}
-                      {Array.isArray(p.variants) && p.variants.length > 0 && (
-                        <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[0.62rem] font-bold text-accent">
-                          {p.variants.length} variants
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => openEdit(p)}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary transition hover:bg-primary hover:text-white"
-                        title="Edit"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => remove(p)}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-500 transition hover:bg-red-500 hover:text-white"
-                        title="Delete"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
-                    No products match your filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    {hasMore && (
+                      <div className="flex justify-center px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => loadMore(cat)}
+                          className="rounded-full border border-slate-200 bg-white px-5 py-2 text-xs font-bold text-slate-600 transition hover:border-primary hover:text-primary"
+                        >
+                          Load more ({items.length - visible.length} more)
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {isCollapsed && (
+                  <button
+                    type="button"
+                    onClick={() => toggleCat(cat)}
+                    className="block w-full px-5 py-3 text-center text-xs font-semibold text-slate-400 hover:bg-slate-50"
+                  >
+                    {count} product{count === 1 ? "" : "s"} hidden — click to expand
+                  </button>
+                )}
+              </section>
+            );
+          })}
         </div>
       </div>
 

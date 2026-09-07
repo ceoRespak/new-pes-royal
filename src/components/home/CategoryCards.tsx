@@ -19,9 +19,9 @@ interface CategoryCardsProps {
  * a normal manually-scrollable row instead (no duplicated content).
  */
 export default function CategoryCards({ cats }: CategoryCardsProps) {
-  const items = (cats ?? snapshotCategories)
-    .filter((c) => c.count > 0)
-    .sort((a, b) => b.count - a.count);
+  // Respect admin sort order (categories already come sorted by `sort_order`);
+  // just hide empty categories.
+  const items = (cats ?? snapshotCategories).filter((c) => c.count > 0);
 
   const [reduced, setReduced] = useState(false);
   useEffect(() => {

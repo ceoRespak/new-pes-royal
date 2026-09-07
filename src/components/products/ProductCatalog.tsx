@@ -245,11 +245,23 @@ export default function ProductCatalog({
     priceMin !== "" ||
     priceMax !== "";
 
+  // Category rows for the filter list. Order follows admin sort_order:
+  // `cats` arrive pre-sorted, so listed categories keep that order; any
+  // remaining categories (present in the current scope but not in `cats`)
+  // are appended by product count.
+  const catOrder = cats ?? [];
   const catRows: Array<{ id: Category | "all"; label: string; count: number }> =
     [
       { id: "all", label: "All Products", count: scopeTotal },
+      ...catOrder
+        .filter((c) => (counts.get(c.id) ?? 0) > 0)
+        .map((c) => ({
+          id: c.id as Category,
+          label: c.shortName,
+          count: counts.get(c.id) ?? 0,
+        })),
       ...[...counts.entries()]
-        .filter(([, c]) => c > 0)
+        .filter(([id, c]) => c > 0 && !catOrder.some((x) => x.id === id))
         .sort((a, b) => b[1] - a[1])
         .map(([id]) => ({
           id: id as Category,

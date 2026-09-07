@@ -65,8 +65,15 @@ const CATEGORY_META: Record<string, Partial<CategoryMeta>> = {
 };
 
 function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
+  // Admin-set order: categories sort by `sort_order` (ascending). Categories
+  // without a value keep their store order after any explicitly-ordered ones.
+  const catsOrdered = [...catsRaw].sort((a, b) => {
+    const ao = a.sort_order == null ? Number.MAX_SAFE_INTEGER : Number(a.sort_order);
+    const bo = b.sort_order == null ? Number.MAX_SAFE_INTEGER : Number(b.sort_order);
+    return ao - bo;
+  });
   const catNameToSlug = new Map<string, string>();
-  const catsMeta: CategoryMeta[] = catsRaw
+  const catsMeta: CategoryMeta[] = catsOrdered
     .map((c) => {
       const name = clean(c.name);
       const slug = slugify(name);

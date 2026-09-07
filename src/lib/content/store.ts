@@ -59,8 +59,24 @@ export interface SiteContent {
     role: string;
     city: string;
   }[];
-  /** About page — editable sections (fall back to built-in defaults). */
+  /** About page — fully editable content (fall back to built-in defaults). */
   about?: {
+    /** Hero heading + gold highlight word. */
+    title?: string;
+    highlight?: string;
+    /** Short line under the hero (the “hero description”). */
+    short?: string;
+    /** Company-profile main image (shop front). */
+    image?: string;
+    /** “Company Profile” intro heading (first line above the paragraphs). */
+    companyHeading?: string;
+    /** Company Profile paragraphs. */
+    p1?: string;
+    p2?: string;
+    /** Mission / Vision / Approach cards. */
+    mission?: { title?: string; text?: string };
+    vision?: { title?: string; text?: string };
+    approach?: { title?: string; text?: string };
     introPoints?: string[];
     values?: { icon: string; title: string; text: string }[];
     stats?: { value: number; suffix: string; label: string }[];

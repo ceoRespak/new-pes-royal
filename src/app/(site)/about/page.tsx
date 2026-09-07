@@ -103,31 +103,98 @@ const defaultIntroPoints = [
   "Free same-day delivery across Peshawar",
 ];
 
+const defaultMissionVision = {
+  mission: {
+    title: "Our Mission",
+    text: "To supply genuine, quality electrical products at fair prices — and help every customer choose exactly the right item through honest, expert advice.",
+  },
+  vision: {
+    title: "Our Vision",
+    text: "To be Peshawar's most trusted electric shop — the first stop for homeowners, electricians and contractors whenever they need quality electrical products.",
+  },
+  approach: {
+    title: "Our Approach",
+    text: "We stock only authentic brands, we advise honestly, and we stand behind every sale with same-day delivery and a simple 7-day return policy.",
+  },
+};
+
+const DEFAULT_COMPANY_IMG = "/images/about/company.svg";
+
+/** Brand copy used when nothing has been saved in Admin → Site Content → About. */
+const DEFAULT_TITLE = "Peshawar's Most";
+const DEFAULT_HIGHLIGHT = "Trusted Electric Shop";
+const DEFAULT_SHORT =
+  "Respak Express has been serving Peshawar since 2015. We provide high-quality electrical products ranging from wires and cables to smart home solutions.";
+const DEFAULT_P1 =
+  "Respak Express has been serving the people of Peshawar for over a decade from our location at Shop No. 1, Haroon Market, Karkhano Bazar. We are approved distributors of Pakistan Cables, AGE Cables, and Fast Cables, and stock premium brands including Philips, Schneider, ABB, Opal, Royal Fans, Voldam Fan, Lahore Fan, Pak Fan, BlueDot Smart Home, and more.";
+const DEFAULT_P2 =
+  "Whether you're an electrician, contractor, or homeowner, we provide expert advice and genuine products at the best prices in town. Now you can also shop online — browse our catalog, place your order, and get same-day delivery across Peshawar.";
+
 export default function AboutPage() {
   const site = getRuntimeSite();
-  const about = site.about;
   const content = getContent();
-  const pg = (((content.pages ?? {}) as Record<string, Record<string, string>>)["about"] ?? {}) as Record<string, string>;
-  const ab = (content.about ?? {}) as {
+
+  // Everything editable in ONE place: Admin → Site Content → About page.
+  const raw = (content.about ?? {}) as {
+    title?: string;
+    highlight?: string;
+    short?: string;
+    image?: string;
+    companyHeading?: string;
+    p1?: string;
+    p2?: string;
+    mission?: { title?: string; text?: string };
+    vision?: { title?: string; text?: string };
+    approach?: { title?: string; text?: string };
     introPoints?: string[];
     values?: { icon: string; title: string; text: string }[];
     stats?: { value: number; suffix: string; label: string }[];
     milestones?: { year: string; title: string; text: string }[];
   };
-  const introPoints = ab.introPoints ?? defaultIntroPoints;
-  const values = (ab.values ?? defaultValues).map((v) => ({
-    ...v,
-    icon: VALUE_ICONS[v.icon] ?? FaShieldAlt,
-  }));
-  const stats = ab.stats ?? defaultStats;
-  const milestones = ab.milestones ?? defaultMilestones;
+
+  // Legacy: hero used to live under "inner page headings" → content.pages.about.
+  const pgAbout = ((content.pages as Record<string, Record<string, string>> | undefined)?.["about"] ?? {}) as Record<string, string>;
+
+  const ab = {
+    title: raw.title || pgAbout.title || DEFAULT_TITLE,
+    highlight: raw.highlight || pgAbout.highlight || DEFAULT_HIGHLIGHT,
+    short: raw.short || DEFAULT_SHORT,
+    image: raw.image || site.shopFront || DEFAULT_COMPANY_IMG,
+    companyHeading: raw.companyHeading || site.shopName,
+    p1: raw.p1 || DEFAULT_P1,
+    p2: raw.p2 || DEFAULT_P2,
+    mission: {
+      title: raw.mission?.title || defaultMissionVision.mission.title,
+      text: raw.mission?.text || defaultMissionVision.mission.text,
+    },
+    vision: {
+      title: raw.vision?.title || defaultMissionVision.vision.title,
+      text: raw.vision?.text || defaultMissionVision.vision.text,
+    },
+    approach: {
+      title: raw.approach?.title || defaultMissionVision.approach.title,
+      text: raw.approach?.text || defaultMissionVision.approach.text,
+    },
+    introPoints: raw.introPoints?.length ? raw.introPoints : defaultIntroPoints,
+    values: (raw.values?.length ? raw.values : defaultValues).map((v) => ({
+      ...v,
+      icon: VALUE_ICONS[v.icon] ?? FaShieldAlt,
+    })),
+    stats: raw.stats?.length ? raw.stats : defaultStats,
+    milestones: raw.milestones?.length ? raw.milestones : defaultMilestones,
+  };
+
+  const stats = ab.stats;
+  const values = ab.values;
+  const milestones = ab.milestones;
+  const introPoints = ab.introPoints;
   return (
     <>
       <PageHero
         crumb="About Us"
-        title={pg.title || about.heading}
-        highlight={pg.highlight || about.headingHighlight}
-        description={about.short}
+        title={ab.title}
+        highlight={ab.highlight}
+        description={ab.short}
       />
 
       {/* Company profile */}
@@ -136,7 +203,7 @@ export default function AboutPage() {
           <AnimatedSectionWrapper>
             <div className="relative">
               <Image
-                src={site.shopFront || "/images/about/company.svg"}
+                src={ab.image}
                 alt="Respak Express shop front"
                 width={640}
                 height={480}
@@ -162,13 +229,13 @@ export default function AboutPage() {
                 <span className="h-px w-6 bg-accent" /> Company Profile
               </span>
               <h2 className="heading heading-underline">
-                {site.shopName} — trusted since{" "}
+                {ab.companyHeading} — trusted since{" "}
                 <span className="text-accent">2015</span>
               </h2>
             </AnimatedSectionWrapper>
             <AnimatedSectionWrapper delay={0.1}>
-              <p className="mt-6 leading-relaxed text-slate-600">{about.p1}</p>
-              <p className="mt-4 leading-relaxed text-slate-500">{about.p2}</p>
+              <p className="mt-6 leading-relaxed text-slate-600">{ab.p1}</p>
+              <p className="mt-4 leading-relaxed text-slate-500">{ab.p2}</p>
               <ul className="mt-7 grid gap-3 sm:grid-cols-2">
                 {introPoints.map((p) => (
                   <li
@@ -230,12 +297,10 @@ export default function AboutPage() {
                   <FaBullseye />
                 </span>
                 <h3 className="mt-6 font-display text-xl font-bold text-primary">
-                  Our Mission
+                  {ab.mission.title}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                  To supply genuine, quality electrical products at fair prices
-                  — and help every customer choose exactly the right item
-                  through honest, expert advice.
+                  {ab.mission.text}
                 </p>
               </div>
             </StaggerItem>
@@ -246,12 +311,10 @@ export default function AboutPage() {
                   <FaEye />
                 </span>
                 <h3 className="mt-6 font-display text-xl font-bold text-white">
-                  Our Vision
+                  {ab.vision.title}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-white/80">
-                  To be Peshawar&apos;s most trusted electric shop — the first
-                  stop for homeowners, electricians and contractors whenever
-                  they need quality electrical products.
+                  {ab.vision.text}
                 </p>
               </div>
             </StaggerItem>
@@ -262,12 +325,10 @@ export default function AboutPage() {
                   <FaBinoculars />
                 </span>
                 <h3 className="mt-6 font-display text-xl font-bold text-primary">
-                  Our Approach
+                  {ab.approach.title}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                  We stock only authentic brands, we advise honestly, and we
-                  stand behind every sale with same-day delivery and a simple
-                  7-day return policy.
+                  {ab.approach.text}
                 </p>
               </div>
             </StaggerItem>

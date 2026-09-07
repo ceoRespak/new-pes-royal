@@ -45,6 +45,17 @@ export interface Slogan {
 }
 
 export interface AboutSections {
+  // Hero + company profile text (whole About page is editable here).
+  title: string;
+  highlight: string;
+  short: string;
+  image: string;
+  companyHeading: string;
+  p1: string;
+  p2: string;
+  mission: { title: string; text: string };
+  vision: { title: string; text: string };
+  approach: { title: string; text: string };
   introPoints: string[];
   values: { icon: string; title: string; text: string }[];
   stats: { value: number; suffix: string; label: string }[];
@@ -52,6 +63,26 @@ export interface AboutSections {
 }
 
 const DEFAULT_ABOUT: AboutSections = {
+  title: "Peshawar's Most",
+  highlight: "Trusted Electric Shop",
+  short:
+    "Respak Express has been serving Peshawar since 2015. We provide high-quality electrical products ranging from wires and cables to smart home solutions.",
+  image: "/images/about/company.svg",
+  companyHeading: "Respak Express",
+  p1: "Respak Express has been serving the people of Peshawar for over a decade from our location at Shop No. 1, Haroon Market, Karkhano Bazar. We are approved distributors of Pakistan Cables, AGE Cables, and Fast Cables, and stock premium brands including Philips, Schneider, ABB, Opal, Royal Fans, Voldam Fan, Lahore Fan, Pak Fan, BlueDot Smart Home, and more.",
+  p2: "Whether you're an electrician, contractor, or homeowner, we provide expert advice and genuine products at the best prices in town. Now you can also shop online — browse our catalog, place your order, and get same-day delivery across Peshawar.",
+  mission: {
+    title: "Our Mission",
+    text: "To supply genuine, quality electrical products at fair prices — and help every customer choose exactly the right item through honest, expert advice.",
+  },
+  vision: {
+    title: "Our Vision",
+    text: "To be Peshawar's most trusted electric shop — the first stop for homeowners, electricians and contractors whenever they need quality electrical products.",
+  },
+  approach: {
+    title: "Our Approach",
+    text: "We stock only authentic brands, we advise honestly, and we stand behind every sale with same-day delivery and a simple 7-day return policy.",
+  },
   introPoints: [
     "Approved distributor of Pakistan Cables, AGE & Fast Cables",
     "Genuine Philips, Schneider, ABB, Opal, Royal & Pak Fan products",
@@ -107,7 +138,6 @@ const DEFAULT_BG =
   "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)";
 
 const PAGES: { id: string; label: string }[] = [
-  { id: "about", label: "About Us" },
   { id: "contact", label: "Contact" },
   { id: "support", label: "Support" },
   { id: "gallery", label: "Gallery" },
@@ -432,11 +462,40 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const [testimonials, setTestimonials] = useState<Testimonial[]>(
     pick("testimonials", defaultTestimonials as Testimonial[])
   );
-  const aboutInit = (initial.about as AboutSections | undefined) ?? DEFAULT_ABOUT;
-  const [aboutIntro, setAboutIntro] = useState<string[]>(aboutInit.introPoints);
-  const [aboutValues, setAboutValues] = useState<AboutSections["values"]>(aboutInit.values);
-  const [aboutStats, setAboutStats] = useState<AboutSections["stats"]>(aboutInit.stats);
-  const [aboutMilestones, setAboutMilestones] = useState<AboutSections["milestones"]>(aboutInit.milestones);
+  // Whole About page is edited from here (one source of truth).
+  const storedAbout = (initial.about as Partial<AboutSections> | undefined) ?? {};
+  // Legacy: hero title/highlight previously lived in the "inner page headings"
+  // group (initial.pages.about). Seed them so the editor matches the live page.
+  const legacyPg = ((initial.pages as Record<string, Record<string, string>> | undefined)?.["about"] ?? {}) as Record<string, string>;
+  const aboutInit: AboutSections = {
+    ...DEFAULT_ABOUT,
+    ...storedAbout,
+    title: storedAbout.title || legacyPg.title || DEFAULT_ABOUT.title,
+    highlight: storedAbout.highlight || legacyPg.highlight || DEFAULT_ABOUT.highlight,
+    mission: { ...DEFAULT_ABOUT.mission, ...(storedAbout.mission ?? {}) },
+    vision: { ...DEFAULT_ABOUT.vision, ...(storedAbout.vision ?? {}) },
+    approach: { ...DEFAULT_ABOUT.approach, ...(storedAbout.approach ?? {}) },
+  };
+  const [about, setAbout] = useState<AboutSections>(aboutInit);
+  const setAboutField = <K extends keyof AboutSections>(k: K, v: AboutSections[K]) =>
+    setAbout((a) => ({ ...a, [k]: v }));
+  const setAboutText = (k: "title" | "highlight" | "short" | "companyHeading" | "p1" | "p2" | "image", v: string) =>
+    setAbout((a) => ({ ...a, [k]: v }));
+  const setMission = (k: "title" | "text", v: string) =>
+    setAbout((a) => ({ ...a, mission: { ...a.mission, [k]: v } }));
+  const setVision = (k: "title" | "text", v: string) =>
+    setAbout((a) => ({ ...a, vision: { ...a.vision, [k]: v } }));
+  const setApproach = (k: "title" | "text", v: string) =>
+    setAbout((a) => ({ ...a, approach: { ...a.approach, [k]: v } }));
+
+  const setAboutIntro = (u: string[] | ((prev: string[]) => string[])) =>
+    setAbout((a) => ({ ...a, introPoints: typeof u === "function" ? u(a.introPoints) : u }));
+  const setAboutValues = (u: AboutSections["values"] | ((prev: AboutSections["values"]) => AboutSections["values"])) =>
+    setAbout((a) => ({ ...a, values: typeof u === "function" ? u(a.values) : u }));
+  const setAboutStats = (u: AboutSections["stats"] | ((prev: AboutSections["stats"]) => AboutSections["stats"])) =>
+    setAbout((a) => ({ ...a, stats: typeof u === "function" ? u(a.stats) : u }));
+  const setAboutMilestones = (u: AboutSections["milestones"] | ((prev: AboutSections["milestones"]) => AboutSections["milestones"])) =>
+    setAbout((a) => ({ ...a, milestones: typeof u === "function" ? u(a.milestones) : u }));
   const [galleryItems, setGallery] = useState<GalleryItem[]>(
     (initial.galleryItems as GalleryItem[] | undefined) ?? defaultGalleryItems
   );
@@ -504,10 +563,20 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       promoBanners: promos,
       testimonials,
       about: {
-        introPoints: aboutIntro,
-        values: aboutValues,
-        stats: aboutStats,
-        milestones: aboutMilestones,
+        title: about.title,
+        highlight: about.highlight,
+        short: about.short,
+        image: about.image,
+        companyHeading: about.companyHeading,
+        p1: about.p1,
+        p2: about.p2,
+        mission: about.mission,
+        vision: about.vision,
+        approach: about.approach,
+        introPoints: about.introPoints,
+        values: about.values,
+        stats: about.stats,
+        milestones: about.milestones,
       },
       galleryItems,
       faqs,
@@ -1028,25 +1097,104 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ ABOUT PAGE ============ */}
-      <Group title="About page sections" hint="Intro points, core values, stats band & history timeline shown on the About page." accent="bg-gradient-to-r from-emerald-500 to-teal-700" icon={FaInfoCircle} count={aboutIntro.length + aboutValues.length + aboutMilestones.length}>
+      <Group
+        title="About page — full content"
+        hint="Edit every section of the About page from here: hero heading, image, story, mission, values, stats & timeline."
+        accent="bg-gradient-to-r from-emerald-500 to-teal-700"
+        icon={FaInfoCircle}
+        count={7}
+      >
+        {/* 1 · Hero */}
         <div className="rounded-2xl border border-slate-200 bg-white p-3">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Intro points (bullets under “Company Profile”)</p>
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+            Hero heading (top banner)
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="block">
+              <span className={lbl}>Heading</span>
+              <input className={input} value={about.title} onChange={(e) => setAboutText("title", e.target.value)} placeholder="e.g. Peshawar's Most" />
+            </label>
+            <label className="block">
+              <span className={lbl}>Highlighted word (gold)</span>
+              <input className={input} value={about.highlight} onChange={(e) => setAboutText("highlight", e.target.value)} placeholder="e.g. Trusted Electric Shop" />
+            </label>
+          </div>
+          <div className="mt-2">
+            <label className="block">
+              <span className={lbl}>Short description under hero</span>
+              <textarea rows={2} className={`${input} resize-none`} value={about.short} onChange={(e) => setAboutText("short", e.target.value)} />
+            </label>
+          </div>
+        </div>
+
+        {/* 2 · Company profile */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+            Company profile (story)
+          </p>
           <div className="space-y-2">
-            {aboutIntro.map((p, i) => (
+            <label className="block">
+              <span className={lbl}>Shop / company name heading</span>
+              <input className={input} value={about.companyHeading} onChange={(e) => setAboutText("companyHeading", e.target.value)} placeholder="e.g. Respak Express" />
+            </label>
+            <label className="block">
+              <span className={lbl}>Shop front image</span>
+              <SmallImageUpload value={about.image} onChange={(url) => setAboutText("image", url)} recommended="1600 × 1000" minW={1200} />
+            </label>
+            <label className="block">
+              <span className={lbl}>Paragraph 1</span>
+              <textarea rows={3} className={`${input} resize-none`} value={about.p1} onChange={(e) => setAboutText("p1", e.target.value)} />
+            </label>
+            <label className="block">
+              <span className={lbl}>Paragraph 2</span>
+              <textarea rows={3} className={`${input} resize-none`} value={about.p2} onChange={(e) => setAboutText("p2", e.target.value)} />
+            </label>
+          </div>
+        </div>
+
+        {/* 3 · Mission / Vision / Approach */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+            Mission · Vision · Approach cards
+          </p>
+          <div className="space-y-3">
+            {(
+              [
+                { key: "mission", state: about.mission, set: setMission, name: "Mission" },
+                { key: "vision", state: about.vision, set: setVision, name: "Vision" },
+                { key: "approach", state: about.approach, set: setApproach, name: "Approach" },
+              ] as const
+            ).map((c) => (
+              <div key={c.key} className="rounded-xl border border-slate-100 bg-slate-50/60 p-2">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <input className={input} value={c.state.title} onChange={(e) => c.set("title", e.target.value)} placeholder={`${c.name} title`} />
+                  <textarea rows={2} className={`${input} resize-none sm:col-span-2`} value={c.state.text} onChange={(e) => c.set("text", e.target.value)} placeholder={`${c.name} text`} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 4 · Intro points */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Intro points (bullets under the story)</p>
+          <div className="space-y-2">
+            {about.introPoints.map((p, i) => (
               <div key={i} className="flex items-start gap-2">
                 <textarea rows={1} className={`${input} resize-none`} value={p} onChange={(e) => setAboutIntro((l) => l.map((x, xi) => (xi === i ? e.target.value : x)))} />
-                <ItemControls i={i} len={aboutIntro.length} onRemove={() => removeAt(setAboutIntro)(i)} moveFn={(d) => moveIntro(i, d)} />
+                <ItemControls i={i} len={about.introPoints.length} onRemove={() => removeAt(setAboutIntro)(i)} moveFn={(d) => moveIntro(i, d)} />
               </div>
             ))}
           </div>
           <AddButton label="Add intro point" onClick={() => pushAt<string>(setAboutIntro, "")} />
         </div>
 
+        {/* 5 · Core values */}
         <div className="rounded-2xl border border-slate-200 bg-white p-3">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Core values</p>
           <div className="space-y-2">
-            {aboutValues.map((v, i) => (
-              <ItemRow key={i} label={v.title} controls={<ItemControls i={i} len={aboutValues.length} onRemove={() => removeAt(setAboutValues)(i)} moveFn={(d) => moveValue(i, d)} />}>
+            {about.values.map((v, i) => (
+              <ItemRow key={i} label={v.title} controls={<ItemControls i={i} len={about.values.length} onRemove={() => removeAt(setAboutValues)(i)} moveFn={(d) => moveValue(i, d)} />}>
                 <div className="grid gap-2 sm:grid-cols-[7rem_1fr]">
                   <IconPick value={v.icon} onChange={(x) => setAboutValue(i, { icon: x })} />
                   <input className={input} value={v.title} onChange={(e) => setAboutValue(i, { title: e.target.value })} placeholder="Title" />
@@ -1058,11 +1206,12 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
           <AddButton label="Add value" onClick={() => pushAt(setAboutValues, { icon: "shield", title: "New value", text: "" })} />
         </div>
 
+        {/* 6 · Stats band */}
         <div className="rounded-2xl border border-slate-200 bg-white p-3">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Stats band (numbers)</p>
           <div className="space-y-2">
-            {aboutStats.map((s, i) => (
-              <ItemRow key={i} label={`${s.value}${s.suffix} ${s.label}`} controls={<ItemControls i={i} len={aboutStats.length} onRemove={() => removeAt(setAboutStats)(i)} moveFn={(d) => moveStat(i, d)} />}>
+            {about.stats.map((s, i) => (
+              <ItemRow key={i} label={`${s.value}${s.suffix} ${s.label}`} controls={<ItemControls i={i} len={about.stats.length} onRemove={() => removeAt(setAboutStats)(i)} moveFn={(d) => moveStat(i, d)} />}>
                 <div className="grid gap-2 sm:grid-cols-[6rem_5rem_1fr]">
                   <input type="number" className={input} value={s.value} onChange={(e) => setAboutStat(i, { value: Number(e.target.value) || 0 })} />
                   <input className={input} value={s.suffix} onChange={(e) => setAboutStat(i, { suffix: e.target.value })} placeholder="+ " />
@@ -1074,11 +1223,12 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
           <AddButton label="Add stat" onClick={() => pushAt(setAboutStats, { value: 0, suffix: "+", label: "New stat" })} />
         </div>
 
+        {/* 7 · Milestones */}
         <div className="rounded-2xl border border-slate-200 bg-white p-3">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">History timeline (milestones)</p>
           <div className="space-y-2">
-            {aboutMilestones.map((m, i) => (
-              <ItemRow key={i} label={`${m.year} — ${m.title}`} controls={<ItemControls i={i} len={aboutMilestones.length} onRemove={() => removeAt(setAboutMilestones)(i)} moveFn={(d) => moveMilestone(i, d)} />}>
+            {about.milestones.map((m, i) => (
+              <ItemRow key={i} label={`${m.year} — ${m.title}`} controls={<ItemControls i={i} len={about.milestones.length} onRemove={() => removeAt(setAboutMilestones)(i)} moveFn={(d) => moveMilestone(i, d)} />}>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <input className={input} value={m.year} onChange={(e) => setAboutMilestone(i, { year: e.target.value })} placeholder="Year / label" />
                   <input className={input} value={m.title} onChange={(e) => setAboutMilestone(i, { title: e.target.value })} placeholder="Title" />
@@ -1192,10 +1342,10 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       {/* ============ INNER PAGES ============ */}
       <Group
         title="Inner page headings"
-        hint="Main heading + highlighted word for About, Contact, Support, Gallery & Dealers."
+        hint="Main heading + highlighted word for Contact, Support, Gallery & Dealers. (About is edited in the About page group above.)"
         accent="bg-gradient-to-r from-rose-500 to-pink-700"
         icon={FaFileAlt}
-        count={5}
+        count={4}
       >
         <div className="space-y-3">
           {PAGES.map(({ id, label }) => (

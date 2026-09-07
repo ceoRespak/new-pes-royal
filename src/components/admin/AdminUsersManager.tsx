@@ -517,7 +517,14 @@ export default function AdminUsersManager({
                     </span>
                     <button
                       type="button"
-                      onClick={() => setForm((f) => ({ ...f, categoryScope: null }))}
+                      onClick={() =>
+                        setForm((f) => ({
+                          ...f,
+                          // Toggle: "All categories" ↔ pick specific ones.
+                          categoryScope:
+                            f.categoryScope === null ? [] : null,
+                        }))
+                      }
                       className={`rounded-full px-2.5 py-0.5 text-[0.62rem] font-bold transition ${
                         form.categoryScope === null
                           ? "bg-primary text-white"

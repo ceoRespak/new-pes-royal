@@ -6,7 +6,7 @@ import {
   FaHandshake,
   FaWhatsapp,
 } from "react-icons/fa";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 
 const items = [
   {
@@ -28,6 +28,7 @@ const items = [
 
 /** Royalfans-style closing "Export / Bulk" CTA band. */
 export default function ExportCta() {
+  const site = getRuntimeSite();
   const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(
     "Hello Respak Express! I have a bulk / trade enquiry."
   )}`;

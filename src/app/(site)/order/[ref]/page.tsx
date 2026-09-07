@@ -5,6 +5,7 @@ import {
   FaCheckCircle,
   FaChevronRight,
   FaClipboardList,
+  FaEnvelope,
   FaHome,
   FaMapMarkerAlt,
   FaPhoneAlt,
@@ -14,7 +15,7 @@ import {
 } from "react-icons/fa";
 import { getOrderByRef } from "@/lib/orders/store";
 import { BANK_DETAILS } from "@/lib/checkout/config";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 import { formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export default async function OrderConfirmationPage({
 }) {
   const order = getOrderByRef(params.ref);
   if (!order) notFound();
+  const site = getRuntimeSite();
 
   const whatsappRecap = encodeURIComponent(
     `Hello Respak Express! I just placed an order on your website:\n\n` +
@@ -102,6 +104,13 @@ export default async function OrderConfirmationPage({
                   </>
                 )}
               </p>
+              {order.customer.email && (
+                <p className="mt-5 inline-flex max-w-full items-center gap-2 rounded-full bg-white px-4 py-2 text-center text-xs font-semibold text-emerald-700 shadow-sm">
+                  <FaEnvelope className="shrink-0" /> Confirmation with your
+                  full order details has been emailed to{" "}
+                  <b className="break-all">{order.customer.email}</b>
+                </p>
+              )}
             </div>
 
             {/* Next-step / bank details */}
@@ -234,7 +243,7 @@ export default async function OrderConfirmationPage({
                 rel="noreferrer"
                 className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-4 text-sm font-bold text-white transition hover:brightness-95"
               >
-                <FaWhatsapp /> Send Order on WhatsApp
+                <FaWhatsapp /> Send Order Details on WhatsApp
               </a>
               <a
                 href={`tel:${site.phone.replace(/\s/g, "")}`}

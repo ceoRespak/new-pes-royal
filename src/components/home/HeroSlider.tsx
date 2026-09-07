@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,64 +9,44 @@ import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { motion } from "framer-motion";
 import { resolveImage } from "@/lib/images";
 import {
-  FaAward,
   FaBolt,
-  FaCheckCircle,
   FaChevronLeft,
   FaChevronRight,
-  FaHeadset,
-  FaShieldAlt,
+  FaShoppingBag,
   FaStar,
-  FaStore,
-  FaSun,
-  FaTruck,
-  FaWifi,
 } from "react-icons/fa";
 import { heroSlides } from "@/data/hero";
-import type { HeroFeature, HeroSlide } from "@/data/hero";
+import type { HeroSlide } from "@/data/hero";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const featureIcons: Record<string, { icon: typeof FaBolt; cls: string }> = {
-  bolt: { icon: FaBolt, cls: "from-amber-300 to-amber-500 text-slate-900" },
-  sun: { icon: FaSun, cls: "from-amber-300 to-yellow-500 text-slate-900" },
-  star: { icon: FaStar, cls: "from-accent to-accent-700 text-primary" },
-  shield: { icon: FaShieldAlt, cls: "from-emerald-400 to-emerald-600 text-white" },
-  truck: { icon: FaTruck, cls: "from-sky-400 to-sky-600 text-white" },
-  wifi: { icon: FaWifi, cls: "from-violet-400 to-violet-600 text-white" },
-  award: { icon: FaAward, cls: "from-red-400 to-red-600 text-white" },
-  headset: { icon: FaHeadset, cls: "from-emerald-400 to-teal-600 text-white" },
-  check: { icon: FaCheckCircle, cls: "from-green-400 to-green-600 text-white" },
-  store: { icon: FaStore, cls: "from-blue-400 to-blue-700 text-white" },
-};
-const fallback = { icon: FaStar, cls: "from-accent to-accent-700 text-primary" };
-
-function FeatureIcon({ name, className }: { name: string; className?: string }) {
-  const def = featureIcons[name] ?? fallback;
-  const Icon = def.icon;
-  return (
-    <span
-      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-sm shadow-md ${def.cls} ${className ?? ""}`}
-    >
-      <Icon />
-    </span>
-  );
-}
-
-function Feature({ f }: { f: HeroFeature }) {
-  return (
-    <span className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-3 py-2.5 backdrop-blur-md">
-      <FeatureIcon name={f.icon} />
-      <span className="text-[0.8rem] font-bold text-white/90">{f.label}</span>
-    </span>
-  );
-}
+/** Responsive show/hide class for block text lines. */
+const dispBlock = (d: boolean, m: boolean) =>
+  d && m
+    ? "block"
+    : m
+      ? "block md:hidden"
+      : d
+        ? "hidden md:block"
+        : "hidden";
+/** Responsive show/hide class for inline text spans. */
+const dispInline = (d: boolean, m: boolean) =>
+  d && m
+    ? "inline"
+    : m
+      ? "inline md:hidden"
+      : d
+        ? "hidden md:inline"
+        : "hidden";
 
 /**
- * HeroSlider — the homepage's main advertisement carousel.
+ * HeroSlider — Powerhouse-style E-COMMERCE promo slider.
+ * Each slide is a full-width "collection / offer" banner: a bold sale headline,
+ * an offer pill (slide.offer, e.g. "Up to 30% OFF"), a big product/collection
+ * visual with a deal sticker and a clear "Shop Now" CTA linking to a category.
  * Content comes from the admin (Site Content) when set, else src/data/hero.ts.
  */
 export default function HeroSlider({
@@ -107,115 +88,213 @@ export default function HeroSlider({
         }}
         className="!overflow-hidden"
       >
-        {list.map((slide) => (
-          <SwiperSlide key={slide.id}>
+        {list.map((slide) => {
+          // Which breakpoint each button shows on (default: both).
+          const dispCls = (d: boolean, m: boolean) =>
+            d && m
+              ? "inline-flex"
+              : !d && m
+                ? "inline-flex md:hidden"
+                : d
+                  ? "hidden md:inline-flex"
+                  : "hidden";
+          const cta1Cls = dispCls(
+            slide.showCta1Desktop !== false,
+            slide.showCta1Mobile !== false
+          );
+          const cta2Cls = dispCls(
+            slide.showCta2Desktop !== false,
+            slide.showCta2Mobile !== false
+          );
+          const cta1Size = slide.cta1Size ?? 14;
+          const cta2Size = slide.cta2Size ?? 14;
+          const hasMobile = !!slide.imageMobile;
+          // Image framing (set via the pop-up image editor).
+          const pad = Math.max(0, Math.min(100, slide.imgPadding ?? 0));
+          const angle = slide.imgAngle ?? 0;
+          const rot = (angle * Math.PI) / 180;
+          const zoom = angle !== 0 ? 1 / Math.cos(rot) : 1;
+          const posX = Math.max(0, Math.min(100, slide.imgPosX ?? 50));
+          const posY = Math.max(0, Math.min(100, slide.imgPosY ?? 50));
+          const imgStyle = {
+            objectPosition: `${posX}% ${posY}%`,
+            transform: angle
+              ? `rotate(${angle}deg) scale(${zoom.toFixed(3)})`
+              : undefined,
+          } as CSSProperties;
+          return (
+            <SwiperSlide key={slide.id}>
             <div
-              className="relative flex items-center overflow-hidden text-white lg:min-h-[640px]"
+              className="relative overflow-hidden text-white lg:h-[600px] lg:min-h-[600px]"
               style={{ background: slide.bg }}
             >
-              {/* subtle grid texture */}
+              {/* ===== Banner image(s) — desktop wide + mobile ===== */}
               <div
-                className="pointer-events-none absolute inset-0 opacity-[0.05]"
+                className="absolute overflow-hidden"
                 style={{
-                  backgroundImage:
-                    "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-                  backgroundSize: "64px 64px",
+                  top: pad,
+                  right: pad,
+                  bottom: pad,
+                  left: pad,
+                  background: slide.bg,
                 }}
-              />
-              {/* soft glows */}
-              <div className="pointer-events-none absolute -right-32 top-1/4 h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-3xl" />
-              <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-[#E11D2A]/15 blur-3xl" />
+              >
+                {hasMobile ? (
+                  <>
+                    <Image
+                      src={heroImg(slide.image)}
+                      alt={slide.imageAlt}
+                      fill
+                      priority
+                      sizes="100vw"
+                      className="hidden object-cover md:block"
+                      style={imgStyle}
+                    />
+                    <Image
+                      src={heroImg(slide.imageMobile ?? "")}
+                      alt={slide.imageAlt}
+                      fill
+                      priority
+                      sizes="100vw"
+                      className="object-cover md:hidden"
+                      style={imgStyle}
+                    />
+                  </>
+                ) : (
+                  <Image
+                    src={heroImg(slide.image)}
+                    alt={slide.imageAlt}
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="object-cover"
+                    style={imgStyle}
+                  />
+                )}
+              </div>
 
-              <div className="container-px relative flex w-full flex-col items-center gap-8 pb-16 pt-32 text-center lg:grid lg:grid-cols-2 lg:items-center lg:gap-8 lg:pb-24 lg:pt-40 lg:text-left">
-                {/* ============ Copy / ad text ============ */}
+              {/* readability scrims (keeps copy readable over any banner) */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001a33] via-[#001a33]/80 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#001a33]/90 to-transparent lg:h-32" />
+              <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
+
+              <div className="container-px relative flex min-h-[520px] flex-col justify-center pb-16 pt-28 lg:min-h-[600px] lg:pb-24 lg:pt-36">
                 <motion.div
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="order-2 w-full lg:order-1"
+                  className="max-w-2xl"
                 >
-                  {slide.badge && (
-                    <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#E11D2A] px-4 py-1.5 text-[0.66rem] font-extrabold uppercase tracking-[0.2em] text-white shadow-lg shadow-[#E11D2A]/40">
-                      <FaStar /> {slide.badge}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {slide.offer && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-gradient px-4 py-1.5 text-[0.72rem] font-extrabold uppercase tracking-widest text-primary shadow-lg shadow-black/25">
+                        <FaBolt /> {slide.offer}
+                      </span>
+                    )}
+                    {slide.badge && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E11D2A]/95 px-4 py-1.5 text-[0.66rem] font-extrabold uppercase tracking-[0.18em] text-white shadow-lg shadow-[#E11D2A]/30">
+                        <FaStar /> {slide.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {slide.eyebrow && (
+                    <p
+                      className={`${dispBlock(
+                        slide.eyebrowDesktop !== false,
+                        slide.eyebrowMobile !== false
+                      )} mb-3 mt-5 text-[0.72rem] font-bold uppercase tracking-[0.24em] text-accent`}
+                    >
+                      <span
+                        style={{
+                          fontSize: `${(slide.eyebrowSize ?? 100) / 100}em`,
+                        }}
+                      >
+                        {slide.eyebrow}
+                      </span>
+                    </p>
                   )}
-                  <p className="mb-3 text-[0.72rem] font-bold uppercase tracking-[0.26em] text-accent">
-                    {slide.eyebrow}
-                  </p>
-                  <h1 className="font-display text-[2.1rem] font-extrabold leading-[1.08] sm:text-6xl lg:text-[4rem]">
-                    {slide.titleA}{" "}
-                    <span className="bg-gold-gradient bg-clip-text text-transparent">
-                      {slide.titleHighlight}
-                    </span>
-                    {slide.titleB && <> {slide.titleB}</>}
+
+                  <h1 className="font-display text-[2rem] font-extrabold leading-[1.07] drop-shadow-[0_2px_18px_rgba(0,10,25,0.55)] sm:text-5xl lg:text-[3.4rem]">
+                    {slide.titleA && (
+                      <span
+                        className={dispInline(
+                          slide.titleDesktop !== false,
+                          slide.titleMobile !== false
+                        )}
+                        style={{ fontSize: `${(slide.titleSize ?? 100) / 100}em` }}
+                      >
+                        {slide.titleA}{" "}
+                      </span>
+                    )}
+                    {slide.titleHighlight && (
+                      <span
+                        className={`${dispInline(
+                          slide.highlightDesktop !== false,
+                          slide.highlightMobile !== false
+                        )} bg-gold-gradient bg-clip-text text-transparent`}
+                        style={{
+                          fontSize: `${(slide.highlightSize ?? 100) / 100}em`,
+                        }}
+                      >
+                        {slide.titleHighlight}
+                      </span>
+                    )}
+                    {slide.titleB && (
+                      <span
+                        className={dispInline(
+                          slide.part2Desktop !== false,
+                          slide.part2Mobile !== false
+                        )}
+                        style={{ fontSize: `${(slide.part2Size ?? 100) / 100}em` }}
+                      >
+                        {" "}
+                        {slide.titleB}
+                      </span>
+                    )}
                   </h1>
-                  <p className="mx-auto mt-4 max-w-xl text-[0.95rem] leading-relaxed text-white/80 sm:text-lg lg:mx-0 lg:mt-6">
-                    {slide.description}
+
+                  <p
+                    className={`${dispBlock(
+                      slide.descDesktop !== false,
+                      slide.descMobile !== false
+                    )} mt-4 max-w-xl text-[0.95rem] leading-relaxed text-white/90 sm:text-lg lg:mt-5`}
+                  >
+                    <span
+                      style={{ fontSize: `${(slide.descSize ?? 100) / 100}em` }}
+                    >
+                      {slide.description}
+                    </span>
                   </p>
 
-                  <div className="mt-6 flex flex-wrap items-center justify-center gap-3.5 lg:mt-9 lg:justify-start">
-                    <Link
-                      href={slide.ctaHref}
-                      className="group inline-flex items-center gap-2 rounded-full bg-[#E11D2A] px-8 py-4 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-[#E11D2A]/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#b8111f]"
-                    >
-                      {slide.ctaLabel}
-                      <FaChevronRight className="transition-transform group-hover:translate-x-1" />
-                    </Link>
+                  <div className="mt-7 flex flex-wrap items-center gap-3.5">
+                    {slide.ctaLabel && slide.ctaHref && (
+                      <Link
+                        href={slide.ctaHref}
+                        className={`${cta1Cls} group items-center gap-2 rounded-full bg-[#E11D2A] px-8 py-3.5 font-extrabold uppercase tracking-wider text-white shadow-xl shadow-[#E11D2A]/40 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#b8111f]`}
+                        style={{ fontSize: cta1Size }}
+                      >
+                        <FaShoppingBag className="text-base" />
+                        {slide.ctaLabel}
+                        <FaChevronRight className="text-xs transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    )}
                     {slide.cta2Label && slide.cta2Href && (
                       <Link
                         href={slide.cta2Href}
-                        className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/5 px-8 py-4 text-sm font-bold uppercase tracking-wider text-white backdrop-blur transition-all duration-300 hover:border-white hover:bg-white hover:text-primary"
+                        className={`${cta2Cls} group items-center gap-2 rounded-full border-2 border-white/40 bg-black/20 px-7 py-3.5 font-bold uppercase tracking-wider text-white backdrop-blur transition-all duration-300 hover:border-white hover:bg-white hover:text-primary`}
+                        style={{ fontSize: cta2Size }}
                       >
                         {slide.cta2Label}
                       </Link>
                     )}
                   </div>
-
-                  {/* feature chips */}
-                  <div className="mx-auto mt-6 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:max-w-xl sm:grid-cols-4 lg:mx-0 lg:mt-9 lg:max-w-xl">
-                    {slide.features.map((f) => (
-                      <Feature key={f.label} f={f} />
-                    ))}
-                  </div>
-                </motion.div>
-
-                {/* ============ Product visual (edge-to-edge on mobile) ============ */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.1 }}
-                  className="order-1 w-[calc(100%+2rem)] -mx-4 sm:-mx-6 sm:w-[calc(100%+3rem)] lg:order-2 lg:mx-0 lg:w-auto lg:max-w-lg"
-                >
-                  <div className="relative">
-                    {/* decorative rings behind card (desktop only) */}
-                    <div className="absolute inset-4 hidden rounded-[2.2rem] bg-white/5 ring-1 ring-white/15 lg:block" />
-                    <div className="relative w-full overflow-hidden bg-white lg:rounded-[2rem] lg:shadow-2xl lg:shadow-black/30">
-                      <div className="relative aspect-square w-full overflow-hidden">
-                        <Image
-                          src={heroImg(slide.image)}
-                          alt={slide.imageAlt}
-                          fill
-                          priority
-                          sizes="(max-width: 1024px) 100vw, 40vw"
-                          className="object-contain p-1 sm:p-4"
-                        />
-                      </div>
-                      {/* subtle brand strip (desktop only) */}
-                      <div className="absolute inset-x-0 bottom-0 hidden items-center justify-between bg-gradient-to-t from-white via-white/80 to-transparent px-5 pb-3 pt-10 lg:flex">
-                        <p className="font-display text-xs font-extrabold uppercase tracking-[0.2em] text-slate-800">
-                          Respak Express
-                        </p>
-                        <span className="rounded-full bg-primary px-3 py-1 text-[0.6rem] font-bold uppercase tracking-wider text-white">
-                          Peshawar
-                        </span>
-                      </div>
-                    </div>
-                  </div>
                 </motion.div>
               </div>
             </div>
           </SwiperSlide>
-        ))}
+          );
+        })}
       </Swiper>
 
       {/* custom controls */}

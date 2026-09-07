@@ -27,7 +27,7 @@ import {
   getLiveCategories,
 } from "@/lib/store/live";
 import type { Product } from "@/types";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 import { resolveImage } from "@/lib/images";
 import { formatPrice } from "@/lib/utils";
 
@@ -42,6 +42,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
+  const site = getRuntimeSite();
   // Read from the site's own store so admin edits (name/price/badge) show up.
   let product: Product | undefined;
   try {
@@ -67,13 +68,13 @@ export async function generateMetadata({
   };
 }
 
-const askWhatsapp = (productName: string) =>
-  `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(
+const waHref = (wa: string, productName: string) =>
+  `https://wa.me/${wa}?text=${encodeURIComponent(
     `Hello Respak Express! Please confirm details & price of: ${productName}`
   )}`;
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  // Local store first (admin edits show immediately), static snapshot as fallback.
+  const site = getRuntimeSite();
   let liveProduct: Product | undefined;
   try {
     liveProduct = await getLiveProductBySlug(params.slug);
@@ -180,7 +181,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     — sourced from our trusted suppliers and stocked at{" "}
                     {site.name}, Peshawar. For bulk or project pricing, please{" "}
                     <a
-                      href={askWhatsapp(product.name)}
+                      href={waHref(site.whatsapp, product.name)}
                       target="_blank"
                       rel="noreferrer"
                       className="font-semibold text-[#E11D2A] underline underline-offset-4 hover:text-[#b8111f]"
@@ -242,7 +243,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         this item.
                       </p>
                       <a
-                        href={askWhatsapp(product.name)}
+                        href={waHref(site.whatsapp, product.name)}
                         target="_blank"
                         rel="noreferrer"
                         className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#E11D2A] px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#b8111f]"
@@ -349,7 +350,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   ) : (
                     <>
                       <a
-                        href={askWhatsapp(product.name)}
+                        href={waHref(site.whatsapp, product.name)}
                         target="_blank"
                         rel="noreferrer"
                         className="flex items-center justify-between rounded-2xl border border-slate-100 bg-light/50 p-4 transition hover:border-[#25D366]/50 hover:bg-[#25D366]/5"

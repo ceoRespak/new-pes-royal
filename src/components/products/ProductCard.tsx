@@ -11,9 +11,9 @@ import {
 } from "react-icons/fa";
 import type { Product } from "@/types";
 import { useCart } from "@/components/cart/CartProvider";
+import { useSite } from "@/components/site/SiteProvider";
 import RatingStars from "@/components/ui/RatingStars";
 import { categoryLabel } from "@/data/categories";
-import { site } from "@/data/site";
 import { cn, discountPercent, formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
@@ -34,6 +34,7 @@ export default function ProductCard({
   priority = false,
   storefront = false,
 }: ProductCardProps) {
+  const site = useSite();
   const discount = discountPercent(product.price, product.salePrice);
   const waMessage = encodeURIComponent(
     `Hello Respak Express! I'm interested in the ${product.name} (${formatPrice(

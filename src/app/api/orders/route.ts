@@ -7,7 +7,10 @@ import {
   shippingMethod,
 } from "@/lib/checkout/config";
 import { createOrder } from "@/lib/orders/store";
+import { sendOrderEmails } from "@/lib/notify/mailer";
+import { sendOrderWhatsAppConfirmation } from "@/lib/notify/whatsapp-ba";
 import { getLiveProducts } from "@/lib/store/live";
+import { getCurrentCustomer } from "@/lib/customers/session";
 import { variantsForProduct } from "@/lib/admin/variants-store";
 import { products as snapshotProducts } from "@/data/products";
 
@@ -160,6 +163,16 @@ export async function POST(req: Request) {
   const shippingFee = ship.fee;
   const total = subtotal + shippingFee;
 
+  // If the buyer is signed in, remember the account so their order history
+  // shows it. Errors reading the session never block guest checkout.
+  let customerId: string | undefined;
+  try {
+    const cur = await getCurrentCustomer();
+    customerId = cur?.id;
+  } catch {
+    /* guest checkout unaffected */
+  }
+
   const order = createOrder({
     customer,
     shippingMethod: ship.id,
@@ -171,7 +184,28 @@ export async function POST(req: Request) {
     paymentMethod: pay.id,
     paymentLabel: pay.label,
     paymentStatus: "pending",
+    ...(customerId ? { customerId } : {}),
   });
+
+  // Fire the confirmation emails (customer + store). Failures are logged and
+  // never affect the checkout response.
+  try {
+    const res = await sendOrderEmails(order);
+    if (res.note) console.log("[order-email]", res.note);
+  } catch (e) {
+    console.warn("[order-email] send error:", String(e));
+  }
+
+  // WhatsApp order-confirmation template (Confirm/Cancel buttons come from the
+  // approved Meta template). Silent skip until WA_* env vars are configured.
+  try {
+    const wa = await sendOrderWhatsAppConfirmation(order);
+    if (wa.ok === false && !wa.skipped) {
+      console.warn("[order-whatsapp]", wa.error || "send failed");
+    }
+  } catch (e) {
+    console.warn("[order-whatsapp] send error:", String(e));
+  }
 
   return NextResponse.json({ ok: true, order });
 }

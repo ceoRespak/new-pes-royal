@@ -10,7 +10,8 @@ import {
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
 import { categories } from "@/data/categories";
-import { navLinks, site as siteBase } from "@/data/site";
+import { navLinks } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 
 const supportLinks = [
   { label: "Return Policy", href: "/support#warranty" },
@@ -19,11 +20,6 @@ const supportLinks = [
   { label: "Visit the Shop", href: "/contact" },
   { label: "Get in Touch", href: "/contact" },
 ];
-
-const socialIcons = [
-  { href: siteBase.social.facebook, label: "Facebook", Icon: FaFacebookF },
-  { href: siteBase.social.whatsapp, label: "WhatsApp", Icon: FaWhatsapp },
-].filter((s) => s.href);
 
 export default function Footer({
   info,
@@ -37,16 +33,24 @@ export default function Footer({
     announcement?: string;
   };
 }) {
+  // Runtime (Admin → Live Store Settings) over static defaults; `info` is the
+  // legacy prop fallback kept for compatibility.
+  const rt = getRuntimeSite();
   const site = {
-    ...siteBase,
-    phone: info?.phone || siteBase.phone,
-    email: info?.email || siteBase.email,
-    hours: info?.hours || siteBase.hours,
-    address: info?.address || siteBase.address,
+    ...rt,
+    phone: info?.phone || rt.phone,
+    email: info?.email || rt.email,
+    hours: info?.hours || rt.hours,
+    address: info?.address || rt.address,
     footerAbout:
       info?.footerAbout ||
+      rt.footerAbout ||
       "Respak Express crafts premium fans, LED lighting, smart sensors and trusted electrical accessories. Proudly powering homes and businesses across Pakistan since 2015.",
   };
+  const socialIcons = [
+    { href: site.social.facebook, label: "Facebook", Icon: FaFacebookF },
+    { href: site.social.whatsapp, label: "WhatsApp", Icon: FaWhatsapp },
+  ].filter((s) => s.href);
   return (
     <footer className="relative overflow-hidden bg-[#001a33] text-slate-300">
       {/* Decorative glow */}
@@ -195,8 +199,7 @@ export default function Footer({
       <div className="relative border-t border-white/10">
         <div className="container-px flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} Respak Express. All rights
-            reserved.
+            © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
           <p className="flex items-center gap-4">
             <Link href="/support#warranty" className="transition hover:text-accent">

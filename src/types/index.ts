@@ -203,6 +203,8 @@ export interface OrderItem {
 export interface Order {
   ref: string;
   createdAt: string;
+  /** Optional link to a logged-in customer account. */
+  customerId?: string;
   customer: OrderCustomer;
   shippingMethod: ShippingMethodId;
   shippingLabel: string;

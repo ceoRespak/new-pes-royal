@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
-import { site } from "@/data/site";
+import { useSite } from "@/components/site/SiteProvider";
 
 export default function WhatsAppButton({ number }: { number?: string }) {
+  const site = useSite();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -15,10 +16,12 @@ export default function WhatsAppButton({ number }: { number?: string }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const waNumber = number || site.whatsapp;
   const message = encodeURIComponent(
-    "Hello Respak Express! I would like to ask about your products."
+    site.whatsappMessage ||
+      "Hello Respak Express! I would like to ask about your products."
   );
-  const href = `https://wa.me/${number || site.whatsapp}?text=${message}`;
+  const href = `https://wa.me/${waNumber}?text=${message}`;
 
   return (
     <AnimatePresence>

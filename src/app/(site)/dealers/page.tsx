@@ -6,7 +6,7 @@ import { FaHandshake, FaHeadset, FaStore } from "react-icons/fa";
 import PageHero from "@/components/ui/PageHero";
 import DealerDirectory from "@/components/DealerDirectory";
 import AnimatedSectionWrapper from "@/components/ui/AnimatedSectionWrapper";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 
 export const metadata: Metadata = {
   title: "Dealers & Retail Network",
@@ -34,6 +34,7 @@ const perks = [
 ];
 
 export default function DealersPage() {
+  const site = getRuntimeSite();
   const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["dealers"] ?? {}) as Record<string, string>;
   return (
     <>

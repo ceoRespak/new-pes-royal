@@ -20,7 +20,10 @@ import {
 } from "@/data/products";
 import { getLiveProducts, getLiveCategories } from "@/lib/store/live";
 import { getContent } from "@/lib/content/store";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 import { site } from "@/data/site";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -35,6 +38,7 @@ export const metadata: Metadata = {
 // → Featured Products → Promo (collections) → Slogan banner
 // → Testimonials → Why Choose → Bulk/Export CTA
 export default async function HomePage() {
+  const runtimeSite = getRuntimeSite();
   let liveProducts: Product[] = snapshotProducts;
   let liveCats: CategoryMeta[] = snapshotCategories;
   try {
@@ -134,7 +138,7 @@ export default async function HomePage() {
       <ShopByBrand brands={brandBlocks} />
       {/* Every category: first 10 products + View All button. */}
       <CategorySections blocks={categoryBlocks} />
-      <PromoBanners banners={content.promoBanners} />
+      <PromoBanners banners={runtimeSite.promoBanners} />
       <SloganBanner content={content.slogan} />
       <TestimonialsSlider items={content.testimonials} />
       <WhyChoose

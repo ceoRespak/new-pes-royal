@@ -78,7 +78,61 @@ Everything is stored by this site under `/.data/` (gitignored, not served):
 > deploying, either run `node scripts/own-backend-migrate.mjs` on the server or
 > upload this machine’s `/.data/` folder (store.json + uploads) to the app root.
 
-## 🗂 Folder structure (highlights)
+## � Order confirmations (email + WhatsApp)
+
+When a customer places an order we send:
+
+- **Email** — full confirmation + order details, automatically to the customer
+  (if they gave an email) and a copy to the store inbox. Powered by SMTP via
+  `nodemailer`. Configure in `.env.local` (see `.env.example`):
+
+  ```
+  SMTP_HOST=…        SMTP_PORT=465        SMTP_SECURE=true
+  SMTP_USER=…        SMTP_PASS=…
+  SMTP_FROM=…                          # optional
+  ORDER_EMAILS_TO=info@respakexpress.pk  # owner inbox(es), comma separated
+  ```
+
+  No SMTP set → emails are skipped (checkout still works; the server logs it).
+
+- **WhatsApp** — two layers:
+  - *Automated (optional):* WhatsApp **Business Cloud API** — when an order is
+    placed it sends the customer an approved template with order ref + total and
+    **Confirm / Cancel** buttons (like powerhouseexpress). A webhook
+    (`/api/whatsapp/webhook`) receives the button tap and updates the order.
+    Configure via `WA_BUSINESS_TOKEN`, `WA_PHONE_ID`, `WA_VERIFY_TOKEN`,
+    `WA_ORDER_TEMPLATE` — see `docs/WHATSAPP_BUSINESS_SETUP.md`. Inactive until
+    those are set.
+  - *Fallback (always available):* the order-confirmation page builds a
+    ready-made **wa.me** message with the full order recap to send the details
+    to the store number in one tap.
+
+- **Payments today:** Cash on Delivery + Bank Transfer (with bank details shown
+  at checkout and on the confirmation page). Online gateways (JazzCash /
+  Easypaisa / card) are disabled placeholders in
+  `src/lib/checkout/config.ts` until merchant accounts are added.
+
+## 👤 Customer accounts (login / my account)
+
+Storefront login like powerhouseexpress — optional but makes repeat ordering
+one-tap:
+
+- **Register / login** at `/login` (email + password). A 30‑day signed cookie
+  (`respak_customer_session`) keeps the visitor signed in. Guest checkout still
+  works with no account.
+- Customers can **save their name / phone / city / address** on `/account`.
+- At **checkout**, signed-in customers have the form auto‑filled from their
+  saved profile and can tick "Save this address to my account" so next order is
+  even faster.
+- Orders placed while signed in are **linked to the account** and listed with
+  their status on `/account` → each row links to the full order page (email +
+  WhatsApp confirmations behave the same as for guests).
+- Accounts + hashed passwords live in `/.data/customers.json` (gitignored).
+  Configure the signing secret with `CUSTOMER_SESSION_SECRET` in `.env.local`
+  (falls back to `ADMIN_SESSION_SECRET`).
+
+
+## �🗂 Folder structure (highlights)
 
 ```
 public/images, downloads      # art + generated PDFs (product images NOT here)

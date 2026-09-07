@@ -11,7 +11,7 @@ import {
 import PageHero from "@/components/ui/PageHero";
 import ContactForm from "@/components/ContactForm";
 import AnimatedSectionWrapper from "@/components/ui/AnimatedSectionWrapper";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-const infoCards = [
+const makeCards = (site: ReturnType<typeof getRuntimeSite>) => [
   {
     icon: FaMapMarkerAlt,
     title: "Visit Us",
@@ -52,6 +52,8 @@ const infoCards = [
 ];
 
 export default function ContactPage() {
+  const site = getRuntimeSite();
+  const infoCards = makeCards(site);
   const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["contact"] ?? {}) as Record<string, string>;
   return (
     <>

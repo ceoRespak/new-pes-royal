@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import type { Product, ProductVariant } from "@/types";
 import { useCart } from "@/components/cart/CartProvider";
-import { site } from "@/data/site";
+import { useSite } from "@/components/site/SiteProvider";
 import { resolveImage } from "@/lib/images";
 import { formatPrice } from "@/lib/utils";
 
@@ -37,6 +37,7 @@ export default function ProductBuyPanel({
   product,
   activeVariant,
 }: ProductBuyPanelProps) {
+  const site = useSite();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const { add } = useCart();

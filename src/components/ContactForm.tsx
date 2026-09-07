@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaCheckCircle, FaPaperPlane, FaWhatsapp } from "react-icons/fa";
-import { site } from "@/data/site";
+import { useSite } from "@/components/site/SiteProvider";
 
 const subjects = [
   "General Enquiry",
@@ -35,6 +35,7 @@ const initial: FormState = {
  * (Static demo — submissions open a pre-filled WhatsApp chat to the sales team.)
  */
 export default function ContactForm() {
+  const site = useSite();
   const [form, setForm] = useState<FormState>(initial);
   const [sent, setSent] = useState(false);
 

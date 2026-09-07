@@ -12,13 +12,15 @@ import {
   FaPhoneAlt,
   FaShoppingCart,
   FaTimes,
+  FaUser,
   FaWhatsapp,
 } from "react-icons/fa";
 import Logo from "./Logo";
 import { useCart } from "@/components/cart/CartProvider";
+import { useSite } from "@/components/site/SiteProvider";
 import type { CategoryMeta } from "@/types";
 import { categories as snapshotCategories } from "@/data/categories";
-import { navLinks, site as siteBase } from "@/data/site";
+import { navLinks } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 export default function Navbar({
@@ -33,18 +35,36 @@ export default function Navbar({
     announcement?: string;
   };
 }) {
+  // Resolve admin-editable site settings (falls back to the static defaults).
+  const rt = useSite();
   const site = {
-    ...siteBase,
-    phone: info?.phone || siteBase.phone,
-    email: info?.email || siteBase.email,
-    hours: info?.hours || siteBase.hours,
+    ...rt,
+    phone: info?.phone || rt.phone,
+    email: info?.email || rt.email,
+    hours: info?.hours || rt.hours,
+    address: info?.address || rt.address,
   };
   const pathname = usePathname();
   const { count, ready } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [account, setAccount] = useState<{ name: string } | null>(null);
   const isHome = pathname === "/";
+
+  // Signed-in customer (storefront account) → show Login / account link.
+  useEffect(() => {
+    let on = true;
+    fetch("/api/account/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (on && d?.ok && d.customer) setAccount(d.customer);
+      })
+      .catch(() => {});
+    return () => {
+      on = false;
+    };
+  }, []);
 
   // Full live category list for the mega-menu (fetched once, snapshot fallback).
   const [liveCats, setLiveCats] = useState<CategoryMeta[] | null>(null);
@@ -212,6 +232,22 @@ export default function Navbar({
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
+            {/* Account (customer login) */}
+            <Link
+              href={account ? "/account" : "/login"}
+              aria-label={account ? "My account" : "Login"}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition",
+                solid
+                  ? "text-slate-600 hover:text-primary"
+                  : "text-white/90 hover:text-white"
+              )}
+            >
+              <FaUser className="text-base" />
+              <span className="hidden xl:inline">
+                {account ? account.name.split(" ")[0] : "Login"}
+              </span>
+            </Link>
             {/* Cart */}
             <Link
               href="/cart"
@@ -336,6 +372,16 @@ export default function Navbar({
               </div>
 
               <nav className="flex-1 overflow-y-auto px-3 py-4">
+                <Link
+                  href={account ? "/account" : "/login"}
+                  onClick={() => setOpen(false)}
+                  className="mb-2 flex items-center gap-3 rounded-xl bg-primary/5 px-4 py-3 text-[0.95rem] font-bold text-primary"
+                >
+                  <FaUser className="text-lg" />
+                  {account
+                    ? `My Account · ${account.name.split(" ")[0]}`
+                    : "Login / Register"}
+                </Link>
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}

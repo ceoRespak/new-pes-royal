@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ import {
   PAYMENT_METHODS,
   SHIPPING_METHODS,
 } from "@/lib/checkout/config";
-import { site } from "@/data/site";
+import { useSite } from "@/components/site/SiteProvider";
 import { formatPrice } from "@/lib/utils";
 
 const inputCls =
@@ -33,6 +33,7 @@ const labelCls =
   "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500";
 
 export default function CheckoutPage() {
+  const site = useSite();
   const { items, ready, subtotal, clear } = useCart();
   const router = useRouter();
 
@@ -48,6 +49,45 @@ export default function CheckoutPage() {
   const [payId, setPayId] = useState<PaymentMethodId>("cod");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Signed-in customer (optional) → prefill their saved details.
+  const [me, setMe] = useState<{
+    name: string;
+    email: string;
+    phone: string;
+    city?: string;
+    address?: string;
+  } | null>(null);
+  const [saveAddr, setSaveAddr] = useState(true);
+
+  useEffect(() => {
+    let on = true;
+    fetch("/api/account/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!on || !d?.ok || !d.customer) return;
+        const c = d.customer as {
+          name: string;
+          email: string;
+          phone: string;
+          city?: string;
+          address?: string;
+        };
+        setMe(c);
+        setForm((f) => ({
+          ...f,
+          name: f.name || c.name || "",
+          phone: f.phone || c.phone || "",
+          email: f.email || c.email || "",
+          city: f.city || c.city || "",
+          address: f.address || c.address || "",
+        }));
+      })
+      .catch(() => {});
+    return () => {
+      on = false;
+    };
+  }, []);
 
   const set = (k: keyof typeof form) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -71,6 +111,23 @@ export default function CheckoutPage() {
 
     setBusy(true);
     try {
+      // Signed-in user: keep their saved profile up to date.
+      if (me && saveAddr) {
+        try {
+          await fetch("/api/account/profile", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: form.name,
+              phone: form.phone,
+              city: form.city,
+              address: form.address,
+            }),
+          });
+        } catch {
+          /* saving profile is best-effort */
+        }
+      }
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -160,6 +217,32 @@ export default function CheckoutPage() {
                   <h2 className="flex items-center gap-2 font-display text-lg font-bold text-slate-900">
                     <FaTruck className="text-[#E11D2A]" /> Delivery Details
                   </h2>
+                  {me && (
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-primary/5 px-4 py-3 text-sm text-slate-700">
+                      <span>
+                        Signed in as <b>{me.name}</b> — we filled in your saved
+                        details.
+                      </span>
+                      <Link
+                        href="/account"
+                        className="shrink-0 font-bold text-primary hover:underline"
+                      >
+                        Manage account
+                      </Link>
+                    </div>
+                  )}
+                  {me && (
+                    <label className="mt-4 flex items-center gap-2 text-sm font-semibold text-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={saveAddr}
+                        onChange={(e) => setSaveAddr(e.target.checked)}
+                        className="h-4 w-4 accent-primary"
+                      />
+                      Save this name / phone / address to my account for next
+                      time
+                    </label>
+                  )}
                   <div className="mt-5 grid gap-4 sm:grid-cols-2">
                     <div>
                       <label htmlFor="co-name" className={labelCls}>

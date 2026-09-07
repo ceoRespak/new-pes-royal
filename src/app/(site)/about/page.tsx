@@ -21,7 +21,7 @@ import AnimatedSectionWrapper, {
 } from "@/components/ui/AnimatedSectionWrapper";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import CtaSection from "@/components/home/CtaSection";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -29,8 +29,6 @@ export const metadata: Metadata = {
     "Respak Express — Peshawar's trusted electrical supply shop since 2015. Approved distributor of Pakistan Cables, AGE & Fast; genuine fans, lighting, switchgear & smart home.",
   alternates: { canonical: "/about" },
 };
-
-const about = site.about;
 
 const milestones = [
   {
@@ -98,6 +96,8 @@ const introPoints = [
 ];
 
 export default function AboutPage() {
+  const site = getRuntimeSite();
+  const about = site.about;
   const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["about"] ?? {}) as Record<string, string>;
   return (
     <>

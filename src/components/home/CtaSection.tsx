@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { FaArrowRight, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 import AnimatedSectionWrapper from "@/components/ui/AnimatedSectionWrapper";
-import { site } from "@/data/site";
+import { getRuntimeSite } from "@/lib/content/runtime-site";
 
 export default function CtaSection() {
+  const site = getRuntimeSite();
   return (
     <section className="section-pad bg-light/60">
       <div className="container-px">

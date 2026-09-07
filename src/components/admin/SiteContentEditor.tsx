@@ -24,6 +24,7 @@ import { testimonials as defaultTestimonials } from "@/data/testimonials";
 import { site } from "@/data/site";
 import { resolveImage } from "@/lib/images";
 import UploadButton from "@/components/admin/UploadButton";
+import HeroImageAdjustModal, { type HeroAdjust } from "@/components/admin/HeroImageAdjustModal";
 import type { HeroSlide } from "@/data/hero";
 
 /* ---------------- types & defaults ---------------- */
@@ -60,7 +61,6 @@ const DEFAULT_WHY: WhyItem[] = [
 ];
 
 const ICONS = ["truck","shield","money","check","headset","store","tags","award","bolt","star","sun","wifi","headset"];
-const FEATURE_ICONS = ["bolt","sun","star","shield","truck","wifi","award","headset","check","store"];
 const DEFAULT_BG =
   "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)";
 
@@ -94,6 +94,222 @@ function IconPick({ value, onChange, icons = ICONS }: { value: string; onChange:
         <option key={i} value={i}>{i}</option>
       ))}
     </select>
+  );
+}
+
+function NumStepper({ label, value, min, max, step, unit, onChange }: { label: string; value: number; min: number; max: number; step: number; unit?: string; onChange: (v: number) => void }) {
+  const bump = (dir: number) =>
+    onChange(Math.max(min, Math.min(max, (Number.isFinite(value) ? value : min) + dir * step)));
+  return (
+    <div>
+      <span className={lbl}>{label}</span>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => bump(-1)}
+          className="h-8 w-8 shrink-0 rounded-lg border border-slate-200 bg-white text-base font-bold text-slate-600 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+          aria-label={`Decrease ${label}`}
+        >
+          −
+        </button>
+        <input
+          type="number"
+          className={`${input} !px-1 text-center`}
+          value={Number.isFinite(value) ? value : 0}
+          min={min}
+          max={max}
+          step={step}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            if (Number.isFinite(v)) onChange(Math.max(min, Math.min(max, v)));
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => bump(1)}
+          className="h-8 w-8 shrink-0 rounded-lg border border-slate-200 bg-white text-base font-bold text-slate-600 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+          aria-label={`Increase ${label}`}
+        >
+          +
+        </button>
+        {unit && <span className="ml-0.5 w-6 text-xs font-bold text-slate-400">{unit}</span>}
+      </div>
+    </div>
+  );
+}
+
+/* Recommended hero banner specs (avoid blurry uploads) */
+function LineOpts({
+  showDesktop,
+  showMobile,
+  onDesktop,
+  onMobile,
+  size,
+  onSize,
+}: {
+  showDesktop: boolean;
+  showMobile: boolean;
+  onDesktop: (v: boolean) => void;
+  onMobile: (v: boolean) => void;
+  size: number;
+  onSize: (v: number) => void;
+}) {
+  const clamp = (v: number) => Math.max(70, Math.min(150, v));
+  return (
+    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-slate-100 bg-white px-2.5 py-1.5">
+      <span className="text-[0.6rem] font-bold uppercase tracking-wide text-slate-400">
+        Show
+      </span>
+      <label className="flex cursor-pointer items-center gap-1 text-[0.68rem] font-semibold text-slate-600">
+        <input
+          type="checkbox"
+          className="h-3.5 w-3.5 accent-[#E11D2A]"
+          checked={showDesktop}
+          onChange={(e) => onDesktop(e.target.checked)}
+        />{" "}
+        D
+      </label>
+      <label className="flex cursor-pointer items-center gap-1 text-[0.68rem] font-semibold text-slate-600">
+        <input
+          type="checkbox"
+          className="h-3.5 w-3.5 accent-[#E11D2A]"
+          checked={showMobile}
+          onChange={(e) => onMobile(e.target.checked)}
+        />{" "}
+        M
+      </label>
+      <div className="ml-auto flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onSize(clamp(size - 5))}
+          className="h-6 w-6 rounded-md bg-slate-100 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+          aria-label="Decrease size"
+        >
+          −
+        </button>
+        <span className="w-11 text-center text-[0.68rem] font-bold text-slate-600">
+          {size}%
+        </span>
+        <button
+          type="button"
+          onClick={() => onSize(clamp(size + 5))}
+          className="h-6 w-6 rounded-md bg-slate-100 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+          aria-label="Increase size"
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Recommended hero banner specs (avoid blurry uploads) */
+const HERO_SPEC = {
+  desktop: {
+    label: "Desktop banner (wide)",
+    size: "1920 × 800",
+    minW: 1500,
+    thumb: "h-14 w-24",
+    placeholder: "/images/hero/fan-ad.jpg",
+  },
+  mobile: {
+    label: "Mobile banner (portrait)",
+    size: "750 × 1000",
+    minW: 640,
+    thumb: "h-14 w-14",
+    placeholder: "Mobile banner for phones",
+  },
+};
+
+function HeroImageSlot({
+  slot,
+  value,
+  imgV,
+  onChange,
+  angle,
+  pad,
+  posX,
+  posY,
+  onAdjust,
+}: {
+  slot: "desktop" | "mobile";
+  value: string;
+  imgV: number;
+  onChange: (url: string) => void;
+  angle: number;
+  pad: number;
+  posX: number;
+  posY: number;
+  onAdjust: (adj: HeroAdjust) => void;
+}) {
+  const spec = HERO_SPEC[slot];
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  return (
+    <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600">
+          {spec.label}
+        </span>
+        <span className="rounded-md bg-[#E11D2A]/10 px-2 py-0.5 text-[0.62rem] font-bold text-[#E11D2A]">
+          Recommended {spec.size}px
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <input
+          className={input}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={spec.placeholder}
+        />
+        <UploadButton value={value} onChange={onChange} label="Upload" />
+      </div>
+
+      <div className="mt-2 flex justify-end">
+        <HeroImageAdjustModal
+          value={value}
+          angle={angle}
+          pad={pad}
+          posX={posX}
+          posY={posY}
+          slotLabel={spec.label}
+          recommended={`${spec.size} px`}
+          minWidth={spec.minW}
+          onSave={(adj) => onAdjust(adj)}
+        />
+      </div>
+
+      {value && (
+        <div className="mt-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={`${value}-${imgV}`}
+            src={`${resolveImg(value)}${
+              resolveImg(value).includes("?") ? "&" : "?"
+            }v=${imgV}`}
+            alt="Preview"
+            className={`${spec.thumb} rounded-lg border border-slate-200 bg-white object-cover`}
+            onLoad={(e) => {
+              const n = e.currentTarget;
+              if (n.naturalWidth && n.naturalHeight)
+                setSize({ w: n.naturalWidth, h: n.naturalHeight });
+            }}
+          />
+          {size && (
+            <p
+              className={`mt-1 text-[0.68rem] font-semibold ${
+                size.w < spec.minW ? "text-amber-600" : "text-emerald-600"
+              }`}
+            >
+              {size.w} × {size.h} px —
+              {size.w < spec.minW
+                ? " smaller than recommended; will look soft/blurry when stretched. Upload a sharper, bigger image."
+                : " sharp for this banner ✓"}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -152,20 +368,6 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const setPromo = setList(setPromos);
   const setTestimonial = setList(setTestimonials);
 
-  const upsertFeature = (i: number, fi: number, patch: { icon?: string; label?: string }) =>
-    setHero((list) =>
-      list.map((s, idx) => {
-        if (idx !== i) return s;
-        const feats = s.features ?? [];
-        const arr = Array.from(
-          { length: Math.max(feats.length, 4, fi + 1) },
-          (_, x) => feats[x] ?? { icon: "bolt", label: "" }
-        );
-        arr[fi] = { ...arr[fi], ...patch };
-        return { ...s, features: arr };
-      })
-    );
-
   function move<T>(setter: React.Dispatch<React.SetStateAction<T[]>>, i: number, dir: -1 | 1) {
     setter((list) => {
       const j = i + dir;
@@ -215,10 +417,6 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       setNotice("Network error.");
     }
     setBusy(false);
-  }
-
-  function RowBtn({ label, title }: { label: string; title?: string }) {
-    return <FaArrowUp className="text-slate-400" aria-hidden title={title} />;
   }
 
   const AddButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
@@ -310,81 +508,219 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                 </button>
                 {isOpen && (
                   <div className="grid gap-3 border-t border-slate-100 p-4 sm:grid-cols-2">
-                    <Field label="Badge"><input className={input} value={s.badge ?? ""} onChange={(e) => setSlide(i, { badge: e.target.value })} /></Field>
-                    <Field label="Eyebrow"><input className={input} value={s.eyebrow} onChange={(e) => setSlide(i, { eyebrow: e.target.value })} /></Field>
-                    <Field label="Headline part 1"><input className={input} value={s.titleA} onChange={(e) => setSlide(i, { titleA: e.target.value })} /></Field>
-                    <Field label="Highlighted part"><input className={input} value={s.titleHighlight} onChange={(e) => setSlide(i, { titleHighlight: e.target.value })} /></Field>
-                    <Field label="Part 2 (optional)"><input className={input} value={s.titleB ?? ""} onChange={(e) => setSlide(i, { titleB: e.target.value })} /></Field>
-                    <div className="sm:col-span-2">
-                      <Field label="Description"><textarea rows={2} className={`${input} resize-none`} value={s.description} onChange={(e) => setSlide(i, { description: e.target.value })} /></Field>
-                    </div>
-                    <Field label="Button 1"><input className={input} value={s.ctaLabel} onChange={(e) => setSlide(i, { ctaLabel: e.target.value })} /></Field>
-                    <Field label="Button 1 link"><input className={input} value={s.ctaHref} onChange={(e) => setSlide(i, { ctaHref: e.target.value })} /></Field>
-                    <Field label="Button 2"><input className={input} value={s.cta2Label ?? ""} onChange={(e) => setSlide(i, { cta2Label: e.target.value })} /></Field>
-                    <Field label="Button 2 link"><input className={input} value={s.cta2Href ?? ""} onChange={(e) => setSlide(i, { cta2Href: e.target.value })} /></Field>
-                    <div className="sm:col-span-2">
-                      <Field label="Image (banner)">
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                          <input
-                            className={input}
-                            value={s.image}
-                            onChange={(e) => setSlide(i, { image: e.target.value })}
-                            placeholder="/images/hero/fan-ad.jpg or upload below"
-                          />
-                          <UploadButton
-                            value={s.image}
-                            onChange={(url) => {
-                              setSlide(i, { image: url });
-                              setImgV((v) => v + 1);
-                            }}
-                            label="Upload image"
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3 sm:col-span-2">
+                      <p className="mb-2 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500">
+                        Text — show on D(esktop) / M(obile) + font size
+                      </p>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <Field label="Offer pill (e.g. Up to 30% OFF)"><input className={input} value={s.offer ?? ""} onChange={(e) => setSlide(i, { offer: e.target.value })} /></Field>
+                        <Field label="Badge"><input className={input} value={s.badge ?? ""} onChange={(e) => setSlide(i, { badge: e.target.value })} /></Field>
+                        <div>
+                          <Field label="Eyebrow"><input className={input} value={s.eyebrow} onChange={(e) => setSlide(i, { eyebrow: e.target.value })} /></Field>
+                          <LineOpts
+                            showDesktop={s.eyebrowDesktop !== false}
+                            showMobile={s.eyebrowMobile !== false}
+                            onDesktop={(v) => setSlide(i, { eyebrowDesktop: v })}
+                            onMobile={(v) => setSlide(i, { eyebrowMobile: v })}
+                            size={Number(s.eyebrowSize ?? 100)}
+                            onSize={(v) => setSlide(i, { eyebrowSize: v })}
                           />
                         </div>
-                        {s.image && (
-                          <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-2">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              key={`${s.image}-${imgV}`}
-                              src={`${resolveImg(s.image)}${
-                                resolveImg(s.image).includes("?") ? "&" : "?"
-                              }v=${imgV}`}
-                              alt="Preview"
-                              className="h-16 w-16 rounded-lg border border-slate-200 object-cover"
-                            />
-                            <p className="text-xs text-slate-400">
-                              Image preview — updates instantly after upload.
-                            </p>
-                          </div>
-                        )}
-                        <p className="mt-1 text-xs text-slate-400">
-                          Upload a banner, or put a file in{" "}
-                          <code>public/images/hero/</code> and type its path.
-                        </p>
-                      </Field>
+                        <div>
+                          <Field label="Headline part 1"><input className={input} value={s.titleA} onChange={(e) => setSlide(i, { titleA: e.target.value })} /></Field>
+                          <LineOpts
+                            showDesktop={s.titleDesktop !== false}
+                            showMobile={s.titleMobile !== false}
+                            onDesktop={(v) => setSlide(i, { titleDesktop: v })}
+                            onMobile={(v) => setSlide(i, { titleMobile: v })}
+                            size={Number(s.titleSize ?? 100)}
+                            onSize={(v) => setSlide(i, { titleSize: v })}
+                          />
+                        </div>
+                        <div>
+                          <Field label="Highlighted part"><input className={input} value={s.titleHighlight} onChange={(e) => setSlide(i, { titleHighlight: e.target.value })} /></Field>
+                          <LineOpts
+                            showDesktop={s.highlightDesktop !== false}
+                            showMobile={s.highlightMobile !== false}
+                            onDesktop={(v) => setSlide(i, { highlightDesktop: v })}
+                            onMobile={(v) => setSlide(i, { highlightMobile: v })}
+                            size={Number(s.highlightSize ?? 100)}
+                            onSize={(v) => setSlide(i, { highlightSize: v })}
+                          />
+                        </div>
+                        <div>
+                          <Field label="Part 2 (optional)"><input className={input} value={s.titleB ?? ""} onChange={(e) => setSlide(i, { titleB: e.target.value })} /></Field>
+                          <LineOpts
+                            showDesktop={s.part2Desktop !== false}
+                            showMobile={s.part2Mobile !== false}
+                            onDesktop={(v) => setSlide(i, { part2Desktop: v })}
+                            onMobile={(v) => setSlide(i, { part2Mobile: v })}
+                            size={Number(s.part2Size ?? 100)}
+                            onSize={(v) => setSlide(i, { part2Size: v })}
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <Field label="Description"><textarea rows={2} className={`${input} resize-none`} value={s.description} onChange={(e) => setSlide(i, { description: e.target.value })} /></Field>
+                          <LineOpts
+                            showDesktop={s.descDesktop !== false}
+                            showMobile={s.descMobile !== false}
+                            onDesktop={(v) => setSlide(i, { descDesktop: v })}
+                            onMobile={(v) => setSlide(i, { descMobile: v })}
+                            size={Number(s.descSize ?? 100)}
+                            onSize={(v) => setSlide(i, { descSize: v })}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="sm:col-span-2">
-                      <p className={lbl}>
-                        Feature chips — names shown under your buttons
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3 sm:col-span-2">
+                      <p className="mb-2 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500">
+                        Buttons
                       </p>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {[0, 1, 2, 3].map((fi) => {
-                          const f = (s.features ?? [])[fi];
-                          return (
-                            <div key={fi} className="flex gap-2">
-                              <IconPick
-                                icons={FEATURE_ICONS}
-                                value={f?.icon ?? "bolt"}
-                                onChange={(v) => upsertFeature(i, fi, { icon: v })}
-                              />
+                      <div className="grid gap-3 lg:grid-cols-2">
+                        {[
+                          {
+                            n: 1,
+                            label: "Button 1 · Primary",
+                            text: s.ctaLabel,
+                            onText: (v: string) => setSlide(i, { ctaLabel: v }),
+                            link: s.ctaHref,
+                            onLink: (v: string) => setSlide(i, { ctaHref: v }),
+                            showDesktop: s.showCta1Desktop !== false,
+                            onDesktop: (v: boolean) => setSlide(i, { showCta1Desktop: v }),
+                            showMobile: s.showCta1Mobile !== false,
+                            onMobile: (v: boolean) => setSlide(i, { showCta1Mobile: v }),
+                            size: Number(s.cta1Size ?? 14),
+                            onSize: (v: number) => setSlide(i, { cta1Size: v }),
+                          },
+                          {
+                            n: 2,
+                            label: "Button 2 · Secondary (optional)",
+                            text: s.cta2Label,
+                            onText: (v: string) => setSlide(i, { cta2Label: v }),
+                            link: s.cta2Href,
+                            onLink: (v: string) => setSlide(i, { cta2Href: v }),
+                            showDesktop: s.showCta2Desktop !== false,
+                            onDesktop: (v: boolean) => setSlide(i, { showCta2Desktop: v }),
+                            showMobile: s.showCta2Mobile !== false,
+                            onMobile: (v: boolean) => setSlide(i, { showCta2Mobile: v }),
+                            size: Number(s.cta2Size ?? 14),
+                            onSize: (v: number) => setSlide(i, { cta2Size: v }),
+                          },
+                        ].map((b) => (
+                          <div
+                            key={b.n}
+                            className="rounded-xl border border-slate-200 bg-white p-3"
+                          >
+                            <p className="mb-2 text-xs font-extrabold uppercase tracking-wider text-slate-600">
+                              {b.label}
+                            </p>
+                            <Field label="Text">
                               <input
                                 className={input}
-                                value={f?.label ?? ""}
-                                onChange={(e) => upsertFeature(i, fi, { label: e.target.value })}
-                                placeholder={`Feature ${fi + 1} name (e.g. Energy saving)`}
+                                value={b.text}
+                                onChange={(e) => b.onText(e.target.value)}
+                              />
+                            </Field>
+                            <div className="mt-2">
+                              <Field label="Link">
+                                <input
+                                  className={input}
+                                  value={b.link}
+                                  onChange={(e) => b.onLink(e.target.value)}
+                                  placeholder="/products?category=fans"
+                                />
+                              </Field>
+                            </div>
+                            <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
+                              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-600">
+                                <input
+                                  type="checkbox"
+                                  className="h-4 w-4 accent-[#E11D2A]"
+                                  checked={b.showDesktop}
+                                  onChange={(e) => b.onDesktop(e.target.checked)}
+                                />
+                                Show on desktop
+                              </label>
+                              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-600">
+                                <input
+                                  type="checkbox"
+                                  className="h-4 w-4 accent-[#E11D2A]"
+                                  checked={b.showMobile}
+                                  onChange={(e) => b.onMobile(e.target.checked)}
+                                />
+                                Show on mobile
+                              </label>
+                            </div>
+                            <div className="mt-2">
+                              <NumStepper
+                                label="Font size"
+                                value={b.size}
+                                min={12}
+                                max={24}
+                                step={1}
+                                unit="px"
+                                onChange={b.onSize}
                               />
                             </div>
-                          );
-                        })}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <div className="space-y-3">
+                        <HeroImageSlot
+                          slot="desktop"
+                          value={s.image}
+                          imgV={imgV}
+                          angle={Number(s.imgAngle ?? 0)}
+                          pad={Number(s.imgPadding ?? 0)}
+                          posX={Number(s.imgPosX ?? 50)}
+                          posY={Number(s.imgPosY ?? 50)}
+                          onChange={(url) => {
+                            setSlide(i, { image: url });
+                            setImgV((v) => v + 1);
+                          }}
+                          onAdjust={(adj) => {
+                            setSlide(i, {
+                              image: adj.image,
+                              imgAngle: adj.angle,
+                              imgPadding: adj.pad,
+                              imgPosX: adj.posX,
+                              imgPosY: adj.posY,
+                            });
+                            setImgV((v) => v + 1);
+                          }}
+                        />
+                        <HeroImageSlot
+                          slot="mobile"
+                          value={s.imageMobile ?? ""}
+                          imgV={imgV}
+                          angle={Number(s.imgAngle ?? 0)}
+                          pad={Number(s.imgPadding ?? 0)}
+                          posX={Number(s.imgPosX ?? 50)}
+                          posY={Number(s.imgPosY ?? 50)}
+                          onChange={(url) => {
+                            setSlide(i, { imageMobile: url });
+                            setImgV((v) => v + 1);
+                          }}
+                          onAdjust={(adj) => {
+                            setSlide(i, {
+                              imageMobile: adj.image,
+                              imgAngle: adj.angle,
+                              imgPadding: adj.pad,
+                              imgPosX: adj.posX,
+                              imgPosY: adj.posY,
+                            });
+                            setImgV((v) => v + 1);
+                          }}
+                        />
+                        <p className="text-[0.7rem] leading-relaxed text-slate-500">
+                          Desktop banner fills the wide slider on computers; the
+                          mobile banner is shown on phones so you can frame each
+                          screen properly. Use sharp originals (JPEG / PNG /
+                          WebP — not screenshots) at the recommended sizes to
+                          avoid blur.
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center justify-between border-t border-slate-100 pt-3 sm:col-span-2">
@@ -410,6 +746,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                 {
                   id: `s-${Date.now()}`,
                   badge: "",
+                  offer: "",
                   eyebrow: "",
                   titleA: "Headline",
                   titleHighlight: "highlight",
@@ -419,7 +756,29 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                   ctaHref: "/products",
                   cta2Label: "",
                   cta2Href: "",
+                  showCta1Desktop: true,
+                  showCta1Mobile: true,
+                  cta1Size: 14,
+                  showCta2Desktop: true,
+                  showCta2Mobile: true,
+                  cta2Size: 14,
+                  eyebrowDesktop: true,
+                  eyebrowMobile: true,
+                  eyebrowSize: 100,
+                  titleDesktop: true,
+                  titleMobile: true,
+                  titleSize: 100,
+                  highlightDesktop: true,
+                  highlightMobile: true,
+                  highlightSize: 100,
+                  part2Desktop: true,
+                  part2Mobile: true,
+                  part2Size: 100,
+                  descDesktop: true,
+                  descMobile: true,
+                  descSize: 100,
                   image: "/images/hero/fan-ad.jpg",
+                  imageMobile: "",
                   imageAlt: "Product",
                   features: [
                     { icon: "bolt", label: "" },

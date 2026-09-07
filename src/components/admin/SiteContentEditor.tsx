@@ -246,6 +246,58 @@ function LineOpts({
 }
 
 /* Recommended hero banner specs (avoid blurry uploads) */
+function SmallImageUpload({ value, onChange, recommended, minW }: { value: string; onChange: (url: string) => void; recommended: string; minW: number }) {
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  return (
+    <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500">
+          Banner image
+        </span>
+        <span className="rounded bg-[#E11D2A]/10 px-2 py-0.5 text-[0.62rem] font-bold text-[#E11D2A]">
+          Recommended {recommended}px
+        </span>
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <input
+          className={input}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="/images/promo/… or upload below"
+        />
+        <UploadButton value={value} onChange={onChange} label="Upload" />
+      </div>
+      {value && (
+        <div className="mt-2 flex items-start gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resolveImg(value)}
+            alt="Preview"
+            className="h-16 w-28 shrink-0 rounded-lg border border-slate-200 bg-white object-cover"
+            onLoad={(e) => {
+              const n = e.currentTarget;
+              if (n.naturalWidth && n.naturalHeight)
+                setSize({ w: n.naturalWidth, h: n.naturalHeight });
+            }}
+          />
+          {size && (
+            <p
+              className={`text-[0.68rem] font-semibold ${
+                size.w < minW ? "text-amber-600" : "text-emerald-600"
+              }`}
+            >
+              {size.w} × {size.h} px —
+              {size.w < minW
+                ? " smaller than recommended; will look soft/blurry. Upload a bigger, sharper image."
+                : " sharp for this banner ✓"}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const HERO_SPEC = {
   desktop: {
     label: "Desktop banner (wide)",
@@ -934,8 +986,13 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                 <input className={input} value={p.title} onChange={(e) => setPromo(i, { title: e.target.value })} placeholder="Title" />
                 <input className={input} value={p.link} onChange={(e) => setPromo(i, { link: e.target.value })} placeholder="/products?category=…" />
                 <input className={input} value={p.subtitle ?? ""} onChange={(e) => setPromo(i, { subtitle: e.target.value })} placeholder="Subtitle" />
-                <input className={input} value={p.image ?? ""} onChange={(e) => setPromo(i, { image: e.target.value })} placeholder="Image path or URL" />
               </div>
+              <SmallImageUpload
+                value={p.image ?? ""}
+                onChange={(url) => setPromo(i, { image: url })}
+                recommended="1200 × 800"
+                minW={900}
+              />
               <div className="flex justify-end gap-1">
                 <button type="button" disabled={i === 0} onClick={() => movePromo(i, -1)} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 disabled:opacity-30"><FaArrowUp /></button>
                 <button type="button" disabled={i === promos.length - 1} onClick={() => movePromo(i, 1)} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 disabled:opacity-30"><FaChevronDown /></button>

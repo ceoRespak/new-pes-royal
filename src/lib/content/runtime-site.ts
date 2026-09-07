@@ -164,22 +164,15 @@ export function getRuntimeSite(): RuntimeSite {
   s.deliveryInfo = pick("deliveryInfo", s.deliveryInfo);
   s.whatsappMessage = pick("whatsappMessage", s.whatsappMessage);
 
-  const promo = arrOf<RuntimeSite["promoBanners"][number]>(store["promoBanners"]);
-  if (promo.length) {
-    // Rewrite legacy `/storage/images/…` → this site's own `/api/files/…`
-    // (same uploaded file, different mount) so banners never 404.
-    s.promoBanners = promo.map((b) => ({
+  // Promo / collection banners are edited in Admin → Site Content (which has
+  // upload + size guidance). Use those when set, otherwise the static defaults.
+  const contentPromo = (content.promoBanners as RuntimeSite["promoBanners"] | undefined) || [];
+  if (contentPromo.length) {
+    s.promoBanners = contentPromo.map((b) => ({
       ...b,
       link: b.link || "/products",
-      // Rewrite legacy `/storage/images/…` → this site's own `/api/files/…`
-      // (same uploaded file, different mount) so banners never 404.
       image: (b.image || "").replace(/^\/storage\/images\//, "/api/files/"),
     }));
-  } else {
-    const contentPromo = (content.promoBanners as RuntimeSite["promoBanners"] | undefined) || [];
-    if (contentPromo.length) {
-      s.promoBanners = contentPromo.map((b) => ({ ...b, link: b.link || "/products" }));
-    }
   }
 
   const socials = arrOf<{ name: string; url: string; icon?: string }>(store["socialLinks"]);

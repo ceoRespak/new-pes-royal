@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaEdit, FaImage, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import { resolveImage } from "@/lib/images";
+import UploadButton from "./UploadButton";
 
 export interface AdminCategory {
   id: string;
@@ -23,6 +24,10 @@ const toAbs = resolveImage;
 
 const empty: FormState = { name: "", image: "", sort_order: 0 };
 
+/** Category banner is shown full-width on the storefront (wide banner). */
+const CAT_RECOMMENDED = "1600 × 600";
+const CAT_MIN_W = 1000;
+
 export default function CategoriesManager({ categories }: { categories: AdminCategory[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -30,15 +35,18 @@ export default function CategoriesManager({ categories }: { categories: AdminCat
   const [form, setForm] = useState<FormState>(empty);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [imgSize, setImgSize] = useState<{ w: number; h: number } | null>(null);
 
   function startCreate() {
     setEditing(null);
     setForm({ ...empty, sort_order: categories.length });
+    setImgSize(null);
     setOpen(true);
   }
   function startEdit(c: AdminCategory) {
     setEditing(c);
     setForm({ name: c.name, image: c.image ?? "", sort_order: c.sort_order ?? 0 });
+    setImgSize(null);
     setOpen(true);
   }
 
@@ -169,17 +177,63 @@ export default function CategoriesManager({ categories }: { categories: AdminCat
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-primary focus:bg-white"
                 />
               </label>
-              <label className="block">
-                <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Image URL
-                </span>
-                <input
-                  value={form.image}
-                  onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-primary focus:bg-white"
-                  placeholder="/storage/images/…"
-                />
-              </label>
+              <div className="block">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Banner image
+                  </span>
+                  <span className="rounded bg-amber-500/10 px-2 py-0.5 text-[0.65rem] font-bold text-amber-600">
+                    Recommended {CAT_RECOMMENDED}px
+                  </span>
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    value={form.image}
+                    onChange={(e) => {
+                      setForm((f) => ({ ...f, image: e.target.value }));
+                      setImgSize(null);
+                    }}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-primary focus:bg-white"
+                    placeholder="/storage/images/… or https://…"
+                  />
+                  <UploadButton
+                    value={form.image}
+                    onChange={(url) => {
+                      setForm((f) => ({ ...f, image: url }));
+                      setImgSize(null);
+                    }}
+                  />
+                </div>
+                {form.image && (
+                  <div className="mt-2 flex items-start gap-3 rounded-xl bg-slate-50 p-2">
+                    <Image
+                      src={toAbs(form.image)}
+                      alt="Category preview"
+                      width={96}
+                      height={48}
+                      unoptimized
+                      className="h-12 w-24 shrink-0 rounded-lg border border-slate-200 bg-white object-cover"
+                      onLoad={(e) => {
+                        const n = e.currentTarget;
+                        if (n.naturalWidth && n.naturalHeight)
+                          setImgSize({ w: n.naturalWidth, h: n.naturalHeight });
+                      }}
+                    />
+                    {imgSize && (
+                      <p
+                        className={`pt-1 text-[0.68rem] font-semibold leading-snug ${
+                          imgSize.w < CAT_MIN_W ? "text-amber-600" : "text-emerald-600"
+                        }`}
+                      >
+                        {imgSize.w} × {imgSize.h} px —{" "}
+                        {imgSize.w < CAT_MIN_W
+                          ? "smaller than recommended; will look soft/blurry on the wide category banner. Upload a wider, sharper image."
+                          : "sharp for the category banner ✓"}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
               <label className="block">
                 <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">
                   Sort order

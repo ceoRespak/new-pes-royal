@@ -67,7 +67,7 @@ function Bar({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[#E11D2A]"
+        className="w-full accent-[#FF5A00]"
         aria-label={label}
       />
     </div>
@@ -147,7 +147,7 @@ export default function HeroImageAdjustModal({
           setDims(null);
           setOpen(true);
         }}
-        className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#E11D2A] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-[#b8111f]"
+        className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#FF5A00] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-[#E04D00]"
       >
         <FaCrop /> Upload &amp; adjust image
       </button>
@@ -164,10 +164,10 @@ export default function HeroImageAdjustModal({
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
               <h3 className="flex items-center gap-2 font-display text-base font-bold text-slate-900">
-                <FaImage className="text-[#E11D2A]" />
+                <FaImage className="text-[#FF5A00]" />
                 {slotLabel || "Banner image editor"}
                 {recommended && (
-                  <span className="rounded-md bg-[#E11D2A]/10 px-2 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-wide text-[#E11D2A]">
+                  <span className="rounded-md bg-[#FF5A00]/10 px-2 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-wide text-[#FF5A00]">
                     {recommended}
                   </span>
                 )}
@@ -188,7 +188,7 @@ export default function HeroImageAdjustModal({
                 <p className="mb-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
                   Live preview (wide banner)
                 </p>
-                <div className="relative h-44 overflow-hidden rounded-xl bg-[#001a33] sm:h-56 lg:h-full lg:min-h-[260px]">
+                <div className="relative h-44 overflow-hidden rounded-xl bg-[#001B45] sm:h-56 lg:h-full lg:min-h-[260px]">
                   {img ? (
                     <>
                       <div
@@ -198,7 +198,7 @@ export default function HeroImageAdjustModal({
                           right: p,
                           bottom: p,
                           left: p,
-                          background: "#001a33",
+                          background: "#001B45",
                         }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -221,7 +221,7 @@ export default function HeroImageAdjustModal({
                         />
                       </div>
                       {/* mimic hero readability scrim */}
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001a33]/70 via-transparent to-transparent" />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001B45]/70 via-transparent to-transparent" />
                       <div className="pointer-events-none absolute bottom-1.5 right-2 rounded bg-black/30 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-white/70">
                         Sample headline
                       </div>
@@ -259,7 +259,7 @@ export default function HeroImageAdjustModal({
                     Image
                   </span>
                   <input
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#E11D2A]"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#FF5A00]"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="/images/hero/banner.jpg or paste URL"
@@ -305,7 +305,7 @@ export default function HeroImageAdjustModal({
                   <button
                     type="button"
                     onClick={reset}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 transition hover:text-[#E11D2A]"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 transition hover:text-[#FF5A00]"
                   >
                     <FaRedo /> Reset adjustments
                   </button>
@@ -326,7 +326,7 @@ export default function HeroImageAdjustModal({
                 type="button"
                 onClick={save}
                 disabled={busy || !url}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#E11D2A] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#b8111f] disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#FF5A00] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#E04D00] disabled:opacity-50"
               >
                 <FaCheck /> {busy ? "Saving…" : "Use this image"}
               </button>

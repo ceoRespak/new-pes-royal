@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --primary: #003366;
-  --primary-soft: #0a4788;
-  --accent: #d4af37;
-  --light: #f5f5f5;
+  --primary: #002B6B;
+  --primary-soft: #0047B3;
+  --accent: #FF5A00;
+  --light: #F5F7FA;
 }
 
 html {
@@ -32,12 +32,12 @@ body {
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #003366;
+  background: #002B6B;
 }
 
 ::selection {
-  background: #d4af37;
-  color: #003366;
+  background: #FF5A00;
+  color: #ffffff;
 }
 
 /* ---------- Reusable component classes ---------- */
@@ -58,8 +58,8 @@ body {
   .btn-primary {
     @apply btn bg-primary-gradient text-white shadow-card hover:-translate-y-0.5 hover:shadow-card-hover;
   }
-  .btn-gold {
-    @apply btn bg-gold-gradient text-primary hover:-translate-y-0.5 hover:shadow-gold;
+  .btn-accent {
+    @apply btn bg-accent-gradient text-white hover:-translate-y-0.5 hover:shadow-accent;
   }
   .btn-outline {
     @apply btn border-2 border-primary/20 text-primary hover:border-primary hover:bg-primary hover:text-white;
@@ -76,7 +76,7 @@ body {
     @apply font-display text-3xl font-bold leading-tight text-primary md:text-4xl lg:text-[2.75rem];
   }
 
-  /* Gold gradient underline for headings */
+  /* Orange gradient underline for headings */
   .heading-underline {
     position: relative;
   }
@@ -88,7 +88,7 @@ body {
     height: 4px;
     width: 72px;
     border-radius: 9999px;
-    background: linear-gradient(90deg, #d4af37, #f0df9a);
+    background: linear-gradient(90deg, #FF5A00, #FF9A4D);
   }
   .heading-underline-center::after {
     left: 50%;
@@ -106,7 +106,7 @@ body {
 }
 .swiper-pagination-bullet-active {
   opacity: 1 !important;
-  background: #d4af37 !important;
+  background: #FF5A00 !important;
   width: 26px;
   border-radius: 9999px;
 }

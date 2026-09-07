@@ -47,7 +47,7 @@ export default function BestSellersBand({ best }: { best?: Product[] }) {
         {/* Heading */}
         <div className="mb-8 flex flex-wrap items-end justify-between gap-3 border-b-2 border-slate-100 pb-3">
           <div>
-            <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
+            <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#FF5A00]">
               Handpicked for you
             </p>
             <h2 className="font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
@@ -56,7 +56,7 @@ export default function BestSellersBand({ best }: { best?: Product[] }) {
           </div>
           <Link
             href="/products"
-            className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+            className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#FF5A00] transition hover:gap-3"
           >
             View All Products
             <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />
@@ -85,14 +85,14 @@ export default function BestSellersBand({ best }: { best?: Product[] }) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/35 to-transparent" />
                 <div className="relative p-6">
-                  <span className="inline-block rounded-full bg-[#E11D2A] px-3 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-widest text-white">
+                  <span className="inline-block rounded-full bg-[#FF5A00] px-3 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-widest text-white">
                     {promo.kicker}
                   </span>
                   <h3 className="mt-2 font-display text-2xl font-extrabold leading-tight text-white">
                     {promo.title}
                   </h3>
                   <p className="mt-1 text-sm text-white/80">{promo.line}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-[0.7rem] font-bold uppercase tracking-wider text-slate-900 transition-all duration-300 group-hover:bg-[#E11D2A] group-hover:text-white">
+                  <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-[0.7rem] font-bold uppercase tracking-wider text-slate-900 transition-all duration-300 group-hover:bg-[#FF5A00] group-hover:text-white">
                     {promo.cta} <FaArrowRight />
                   </span>
                 </div>

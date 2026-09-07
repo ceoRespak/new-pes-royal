@@ -51,7 +51,7 @@ export default function AdminNav({
             className={cn(
               "flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition",
               active
-                ? "bg-gold-gradient text-primary"
+                ? "bg-accent-gradient text-white"
                 : "text-slate-300 hover:bg-white/10 hover:text-white"
             )}
           >

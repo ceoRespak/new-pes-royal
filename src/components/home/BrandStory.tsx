@@ -50,7 +50,7 @@ export default function BrandStory() {
 
           {/* Floating badge */}
           <div className="absolute -bottom-8 -right-3 flex items-center gap-4 rounded-2xl bg-primary p-5 text-white shadow-card-hover sm:right-8">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-gradient text-2xl text-primary">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-gradient text-2xl text-white">
               <FaAward />
             </span>
             <div>

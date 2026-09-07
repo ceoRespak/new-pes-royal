@@ -139,7 +139,7 @@ const DEFAULT_WHY: WhyItem[] = [
 
 const ICONS = ["truck","shield","money","check","headset","store","tags","award","bolt","star","sun","wifi","headset","heart","handshake","eye","bullseye"];
 const DEFAULT_BG =
-  "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)";
+  "radial-gradient(1200px 620px at 85% -10%, rgba(0,71,179,0.5), transparent 60%), linear-gradient(120deg,#001B45 0%,#002B6B 58%,#0047B3 100%)";
 
 const PAGES: { id: string; label: string }[] = [
   { id: "contact", label: "Contact" },
@@ -151,7 +151,7 @@ const PAGES: { id: string; label: string }[] = [
 const resolveImg = (src?: string) => resolveImage(src);
 
 const input =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#E11D2A]";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#FF5A00]";
 const lbl = "mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -183,7 +183,7 @@ function NumStepper({ label, value, min, max, step, unit, onChange }: { label: s
         <button
           type="button"
           onClick={() => bump(-1)}
-          className="h-8 w-8 shrink-0 rounded-lg border border-slate-200 bg-white text-base font-bold text-slate-600 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+          className="h-8 w-8 shrink-0 rounded-lg border border-slate-200 bg-white text-base font-bold text-slate-600 transition hover:border-[#FF5A00] hover:text-[#FF5A00]"
           aria-label={`Decrease ${label}`}
         >
           −
@@ -203,7 +203,7 @@ function NumStepper({ label, value, min, max, step, unit, onChange }: { label: s
         <button
           type="button"
           onClick={() => bump(1)}
-          className="h-8 w-8 shrink-0 rounded-lg border border-slate-200 bg-white text-base font-bold text-slate-600 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+          className="h-8 w-8 shrink-0 rounded-lg border border-slate-200 bg-white text-base font-bold text-slate-600 transition hover:border-[#FF5A00] hover:text-[#FF5A00]"
           aria-label={`Increase ${label}`}
         >
           +
@@ -239,7 +239,7 @@ function LineOpts({
       <label className="flex cursor-pointer items-center gap-1 text-[0.68rem] font-semibold text-slate-600">
         <input
           type="checkbox"
-          className="h-3.5 w-3.5 accent-[#E11D2A]"
+          className="h-3.5 w-3.5 accent-[#FF5A00]"
           checked={showDesktop}
           onChange={(e) => onDesktop(e.target.checked)}
         />{" "}
@@ -248,7 +248,7 @@ function LineOpts({
       <label className="flex cursor-pointer items-center gap-1 text-[0.68rem] font-semibold text-slate-600">
         <input
           type="checkbox"
-          className="h-3.5 w-3.5 accent-[#E11D2A]"
+          className="h-3.5 w-3.5 accent-[#FF5A00]"
           checked={showMobile}
           onChange={(e) => onMobile(e.target.checked)}
         />{" "}
@@ -288,7 +288,7 @@ function SmallImageUpload({ value, onChange, recommended, minW }: { value: strin
         <span className="text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500">
           Banner image
         </span>
-        <span className="rounded bg-[#E11D2A]/10 px-2 py-0.5 text-[0.62rem] font-bold text-[#E11D2A]">
+        <span className="rounded bg-[#FF5A00]/10 px-2 py-0.5 text-[0.62rem] font-bold text-[#FF5A00]">
           Recommended {recommended}px
         </span>
       </div>
@@ -378,7 +378,7 @@ function HeroImageSlot({
         <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600">
           {spec.label}
         </span>
-        <span className="rounded-md bg-[#E11D2A]/10 px-2 py-0.5 text-[0.62rem] font-bold text-[#E11D2A]">
+        <span className="rounded-md bg-[#FF5A00]/10 px-2 py-0.5 text-[0.62rem] font-bold text-[#FF5A00]">
           Recommended {spec.size}px
         </span>
       </div>
@@ -621,7 +621,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-white py-3 text-sm font-bold text-slate-500 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+      className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-white py-3 text-sm font-bold text-slate-500 transition hover:border-[#FF5A00] hover:text-[#FF5A00]"
     >
       <FaPlus /> {label}
     </button>
@@ -670,7 +670,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
         <button
           onClick={save}
           disabled={busy}
-          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#E11D2A] to-[#7a0f16] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#FF5A00] to-[#C2410C] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 disabled:opacity-60"
         >
           <FaSave /> {busy ? "Saving…" : "Save all changes"}
         </button>
@@ -682,7 +682,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       )}
 
       {/* ============ HERO SLIDES ============ */}
-      <Group title="Hero advertisement slides" hint="The big banners people see first — copy, image & buttons." accent="bg-gradient-to-r from-[#E11D2A] to-[#7a0f16]" icon={FaBullhorn} count={heroSlides.length}>
+      <Group title="Hero advertisement slides" hint="The big banners people see first — copy, image & buttons." accent="bg-gradient-to-r from-[#FF5A00] to-[#C2410C]" icon={FaBullhorn} count={heroSlides.length}>
         <div className="space-y-4">
           {heroSlides.map((s, i) => {
             const isOpen = open === i;
@@ -707,7 +707,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                     <span className="block text-[0.62rem] font-bold uppercase tracking-wider text-slate-400">Slide {i + 1}</span>
                     <span className="block truncate text-sm font-bold text-slate-800">{s.titleA} {s.titleHighlight}</span>
                   </span>
-                  <span className={isOpen ? "text-[#E11D2A]" : "text-slate-400"}>
+                  <span className={isOpen ? "text-[#FF5A00]" : "text-slate-400"}>
                     {isOpen ? <FaChevronUp /> : <FaChevronDown />}
                   </span>
                 </button>
@@ -840,7 +840,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                               <label className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-600">
                                 <input
                                   type="checkbox"
-                                  className="h-4 w-4 accent-[#E11D2A]"
+                                  className="h-4 w-4 accent-[#FF5A00]"
                                   checked={b.showDesktop}
                                   onChange={(e) => b.onDesktop(e.target.checked)}
                                 />
@@ -849,7 +849,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                               <label className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-600">
                                 <input
                                   type="checkbox"
-                                  className="h-4 w-4 accent-[#E11D2A]"
+                                  className="h-4 w-4 accent-[#FF5A00]"
                                   checked={b.showMobile}
                                   onChange={(e) => b.onMobile(e.target.checked)}
                                 />
@@ -1001,7 +1001,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ TRUST STRIP ============ */}
-      <Group title="Trust strip (USPs)" hint="The small benefit cards above the category tiles." accent="bg-gradient-to-r from-emerald-500 to-teal-700" icon={FaCheckCircle} count={trust.length}>
+      <Group title="Trust strip (USPs)" hint="The small benefit cards above the category tiles." accent="bg-gradient-to-r from-[#002B6B] to-[#0047B3]" icon={FaCheckCircle} count={trust.length}>
         <div className="space-y-3">
           {trust.map((t, i) => (
             <ItemRow key={i} label={t.title} onRemove={() => removeAt(setTrust)(i)}
@@ -1018,7 +1018,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ SLOGAN ============ */}
-      <Group title="Slogan banner (mid-page)" hint="The full-width message between sections." accent="bg-gradient-to-r from-indigo-500 to-blue-700" icon={FaQuoteRight} count={1}>
+      <Group title="Slogan banner (mid-page)" hint="The full-width message between sections." accent="bg-gradient-to-r from-[#0047B3] to-[#001B45]" icon={FaQuoteRight} count={1}>
         <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2">
           <Field label="Eyebrow"><input className={input} value={slogan.eyebrow} onChange={(e) => setSlogan({ ...slogan, eyebrow: e.target.value })} /></Field>
           <Field label="Highlight (gold)"><input className={input} value={slogan.highlight} onChange={(e) => setSlogan({ ...slogan, highlight: e.target.value })} /></Field>
@@ -1031,7 +1031,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ WHY CHOOSE ============ */}
-      <Group title="Why Choose tiles" hint="The 4 reasons shown near the bottom of the homepage." accent="bg-gradient-to-r from-violet-500 to-purple-800" icon={FaThumbsUp} count={why.length}>
+      <Group title="Why Choose tiles" hint="The 4 reasons shown near the bottom of the homepage." accent="bg-gradient-to-r from-[#FF5A00] to-[#E04D00]" icon={FaThumbsUp} count={why.length}>
         <div className="space-y-3">
           <input className={input} value={whyHeading} onChange={(e) => setWhyHeading(e.target.value)} placeholder="Heading (e.g. Your Trusted Electrical Partner)" />
           {why.map((w, i) => (
@@ -1053,7 +1053,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ PROMO BANNERS ============ */}
-      <Group title="Promo / collection banners" hint="Image banners linking to a category or page." accent="bg-gradient-to-r from-sky-500 to-cyan-700" icon={FaImages} count={promos.length}>
+      <Group title="Promo / collection banners" hint="Image banners linking to a category or page." accent="bg-gradient-to-r from-[#0047B3] to-[#002B6B]" icon={FaImages} count={promos.length}>
         <div className="space-y-3">
           {promos.map((p, i) => (
             <ItemRow key={i} label={p.title} onRemove={() => removeAt(setPromos)(i)}>
@@ -1080,7 +1080,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ TESTIMONIALS ============ */}
-      <Group title="Testimonials" hint="Customer reviews shown in the blue carousel." accent="bg-gradient-to-r from-amber-500 to-orange-700" icon={FaCommentDots} count={testimonials.length}>
+      <Group title="Testimonials" hint="Customer reviews shown in the blue carousel." accent="bg-gradient-to-r from-[#FF7A1A] to-[#E04D00]" icon={FaCommentDots} count={testimonials.length}>
         <div className="space-y-3">
           {testimonials.map((t, i) => (
             <ItemRow key={t.id} label={t.name} onRemove={() => removeAt(setTestimonials)(i)}>
@@ -1106,7 +1106,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       <Group
         title="About page — full content"
         hint="Edit every section of the About page from here: hero heading, image, story, mission, values, stats & timeline."
-        accent="bg-gradient-to-r from-emerald-500 to-teal-700"
+        accent="bg-gradient-to-r from-[#002B6B] to-[#0047B3]"
         icon={FaInfoCircle}
         count={7}
       >
@@ -1258,7 +1258,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ GALLERY ============ */}
-      <Group title="Gallery photos" hint="Real project photos with captions — shown on the Gallery page." accent="bg-gradient-to-r from-rose-500 to-red-700" icon={FaImages} count={galleryItems.length}>
+      <Group title="Gallery photos" hint="Real project photos with captions — shown on the Gallery page." accent="bg-gradient-to-r from-[#FF5A00] to-[#C2410C]" icon={FaImages} count={galleryItems.length}>
         <div className="space-y-3">
           {galleryItems.map((g, i) => (
             <ItemRow key={g.id} label={g.title} controls={<ItemControls i={i} len={galleryItems.length} onRemove={() => removeAt(setGallery)(i)} moveFn={(d) => moveGallery(i, d)} />}>
@@ -1282,7 +1282,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ SUPPORT FAQ ============ */}
-      <Group title="Support FAQs" hint="Questions & answers on the Support page (categories: warranty / products / orders / support)." accent="bg-gradient-to-r from-cyan-500 to-blue-700" icon={FaQuestionCircle} count={faqs.length}>
+      <Group title="Support FAQs" hint="Questions & answers on the Support page (categories: warranty / products / orders / support)." accent="bg-gradient-to-r from-[#0047B3] to-[#1E5CB3]" icon={FaQuestionCircle} count={faqs.length}>
         <div className="space-y-3">
           {faqs.map((f, i) => (
             <ItemRow key={f.id} label={f.question} controls={<ItemControls i={i} len={faqs.length} onRemove={() => removeAt(setFaqs)(i)} moveFn={(d) => moveFaq(i, d)} />}>
@@ -1302,7 +1302,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       </Group>
 
       {/* ============ DEALERS ============ */}
-      <Group title="Dealers & locations" hint="Outlets shown on the Dealers page." accent="bg-gradient-to-r from-orange-500 to-amber-700" icon={FaStore} count={dealers.length}>
+      <Group title="Dealers & locations" hint="Outlets shown on the Dealers page." accent="bg-gradient-to-r from-[#FF7A1A] to-[#E04D00]" icon={FaStore} count={dealers.length}>
         <div className="space-y-3">
           {dealers.map((d, i) => (
             <ItemRow key={d.id} label={d.name} controls={<ItemControls i={i} len={dealers.length} onRemove={() => removeAt(setDealers)(i)} moveFn={(d2) => moveDealer(i, d2)} />}>
@@ -1315,10 +1315,10 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
                 <input className={input} value={d.timing} onChange={(e) => setDealer(i, { timing: e.target.value })} placeholder="Timing" />
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                    <input type="checkbox" className="h-4 w-4 accent-[#E11D2A]" checked={d.isServiceCenter} onChange={(e) => setDealer(i, { isServiceCenter: e.target.checked })} /> Service center
+                    <input type="checkbox" className="h-4 w-4 accent-[#FF5A00]" checked={d.isServiceCenter} onChange={(e) => setDealer(i, { isServiceCenter: e.target.checked })} /> Service center
                   </label>
                   <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                    <input type="checkbox" className="h-4 w-4 accent-[#E11D2A]" checked={d.isHeadOffice} onChange={(e) => setDealer(i, { isHeadOffice: e.target.checked })} /> Head office
+                    <input type="checkbox" className="h-4 w-4 accent-[#FF5A00]" checked={d.isHeadOffice} onChange={(e) => setDealer(i, { isHeadOffice: e.target.checked })} /> Head office
                   </label>
                 </div>
               </div>
@@ -1359,7 +1359,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       <Group
         title="Inner page headings"
         hint="Main heading + highlighted word for Contact, Support, Gallery & Dealers. (About is edited in the About page group above.)"
-        accent="bg-gradient-to-r from-rose-500 to-pink-700"
+        accent="bg-gradient-to-r from-[#E04D00] to-[#C2410C]"
         icon={FaFileAlt}
         count={4}
       >

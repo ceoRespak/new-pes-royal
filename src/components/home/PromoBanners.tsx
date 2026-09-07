@@ -42,7 +42,7 @@ export default function PromoBanners({
               <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border-[1.5rem] border-white/10 transition-transform duration-700 group-hover:scale-125" />
 
               <div className="relative p-7">
-                <span className="inline-flex items-center gap-2 rounded-full bg-gold-gradient px-3 py-1 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-primary">
+                <span className="inline-flex items-center gap-2 rounded-full bg-accent-gradient px-3 py-1 text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-white">
                   Shop Now
                 </span>
                 <h3 className="mt-3 font-display text-2xl font-bold leading-tight">

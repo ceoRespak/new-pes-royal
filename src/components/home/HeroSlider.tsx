@@ -174,8 +174,8 @@ export default function HeroSlider({
               </div>
 
               {/* readability scrims (keeps copy readable over any banner) */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001a33] via-[#001a33]/80 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#001a33]/90 to-transparent lg:h-32" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#001B45] via-[#001B45]/80 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#001B45]/90 to-transparent lg:h-32" />
               <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
 
               <div className="container-px relative flex min-h-[520px] flex-col justify-center pb-16 pt-28 lg:min-h-[600px] lg:pb-24 lg:pt-36">
@@ -187,12 +187,12 @@ export default function HeroSlider({
                 >
                   <div className="flex flex-wrap items-center gap-2.5">
                     {slide.offer && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-gradient px-4 py-1.5 text-[0.72rem] font-extrabold uppercase tracking-widest text-primary shadow-lg shadow-black/25">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-gradient px-4 py-1.5 text-[0.72rem] font-extrabold uppercase tracking-widest text-white shadow-lg shadow-black/25">
                         <FaBolt /> {slide.offer}
                       </span>
                     )}
                     {slide.badge && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E11D2A]/95 px-4 py-1.5 text-[0.66rem] font-extrabold uppercase tracking-[0.18em] text-white shadow-lg shadow-[#E11D2A]/30">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FF5A00]/95 px-4 py-1.5 text-[0.66rem] font-extrabold uppercase tracking-[0.18em] text-white shadow-lg shadow-[#FF5A00]/30">
                         <FaStar /> {slide.badge}
                       </span>
                     )}
@@ -232,7 +232,7 @@ export default function HeroSlider({
                         className={`${dispInline(
                           slide.highlightDesktop !== false,
                           slide.highlightMobile !== false
-                        )} bg-gold-gradient bg-clip-text text-transparent`}
+                        )} bg-accent-gradient bg-clip-text text-transparent`}
                         style={{
                           fontSize: `${(slide.highlightSize ?? 100) / 100}em`,
                         }}
@@ -271,7 +271,7 @@ export default function HeroSlider({
                     {slide.ctaLabel && slide.ctaHref && (
                       <Link
                         href={slide.ctaHref}
-                        className={`${cta1Cls} group items-center gap-2 rounded-full bg-[#E11D2A] px-8 py-3.5 font-extrabold uppercase tracking-wider text-white shadow-xl shadow-[#E11D2A]/40 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#b8111f]`}
+                        className={`${cta1Cls} group items-center gap-2 rounded-full bg-[#FF5A00] px-8 py-3.5 font-extrabold uppercase tracking-wider text-white shadow-xl shadow-[#FF5A00]/40 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#E04D00]`}
                         style={{ fontSize: cta1Size }}
                       >
                         <FaShoppingBag className="text-base" />
@@ -301,14 +301,14 @@ export default function HeroSlider({
       <button
         ref={prevRef}
         aria-label="Previous slide"
-        className="absolute left-3 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur transition hover:bg-[#E11D2A] hover:text-white lg:flex"
+        className="absolute left-3 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur transition hover:bg-[#FF5A00] hover:text-white lg:flex"
       >
         <FaChevronLeft />
       </button>
       <button
         ref={nextRef}
         aria-label="Next slide"
-        className="absolute right-3 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur transition hover:bg-[#E11D2A] hover:text-white lg:flex"
+        className="absolute right-3 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur transition hover:bg-[#FF5A00] hover:text-white lg:flex"
       >
         <FaChevronRight />
       </button>

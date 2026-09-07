@@ -101,7 +101,7 @@ export default async function AdminDashboardPage() {
             value: String(settings?.siteName ?? site.name),
             sub: String(settings?.footerTagline ?? site.tagline),
             href: "/admin/settings",
-            tone: "from-emerald-500 to-teal-600",
+            tone: "from-primary-600 to-primary",
           },
           {
             icon: FaInfoCircle,

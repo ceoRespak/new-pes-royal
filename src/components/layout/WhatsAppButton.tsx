@@ -42,7 +42,7 @@ export default function WhatsAppButton({ number }: { number?: string }) {
           </span>
           <span className="relative flex h-14 w-14 items-center justify-center">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#25D366] opacity-40" />
-            <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-gold transition-transform duration-300 group-hover:scale-110">
+            <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-3xl text-white shadow-accent transition-transform duration-300 group-hover:scale-110">
               <FaWhatsapp />
             </span>
           </span>

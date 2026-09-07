@@ -124,7 +124,7 @@ export default function DealerDirectory({ dealers: propDealers }: { dealers?: De
             >
               {/* top accent strip for head office */}
               {d.isHeadOffice && (
-                <span className="absolute inset-x-0 top-0 h-1.5 bg-gold-gradient" />
+                <span className="absolute inset-x-0 top-0 h-1.5 bg-accent-gradient" />
               )}
               <div className="flex items-start justify-between gap-3">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/5 text-xl text-primary transition group-hover:bg-primary-gradient group-hover:text-white">
@@ -132,7 +132,7 @@ export default function DealerDirectory({ dealers: propDealers }: { dealers?: De
                 </span>
                 <div className="flex flex-wrap justify-end gap-1.5">
                   {d.isHeadOffice && (
-                    <span className="rounded-full bg-gold-gradient px-2.5 py-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-primary">
+                    <span className="rounded-full bg-accent-gradient px-2.5 py-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-white">
                       Head Office
                     </span>
                   )}

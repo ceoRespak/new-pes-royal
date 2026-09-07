@@ -42,7 +42,7 @@ export default function ExportCta() {
                 key={title}
                 className={`p-8 ${i > 0 ? "border-t border-slate-200 md:border-l md:border-t-0" : ""}`}
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E11D2A]/10 text-xl text-[#E11D2A]">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FF5A00]/10 text-xl text-[#FF5A00]">
                   <Icon />
                 </span>
                 <h3 className="mt-4 font-display text-lg font-bold text-slate-900">
@@ -66,7 +66,7 @@ export default function ExportCta() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 rounded-full bg-[#E11D2A] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#b8111f]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#FF5A00] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#E04D00]"
               >
                 Contact Our Team <FaArrowRight />
               </Link>

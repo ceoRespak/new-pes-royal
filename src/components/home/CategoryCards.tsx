@@ -40,16 +40,16 @@ export default function CategoryCards({ cats }: CategoryCardsProps) {
       href={`/products?category=${cat.id}`}
       tabIndex={dup ? -1 : undefined}
       aria-hidden={dup}
-      className="group flex min-w-max items-center gap-2.5 rounded-2xl border border-slate-200 bg-white py-2 pl-3 pr-4 shadow-sm transition hover:-translate-y-0.5 hover:border-[#E11D2A]/40 hover:shadow-md"
+      className="group flex min-w-max items-center gap-2.5 rounded-2xl border border-slate-200 bg-white py-2 pl-3 pr-4 shadow-sm transition hover:-translate-y-0.5 hover:border-[#FF5A00]/40 hover:shadow-md"
     >
       <span
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[0.65rem] font-extrabold uppercase text-white"
-        style={{ background: cat.accent ?? "#003366" }}
+        style={{ background: cat.accent ?? "#002B6B" }}
       >
         {cat.shortName.slice(0, 2)}
       </span>
       <span className="text-left">
-        <span className="block max-w-[10rem] truncate text-sm font-bold leading-tight text-slate-800 group-hover:text-[#E11D2A]">
+        <span className="block max-w-[10rem] truncate text-sm font-bold leading-tight text-slate-800 group-hover:text-[#FF5A00]">
           {cat.shortName}
         </span>
         <span className="block text-[0.66rem] font-semibold text-slate-400">
@@ -64,7 +64,7 @@ export default function CategoryCards({ cats }: CategoryCardsProps) {
       <div className="container-px">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
+            <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#FF5A00]">
               Shop by Category
             </p>
             <h2 className="font-display text-xl font-extrabold text-slate-900 md:text-2xl">
@@ -73,7 +73,7 @@ export default function CategoryCards({ cats }: CategoryCardsProps) {
           </div>
           <Link
             href="/products"
-            className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+            className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#FF5A00] transition hover:gap-3"
           >
             View All Categories
             <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />

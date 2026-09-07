@@ -158,9 +158,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     {(product.features ?? []).map((f) => (
                       <li
                         key={f}
-                        className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm transition hover:border-[#E11D2A]/40"
+                        className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm transition hover:border-[#FF5A00]/40"
                       >
-                        <FaCheckCircle className="mt-0.5 shrink-0 text-[#E11D2A]" />
+                        <FaCheckCircle className="mt-0.5 shrink-0 text-[#FF5A00]" />
                         {f}
                       </li>
                     ))}
@@ -184,7 +184,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       href={waHref(site.whatsapp, product.name)}
                       target="_blank"
                       rel="noreferrer"
-                      className="font-semibold text-[#E11D2A] underline underline-offset-4 hover:text-[#b8111f]"
+                      className="font-semibold text-[#FF5A00] underline underline-offset-4 hover:text-[#E04D00]"
                     >
                       confirm on WhatsApp
                     </a>
@@ -211,7 +211,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     <p className="mt-1 text-sm text-slate-500">{site.address}</p>
                     <Link
                       href="/contact"
-                      className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#E11D2A] hover:underline"
+                      className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#FF5A00] hover:underline"
                     >
                       <FaStore /> Get Directions
                     </Link>
@@ -246,7 +246,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         href={waHref(site.whatsapp, product.name)}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#E11D2A] px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#b8111f]"
+                        className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#FF5A00] px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#E04D00]"
                       >
                         <FaWhatsapp /> Ask on WhatsApp
                       </a>
@@ -305,9 +305,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           href={v.link}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#E11D2A]/40"
+                          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#FF5A00]/40"
                         >
-                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E11D2A]/10 text-[#E11D2A]">
+                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FF5A00]/10 text-[#FF5A00]">
                             ▶
                           </span>
                           <span className="text-sm font-semibold text-slate-700">
@@ -334,7 +334,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         key={d.url + d.label}
                         href={d.url}
                         download
-                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#E11D2A]/40 hover:bg-[#E11D2A]/5"
+                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[#FF5A00]/40 hover:bg-[#FF5A00]/5"
                       >
                         <span className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-lg text-red-500">
@@ -342,7 +342,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           </span>
                           {d.label}
                         </span>
-                        <span className="text-xs font-bold text-slate-400 group-hover:text-[#E11D2A]">
+                        <span className="text-xs font-bold text-slate-400 group-hover:text-[#FF5A00]">
                           {d.size} ↓
                         </span>
                       </a>
@@ -365,7 +365,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           Live chat →
                         </span>
                       </a>
-                      <p className="rounded-2xl bg-[#E11D2A]/5 p-4 text-xs leading-relaxed text-slate-500">
+                      <p className="rounded-2xl bg-[#FF5A00]/5 p-4 text-xs leading-relaxed text-slate-500">
                         Need bulk / project pricing, exact stock or a datasheet?
                         Message us and a member of our Peshawar team will reply
                         promptly.
@@ -385,19 +385,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <div className="container-px">
             <div className="mb-8 flex flex-wrap items-end justify-between gap-3 border-b-2 border-slate-100 pb-3">
               <div>
-                <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
+                <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#FF5A00]">
                   You May Also Like
                 </p>
                 <h2 className="font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
                   More in{" "}
-                  <span className="text-[#E11D2A]">
+                  <span className="text-[#FF5A00]">
                     {categoryLabel(product.category)}
                   </span>
                 </h2>
               </div>
               <Link
                 href={`/products?category=${product.category}`}
-                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#FF5A00] transition hover:gap-3"
               >
                 View All
                 <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />

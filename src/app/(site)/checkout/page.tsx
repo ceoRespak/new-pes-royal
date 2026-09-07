@@ -27,7 +27,7 @@ import { useSite } from "@/components/site/SiteProvider";
 import { formatPrice } from "@/lib/utils";
 
 const inputCls =
-  "w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#E11D2A] focus:bg-white focus:ring-4 focus:ring-[#E11D2A]/10";
+  "w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#FF5A00] focus:bg-white focus:ring-4 focus:ring-[#FF5A00]/10";
 
 const labelCls =
   "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500";
@@ -200,7 +200,7 @@ export default function CheckoutPage() {
               </p>
               <Link
                 href="/products"
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#E11D2A] px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f]"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#FF5A00] px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 hover:bg-[#E04D00]"
               >
                 Browse Products
               </Link>
@@ -215,7 +215,7 @@ export default function CheckoutPage() {
                 {/* Contact & delivery */}
                 <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                   <h2 className="flex items-center gap-2 font-display text-lg font-bold text-slate-900">
-                    <FaTruck className="text-[#E11D2A]" /> Delivery Details
+                    <FaTruck className="text-[#FF5A00]" /> Delivery Details
                   </h2>
                   {me && (
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-primary/5 px-4 py-3 text-sm text-slate-700">
@@ -329,7 +329,7 @@ export default function CheckoutPage() {
                 {/* Shipping */}
                 <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                   <h2 className="flex items-center gap-2 font-display text-lg font-bold text-slate-900">
-                    <FaTruck className="text-[#E11D2A]" /> Delivery Method
+                    <FaTruck className="text-[#FF5A00]" /> Delivery Method
                   </h2>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     {SHIPPING_METHODS.map((s) => {
@@ -341,7 +341,7 @@ export default function CheckoutPage() {
                           onClick={() => setShippingId(s.id)}
                           className={`rounded-2xl border-2 p-4 text-left transition ${
                             active
-                              ? "border-[#E11D2A] bg-[#E11D2A]/5"
+                              ? "border-[#FF5A00] bg-[#FF5A00]/5"
                               : "border-slate-200 hover:border-slate-300"
                           }`}
                         >
@@ -371,7 +371,7 @@ export default function CheckoutPage() {
                 {/* Payment */}
                 <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                   <h2 className="flex items-center gap-2 font-display text-lg font-bold text-slate-900">
-                    <FaMoneyBillWave className="text-[#E11D2A]" /> Payment Method
+                    <FaMoneyBillWave className="text-[#FF5A00]" /> Payment Method
                   </h2>
                   <div className="mt-4 space-y-3">
                     {availablePayments.map((p) => {
@@ -383,14 +383,14 @@ export default function CheckoutPage() {
                           onClick={() => setPayId(p.id)}
                           className={`flex w-full items-start gap-3 rounded-2xl border-2 p-4 text-left transition ${
                             active
-                              ? "border-[#E11D2A] bg-[#E11D2A]/5"
+                              ? "border-[#FF5A00] bg-[#FF5A00]/5"
                               : "border-slate-200 hover:border-slate-300"
                           }`}
                         >
                           <span
                             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
                               active
-                                ? "border-[#E11D2A] bg-[#E11D2A]"
+                                ? "border-[#FF5A00] bg-[#FF5A00]"
                                 : "border-slate-300"
                             }`}
                           >
@@ -523,7 +523,7 @@ export default function CheckoutPage() {
                   <button
                     type="submit"
                     disabled={busy || !ready}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#E11D2A] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A00] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 hover:bg-[#E04D00] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {busy ? (
                       <>

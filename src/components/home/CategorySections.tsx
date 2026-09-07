@@ -33,7 +33,7 @@ export default function CategorySections({ blocks }: CategorySectionsProps) {
               <div className="flex items-center gap-3">
                 <span
                   className="flex h-11 w-11 items-center justify-center rounded-xl text-[0.7rem] font-extrabold uppercase text-white"
-                  style={{ background: cat.accent ?? "#003366" }}
+                  style={{ background: cat.accent ?? "#002B6B" }}
                 >
                   {cat.shortName.slice(0, 2)}
                 </span>
@@ -48,7 +48,7 @@ export default function CategorySections({ blocks }: CategorySectionsProps) {
               </div>
               <Link
                 href={`/products?category=${cat.id}`}
-                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#FF5A00] transition hover:gap-3"
               >
                 View All
                 <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />
@@ -75,7 +75,7 @@ export default function CategorySections({ blocks }: CategorySectionsProps) {
                   "inline-flex items-center gap-2 rounded-full border-2 px-7 py-3 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5",
                   i % 2 === 0
                     ? "border-primary/15 text-primary hover:border-primary hover:bg-primary hover:text-white"
-                    : "border-[#E11D2A]/25 text-[#E11D2A] hover:border-[#E11D2A] hover:bg-[#E11D2A] hover:text-white"
+                    : "border-[#FF5A00]/25 text-[#FF5A00] hover:border-[#FF5A00] hover:bg-[#FF5A00] hover:text-white"
                 )}
               >
                 All {cat.count} {cat.shortName} Products

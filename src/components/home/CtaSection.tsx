@@ -14,14 +14,14 @@ export default function CtaSection() {
               className="pointer-events-none absolute inset-0 opacity-10"
               style={{
                 backgroundImage:
-                  "repeating-linear-gradient(135deg,#d4af37 0 2px,transparent 2px 26px)",
+                  "repeating-linear-gradient(135deg,#FF5A00 0 2px,transparent 2px 26px)",
               }}
             />
             <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-accent/20 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
 
             <div className="relative mx-auto max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full bg-gold-gradient px-4 py-1.5 text-[0.7rem] font-extrabold uppercase tracking-[0.2em] text-primary">
+              <span className="inline-flex items-center gap-2 rounded-full bg-accent-gradient px-4 py-1.5 text-[0.7rem] font-extrabold uppercase tracking-[0.2em] text-white">
                 Ready to get started?
               </span>
               <h2 className="mt-5 font-display text-3xl font-bold leading-tight md:text-4xl">
@@ -34,7 +34,7 @@ export default function CtaSection() {
               </p>
 
               <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-                <Link href="/contact" className="btn-gold group">
+                <Link href="/contact" className="btn-accent group">
                   Get a Free Quote
                   <FaArrowRight className="transition-transform group-hover:translate-x-1" />
                 </Link>

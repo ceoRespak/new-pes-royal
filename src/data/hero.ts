@@ -98,7 +98,7 @@ export const heroSlides: HeroSlide[] = [
       { icon: "shield", label: "Official warranty" },
       { icon: "check", label: "Cash on Delivery" },
     ],
-    bg: "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)",
+    bg: "radial-gradient(1200px 620px at 85% -10%, rgba(0,71,179,0.5), transparent 60%), linear-gradient(120deg,#001B45 0%,#002B6B 58%,#0047B3 100%)",
   },
   {
     id: "s2-lighting",
@@ -120,7 +120,7 @@ export const heroSlides: HeroSlide[] = [
       { icon: "shield", label: "1-year warranty" },
       { icon: "truck", label: "Fast delivery" },
     ],
-    bg: "radial-gradient(1200px 620px at 15% -10%, rgba(212,175,55,0.18), transparent 60%), linear-gradient(120deg,#141428 0%,#003366 55%,#0a4788 100%)",
+    bg: "radial-gradient(1200px 620px at 15% -10%, rgba(255,90,0,0.18), transparent 60%), linear-gradient(120deg,#001433 0%,#002B6B 55%,#0047B3 100%)",
   },
   {
     id: "s3-smarthome",
@@ -142,6 +142,6 @@ export const heroSlides: HeroSlide[] = [
       { icon: "shield", label: "Genuine BlueDot" },
       { icon: "check", label: "Easy checkout" },
     ],
-    bg: "radial-gradient(1200px 620px at 80% 0%, rgba(26,92,173,0.55), transparent 60%), linear-gradient(120deg,#00244a 0%,#003366 55%,#0a4788 100%)",
+    bg: "radial-gradient(1200px 620px at 80% 0%, rgba(0,71,179,0.55), transparent 60%), linear-gradient(120deg,#00204F 0%,#002B6B 55%,#0047B3 100%)",
   },
 ];

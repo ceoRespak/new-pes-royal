@@ -264,7 +264,7 @@ export default function AboutPage() {
           className="pointer-events-none absolute inset-0 opacity-10"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(135deg,#d4af37 0 2px,transparent 2px 22px)",
+              "repeating-linear-gradient(135deg,#FF5A00 0 2px,transparent 2px 22px)",
           }}
         />
         <div className="container-px relative">
@@ -299,7 +299,7 @@ export default function AboutPage() {
           <StaggerGroup className="mt-12 grid gap-6 md:grid-cols-3">
             <StaggerItem>
               <div className="group relative h-full overflow-hidden rounded-3xl bg-white p-8 shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-card-hover">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-gradient text-2xl text-white transition group-hover:bg-gold-gradient group-hover:text-primary">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-gradient text-2xl text-white transition group-hover:bg-accent-gradient group-hover:text-white">
                   <FaBullseye />
                 </span>
                 <h3 className="mt-6 font-display text-xl font-bold text-primary">
@@ -313,7 +313,7 @@ export default function AboutPage() {
 
             <StaggerItem delay={0.1}>
               <div className="group relative h-full overflow-hidden rounded-3xl bg-primary-gradient p-8 text-white shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-card-hover">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-gradient text-2xl text-primary">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-gradient text-2xl text-white">
                   <FaEye />
                 </span>
                 <h3 className="mt-6 font-display text-xl font-bold text-white">
@@ -327,7 +327,7 @@ export default function AboutPage() {
 
             <StaggerItem delay={0.2}>
               <div className="group relative h-full overflow-hidden rounded-3xl bg-white p-8 shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-card-hover">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-2xl text-accent transition group-hover:bg-gold-gradient group-hover:text-primary">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-2xl text-accent transition group-hover:bg-accent-gradient group-hover:text-white">
                   <FaBinoculars />
                 </span>
                 <h3 className="mt-6 font-display text-xl font-bold text-primary">
@@ -390,7 +390,7 @@ export default function AboutPage() {
                   >
                     {/* dot */}
                     <span
-                      className={`absolute top-1 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-accent text-[0.6rem] font-bold text-primary shadow-gold ${
+                      className={`absolute top-1 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-accent text-[0.6rem] font-bold text-white shadow-accent ${
                         i % 2 === 0
                           ? "left-0 md:left-auto md:-right-4"
                           : "left-0 md:-left-4"

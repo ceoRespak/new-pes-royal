@@ -81,7 +81,7 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
                     className={cn(
                       "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs transition-all duration-300",
                       open
-                        ? "rotate-180 bg-accent text-primary"
+                        ? "rotate-180 bg-accent text-white"
                         : "bg-light text-slate-500"
                     )}
                   >

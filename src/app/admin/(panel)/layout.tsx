@@ -35,7 +35,7 @@ export default function AdminPanelLayout({
   return (
     <div className="flex min-h-screen bg-slate-100">
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-[#001a33] text-white lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-[#001B45] text-white lg:flex">
         <div className="flex items-center gap-3 border-b border-white/10 px-5 py-5">
           <div className="relative h-10 w-10 overflow-hidden rounded-lg">
             <Image
@@ -81,7 +81,7 @@ export default function AdminPanelLayout({
       </aside>
 
       {/* Mobile top bar */}
-      <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between bg-[#001a33] px-4 py-3 text-white lg:hidden">
+      <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between bg-[#001B45] px-4 py-3 text-white lg:hidden">
         <div className="flex items-center gap-2">
           <div className="relative h-8 w-8 overflow-hidden rounded">
             <Image src="/logo.png" alt="Respak Express" fill className="object-contain" />

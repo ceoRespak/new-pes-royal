@@ -10,7 +10,7 @@ export default function AdminContentPage() {
   const content = getContent();
   return (
     <div>
-      <header className="mb-6 overflow-hidden rounded-3xl bg-gradient-to-r from-[#E11D2A] to-[#7a0f16] p-6 text-white shadow-lg">
+      <header className="mb-6 overflow-hidden rounded-3xl bg-gradient-to-r from-[#FF5A00] to-[#C2410C] p-6 text-white shadow-lg">
         <div className="flex items-center gap-4">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-2xl backdrop-blur">
             🎨

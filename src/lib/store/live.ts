@@ -49,19 +49,19 @@ const sentence = (s?: string) => (s ? clean(s) : "");
 
 /* Editorial category meta (mirrors the old import script). */
 const CATEGORY_META: Record<string, Partial<CategoryMeta>> = {
-  FAN: { icon: "fan", accent: "#d4af37", tagline: "Ceiling & bracket fans from Pakistan's top brands" },
-  "Exhaust Fans": { icon: "fan", accent: "#5aa7d6", tagline: "Kitchen, bath & industrial ventilation" },
-  "Lighting Solutions": { icon: "bulb", accent: "#f2c14e", tagline: "LED bulbs, panels & decorative lighting" },
-  "Wires & Cables": { icon: "wire", accent: "#c9894a", tagline: "Pakistan Cables, AGE, Fast & more" },
-  "Switches & Sockets": { icon: "switch", accent: "#4f9de0", tagline: "Clipsal, Schneider, ABB & genuine brands" },
-  "Circuit Breakers": { icon: "breaker", accent: "#5fd0a6", tagline: "MCBs, MCCBs, RCDs & change-overs" },
-  "Distribution Boards (DBs)": { icon: "dbs", accent: "#d98e4a", tagline: "Load centres for every project" },
-  "Solar Accessories": { icon: "solar", accent: "#f2c14e", tagline: "Solar gear for homes & industry" },
-  "Smart Home": { icon: "smart", accent: "#5aa7d6", tagline: "BlueDot switches & automation" },
+  FAN: { icon: "fan", accent: "#FF5A00", tagline: "Ceiling & bracket fans from Pakistan's top brands" },
+  "Exhaust Fans": { icon: "fan", accent: "#0047B3", tagline: "Kitchen, bath & industrial ventilation" },
+  "Lighting Solutions": { icon: "bulb", accent: "#FF7A1A", tagline: "LED bulbs, panels & decorative lighting" },
+  "Wires & Cables": { icon: "wire", accent: "#FF7A1A", tagline: "Pakistan Cables, AGE, Fast & more" },
+  "Switches & Sockets": { icon: "switch", accent: "#0047B3", tagline: "Clipsal, Schneider, ABB & genuine brands" },
+  "Circuit Breakers": { icon: "breaker", accent: "#002B6B", tagline: "MCBs, MCCBs, RCDs & change-overs" },
+  "Distribution Boards (DBs)": { icon: "dbs", accent: "#FF5A00", tagline: "Load centres for every project" },
+  "Solar Accessories": { icon: "solar", accent: "#FF7A1A", tagline: "Solar gear for homes & industry" },
+  "Smart Home": { icon: "smart", accent: "#0047B3", tagline: "BlueDot switches & automation" },
   "Conduites & Back Boxes": { icon: "conduit", accent: "#9aa7b8", tagline: "Conduit pipes, ducts & boxes" },
-  "Shutters & Covers": { icon: "shutter", accent: "#7ec89b", tagline: "Exhaust shutters & covers" },
-  "Earthing Accessories": { icon: "earthing", accent: "#b3922a", tagline: "Copper rods & grounding gear" },
-  Others: { icon: "other", accent: "#8ab6f0", tagline: "Everyday electrical essentials" },
+  "Shutters & Covers": { icon: "shutter", accent: "#002B6B", tagline: "Exhaust shutters & covers" },
+  "Earthing Accessories": { icon: "earthing", accent: "#C2410C", tagline: "Copper rods & grounding gear" },
+  Others: { icon: "other", accent: "#0047B3", tagline: "Everyday electrical essentials" },
 };
 
 function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
@@ -80,7 +80,7 @@ function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
       catNameToSlug.set(name, slug);
       const meta = CATEGORY_META[name] || {
         icon: "other" as const,
-        accent: "#8ab6f0",
+        accent: "#0047B3",
         tagline: `${name}`,
         description: `Browse our full range of ${name.toLowerCase()} — genuine brands, fair prices and expert advice in store.`,
       };
@@ -91,7 +91,7 @@ function buildCatalog(productsRaw: RawProduct[], catsRaw: RawCategory[]) {
         tagline: meta.tagline ?? "",
         description: meta.description ?? "",
         icon: meta.icon ?? "other",
-        accent: meta.accent ?? "#8ab6f0",
+        accent: meta.accent ?? "#0047B3",
         image: c.image ? abs(c.image) : "",
         count: 0,
       };

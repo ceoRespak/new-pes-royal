@@ -28,7 +28,7 @@ const FEATURE_ICONS = [
 ];
 
 const DEFAULT_BG =
-  "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)";
+  "radial-gradient(1200px 620px at 85% -10%, rgba(0,71,179,0.5), transparent 60%), linear-gradient(120deg,#001B45 0%,#002B6B 58%,#0047B3 100%)";
 
 function newSlide(): HeroSlide {
   return {
@@ -127,7 +127,7 @@ export default function HomeContentEditor({
   }
 
   const input =
-    "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#E11D2A]";
+    "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#FF5A00]";
 
   return (
     <div className="space-y-5">
@@ -197,7 +197,7 @@ export default function HomeContentEditor({
                   >
                     <FaArrowUp />
                   </span>
-                  <span className={isOpen ? "text-[#E11D2A]" : "text-slate-400"}>
+                  <span className={isOpen ? "text-[#FF5A00]" : "text-slate-400"}>
                     {isOpen ? <FaChevronUp /> : <FaChevronDown />}
                   </span>
                 </span>
@@ -302,7 +302,7 @@ export default function HomeContentEditor({
           setHeroSlides((list) => [...list, s]);
           setOpen(heroSlides.length);
         }}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-white py-4 text-sm font-bold text-slate-500 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-white py-4 text-sm font-bold text-slate-500 transition hover:border-[#FF5A00] hover:text-[#FF5A00]"
       >
         <FaPlus /> Add hero slide
       </button>

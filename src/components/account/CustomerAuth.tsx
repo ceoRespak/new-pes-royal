@@ -144,7 +144,7 @@ export default function CustomerAuth({ next }: { next?: string }) {
           <button
             type="submit"
             disabled={busy}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-[#E11D2A] px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f] disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A00] px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 hover:bg-[#E04D00] disabled:opacity-60"
           >
             {busy ? <FaSpinner className="animate-spin" /> : mode === "login" ? <FaLock /> : <FaUserPlus />}
             {busy ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}

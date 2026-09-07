@@ -38,7 +38,7 @@ export default function NewsletterForm() {
       <button
         type="submit"
         aria-label="Subscribe to newsletter"
-        className="flex shrink-0 items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-accent-300"
+        className="flex shrink-0 items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:bg-accent-400"
       >
         <FaPaperPlane /> Subscribe
       </button>

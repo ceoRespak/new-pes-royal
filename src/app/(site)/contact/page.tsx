@@ -71,7 +71,7 @@ export default function ContactPage() {
             {infoCards.map((c, i) => (
               <AnimatedSectionWrapper key={c.title} delay={i * 0.07}>
                 <div className="group flex h-full flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-card transition-all duration-500 hover:-translate-y-1.5 hover:shadow-card-hover">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-gradient text-xl text-white transition group-hover:bg-gold-gradient group-hover:text-primary">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-gradient text-xl text-white transition group-hover:bg-accent-gradient group-hover:text-white">
                     <c.icon />
                   </span>
                   <h3 className="mt-4 font-display text-base font-bold text-primary">

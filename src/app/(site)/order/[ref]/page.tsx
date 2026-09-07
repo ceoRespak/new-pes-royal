@@ -154,7 +154,7 @@ export default async function OrderConfirmationPage({
             {/* Items */}
             <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
               <h2 className="flex items-center gap-2 font-display text-lg font-bold text-slate-900">
-                <FaClipboardList className="text-[#E11D2A]" /> Order Summary
+                <FaClipboardList className="text-[#FF5A00]" /> Order Summary
               </h2>
               <ul className="mt-5 divide-y divide-slate-100">
                 {order.items.map((i, idx) => (
@@ -216,16 +216,16 @@ export default async function OrderConfirmationPage({
             {/* Delivery to */}
             <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
               <h2 className="flex items-center gap-2 font-display text-lg font-bold text-slate-900">
-                <FaTruck className="text-[#E11D2A]" /> Delivering To
+                <FaTruck className="text-[#FF5A00]" /> Delivering To
               </h2>
               <div className="mt-4 space-y-2 text-sm text-slate-600">
                 <p className="font-bold text-slate-800">{order.customer.name}</p>
                 <p className="flex items-start gap-2">
-                  <FaMapMarkerAlt className="mt-0.5 shrink-0 text-[#E11D2A]" />
+                  <FaMapMarkerAlt className="mt-0.5 shrink-0 text-[#FF5A00]" />
                   {order.customer.address}, {order.customer.city}
                 </p>
                 <p className="flex items-center gap-2">
-                  <FaPhoneAlt className="text-[#E11D2A]" /> {order.customer.phone}
+                  <FaPhoneAlt className="text-[#FF5A00]" /> {order.customer.phone}
                 </p>
                 {order.customer.notes && (
                   <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs italic text-slate-500">
@@ -255,7 +255,7 @@ export default async function OrderConfirmationPage({
             <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm">
               <Link
                 href="/products"
-                className="font-bold text-[#E11D2A] hover:underline"
+                className="font-bold text-[#FF5A00] hover:underline"
               >
                 Continue Shopping →
               </Link>

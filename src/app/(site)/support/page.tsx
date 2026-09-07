@@ -40,7 +40,7 @@ const warrantyTiers = [
     icon: FaAward,
     title: "Easy 7-Day Returns",
     items: ["Defective items returned within 7 days", "Original packaging required", "Replacement on stock / swift refunds"],
-    color: "bg-gold-gradient",
+    color: "bg-accent-gradient",
   },
 ];
 
@@ -154,7 +154,7 @@ export default function SupportPage() {
                 <div className="mt-8 flex flex-wrap gap-3 border-t border-white/10 pt-6">
                   <a
                     href="/contact"
-                    className="rounded-full bg-gold-gradient px-5 py-2.5 text-sm font-bold text-primary transition hover:brightness-105"
+                    className="rounded-full bg-accent-gradient px-5 py-2.5 text-sm font-bold text-white transition hover:brightness-105"
                   >
                     Register a Claim
                   </a>

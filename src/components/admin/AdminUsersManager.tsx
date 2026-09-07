@@ -604,7 +604,7 @@ export default function AdminUsersManager({
           transition: all 0.15s;
         }
         .inp:focus {
-          border-color: #003366;
+          border-color: #002B6B;
           background: #fff;
         }
       `}</style>

@@ -97,7 +97,7 @@ export default function ProductBuyPanel({
           </div>
         </div>
         {activeVariant && (
-          <span className="rounded-full bg-[#E11D2A]/10 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wide text-[#E11D2A]">
+          <span className="rounded-full bg-[#FF5A00]/10 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wide text-[#FF5A00]">
             {qty} × {formatPrice(unit)}
           </span>
         )}
@@ -112,7 +112,7 @@ export default function ProductBuyPanel({
           <button
             onClick={() => setQty((q) => Math.max(1, q - 1))}
             aria-label="Decrease quantity"
-            className="flex h-11 w-11 items-center justify-center text-slate-600 transition hover:text-[#E11D2A]"
+            className="flex h-11 w-11 items-center justify-center text-slate-600 transition hover:text-[#FF5A00]"
           >
             <FaMinus className="text-xs" />
           </button>
@@ -122,7 +122,7 @@ export default function ProductBuyPanel({
           <button
             onClick={() => setQty((q) => Math.min(99, q + 1))}
             aria-label="Increase quantity"
-            className="flex h-11 w-11 items-center justify-center text-slate-600 transition hover:text-[#E11D2A]"
+            className="flex h-11 w-11 items-center justify-center text-slate-600 transition hover:text-[#FF5A00]"
           >
             <FaPlus className="text-xs" />
           </button>
@@ -137,7 +137,7 @@ export default function ProductBuyPanel({
           className={
             added
               ? "flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-emerald-600/25 transition hover:bg-emerald-700"
-              : "flex w-full items-center justify-center gap-2 rounded-xl bg-[#E11D2A] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f]"
+              : "flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF5A00] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 hover:bg-[#E04D00]"
           }
         >
           {added ? (
@@ -161,7 +161,7 @@ export default function ProductBuyPanel({
           </a>
           <a
             href={`tel:${site.phone.replace(/\s/g, "")}`}
-            className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+            className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-[#FF5A00] hover:text-[#FF5A00]"
           >
             <FaPhoneAlt /> Call Us
           </a>

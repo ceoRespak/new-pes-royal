@@ -58,7 +58,7 @@ export default function CartPage() {
               </p>
               <Link
                 href="/products"
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#E11D2A] px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f]"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#FF5A00] px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 hover:bg-[#E04D00]"
               >
                 Start Shopping
               </Link>
@@ -94,7 +94,7 @@ export default function CartPage() {
                           <div className="min-w-0">
                             <Link
                               href={`/products/${item.slug}`}
-                              className="line-clamp-2 text-sm font-bold text-slate-800 transition hover:text-[#E11D2A]"
+                              className="line-clamp-2 text-sm font-bold text-slate-800 transition hover:text-[#FF5A00]"
                             >
                               {item.name}
                             </Link>
@@ -123,7 +123,7 @@ export default function CartPage() {
                               type="button"
                               onClick={() => setQty(key, item.qty - 1)}
                               aria-label="Decrease quantity"
-                              className="flex h-9 w-9 items-center justify-center text-slate-600 transition hover:text-[#E11D2A]"
+                              className="flex h-9 w-9 items-center justify-center text-slate-600 transition hover:text-[#FF5A00]"
                             >
                               <FaMinus className="text-[0.6rem]" />
                             </button>
@@ -134,7 +134,7 @@ export default function CartPage() {
                               type="button"
                               onClick={() => setQty(key, item.qty + 1)}
                               aria-label="Increase quantity"
-                              className="flex h-9 w-9 items-center justify-center text-slate-600 transition hover:text-[#E11D2A]"
+                              className="flex h-9 w-9 items-center justify-center text-slate-600 transition hover:text-[#FF5A00]"
                             >
                               <FaPlus className="text-[0.6rem]" />
                             </button>
@@ -192,7 +192,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => router.push("/checkout")}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#E11D2A] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 hover:bg-[#b8111f]"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A00] px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 hover:bg-[#E04D00]"
                 >
                   Proceed to Checkout
                 </button>

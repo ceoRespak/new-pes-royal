@@ -40,7 +40,7 @@ export default function ProductShowcase({
           <div className="mb-8 flex flex-wrap items-end justify-between gap-3 border-b-2 border-slate-100 pb-3">
             <div>
               {eyebrow && (
-                <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
+                <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#FF5A00]">
                   {eyebrow}
                 </p>
               )}
@@ -51,7 +51,7 @@ export default function ProductShowcase({
             {viewAllHref && (
               <Link
                 href={viewAllHref}
-                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+                className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#FF5A00] transition hover:gap-3"
               >
                 {viewAllLabel}
                 <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />

@@ -92,7 +92,7 @@ export default function ProductView({ product, category }: Props) {
           {/* top-left badges */}
           <div className="pointer-events-none absolute left-4 top-4 flex flex-col items-start gap-2">
             {product.badge && (
-              <span className="rounded-full bg-[#E11D2A] px-3 py-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-white shadow">
+              <span className="rounded-full bg-[#FF5A00] px-3 py-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-white shadow">
                 {product.badge}
               </span>
             )}
@@ -108,7 +108,7 @@ export default function ProductView({ product, category }: Props) {
               <FaCheckCircle className="text-emerald-500" />
               {activeVariant.label}
               {activeUnit != null && (
-                <span className="text-[#E11D2A]">{formatPrice(activeUnit)}</span>
+                <span className="text-[#FF5A00]">{formatPrice(activeUnit)}</span>
               )}
             </span>
           )}
@@ -132,14 +132,14 @@ export default function ProductView({ product, category }: Props) {
                     className={cn(
                       "group relative flex items-center gap-2 rounded-2xl border-2 bg-white p-2 text-left transition",
                       selected
-                        ? "border-[#E11D2A] shadow-md"
+                        ? "border-[#FF5A00] shadow-md"
                         : "border-slate-200 hover:border-slate-300"
                     )}
                   >
                     <span
                       className={cn(
                         "relative block h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100",
-                        selected ? "ring-2 ring-[#E11D2A]/30" : ""
+                        selected ? "ring-2 ring-[#FF5A00]/30" : ""
                       )}
                     >
                       <Image
@@ -154,7 +154,7 @@ export default function ProductView({ product, category }: Props) {
                       <span
                         className={cn(
                           "block truncate text-xs font-bold",
-                          selected ? "text-[#E11D2A]" : "text-slate-700"
+                          selected ? "text-[#FF5A00]" : "text-slate-700"
                         )}
                       >
                         {t.label}
@@ -166,7 +166,7 @@ export default function ProductView({ product, category }: Props) {
                       )}
                     </span>
                     {selected && (
-                      <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#E11D2A] text-[0.5rem] text-white">
+                      <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#FF5A00] text-[0.5rem] text-white">
                         ✓
                       </span>
                     )}
@@ -192,7 +192,7 @@ export default function ProductView({ product, category }: Props) {
           )}
           <Link
             href={`/products?category=${product.category}`}
-            className="inline-flex items-center gap-2 rounded-full bg-[#E11D2A]/8 px-4 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#E11D2A] transition hover:bg-[#E11D2A] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-full bg-[#FF5A00]/8 px-4 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#FF5A00] transition hover:bg-[#FF5A00] hover:text-white"
           >
             {catName}
           </Link>
@@ -218,7 +218,7 @@ export default function ProductView({ product, category }: Props) {
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
           {product.reviews > 0 ? (
             <span className="flex items-center gap-1.5">
-              <RatingStars rating={product.rating} className="!text-amber-400" />
+              <RatingStars rating={product.rating} className="!text-accent-400" />
               <b className="font-semibold text-slate-600">{product.rating}</b>{" "}
               ({product.reviews} reviews)
             </span>
@@ -249,7 +249,7 @@ export default function ProductView({ product, category }: Props) {
                 key={f}
                 className="flex items-start gap-2.5 text-sm text-slate-600"
               >
-                <FaCheckCircle className="mt-0.5 shrink-0 text-[#E11D2A]" />
+                <FaCheckCircle className="mt-0.5 shrink-0 text-[#FF5A00]" />
                 {f}
               </li>
             ))}
@@ -259,7 +259,7 @@ export default function ProductView({ product, category }: Props) {
         <div className="mt-5 space-y-3 leading-relaxed text-slate-600">
           <p>{longDesc}</p>
           {!product.description && (
-            <p className="rounded-2xl bg-[#E11D2A]/5 px-4 py-3 text-sm text-slate-500">
+            <p className="rounded-2xl bg-[#FF5A00]/5 px-4 py-3 text-sm text-slate-500">
               Photos &amp; details are indicative. Confirm the exact model,
               specifications and current best price with our team on WhatsApp
               before ordering.
@@ -274,7 +274,7 @@ export default function ProductView({ product, category }: Props) {
               key={label}
               className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2.5"
             >
-              <Icon className="shrink-0 text-[#E11D2A]" />
+              <Icon className="shrink-0 text-[#FF5A00]" />
               <span className="text-[0.72rem] font-semibold leading-tight text-slate-600">
                 {label}
               </span>

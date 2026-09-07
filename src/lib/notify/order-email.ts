@@ -104,7 +104,7 @@ export function buildOrderEmail(
     )})</td><td align="right" style="padding:8px 12px;color:#0f172a;">${
       order.shippingFee === 0 ? "FREE" : rs(order.shippingFee)
     }</td></tr>
-    <tr><td colspan="3" style="padding:10px 12px;color:#0f172a;font-size:16px;font-weight:700;">Total</td><td align="right" style="padding:10px 12px;color:#b91c1c;font-size:16px;font-weight:800;">${rs(
+    <tr><td colspan="3" style="padding:10px 12px;color:#0f172a;font-size:16px;font-weight:700;">Total</td><td align="right" style="padding:10px 12px;color:#E04D00;font-size:16px;font-weight:800;">${rs(
       order.total
     )}</td></tr>`;
 
@@ -147,7 +147,7 @@ export function buildOrderEmail(
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f5;padding:24px 12px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
-        <tr><td style="background:#003366;padding:22px 26px;">
+        <tr><td style="background:#002B6B;padding:22px 26px;">
           <div style="color:#ffffff;font-size:22px;font-weight:800;">${esc(
             site.name
           )}</div>
@@ -157,7 +157,7 @@ export function buildOrderEmail(
         </td></tr>
         <tr><td style="padding:26px;">
           <h2 style="margin:0 0 6px;color:#0f172a;font-size:20px;">${esc(head)}</h2>
-          <p style="margin:0 0 18px;color:#64748b;font-size:13px;">Order <b style="color:#003366;">${esc(
+          <p style="margin:0 0 18px;color:#64748b;font-size:13px;">Order <b style="color:#002B6B;">${esc(
             order.ref
           )}</b> · ${fmtDate(order.createdAt)} · ${esc(order.paymentLabel)}</p>
 
@@ -186,7 +186,7 @@ export function buildOrderEmail(
             </td></tr>
           </table>
 
-          <p style="margin-top:18px;background:#fef3c7;border:1px solid #fde68a;border-radius:12px;padding:12px 14px;color:#92400e;font-size:13px;">${esc(
+          <p style="margin-top:18px;background:#FFF3EB;border:1px solid #FFE3CC;border-radius:12px;padding:12px 14px;color:#E04D00;font-size:13px;">${esc(
             paymentNote(order)
           )}</p>
 

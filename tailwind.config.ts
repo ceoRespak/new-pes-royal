@@ -10,48 +10,49 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#003366", // royal blue
-          50: "#eef4fb",
-          100: "#d9e6f5",
-          200: "#b3cceb",
-          300: "#7fa8db",
-          400: "#4a80c4",
-          500: "#1a5cad",
-          600: "#0a4788",
-          700: "#003366",
-          800: "#00244a",
-          900: "#001833",
+          DEFAULT: "#002B6B", // deep navy
+          50: "#eef3fb",
+          100: "#dbe6f7",
+          200: "#b8cdee",
+          300: "#8aade0",
+          400: "#4d82cc",
+          500: "#1e5cb3",
+          600: "#0a4695",
+          700: "#002B6B",
+          800: "#00204f",
+          900: "#001638",
         },
         accent: {
-          DEFAULT: "#D4AF37", // gold
-          50: "#fbf7e9",
-          100: "#f6edcc",
-          200: "#edd99a",
-          300: "#e4c566",
-          400: "#dcb84c",
-          500: "#D4AF37", // gold
-          600: "#b3922a",
-          700: "#8f7422",
-          800: "#6b561b",
-          900: "#4a3c13",
+          DEFAULT: "#FF5A00", // RESPAK orange
+          50: "#fff3eb",
+          100: "#ffe3cc",
+          200: "#ffc799",
+          300: "#ffa35c",
+          400: "#FF7A1A", // secondary orange
+          500: "#FF5A00",
+          600: "#E04D00", // hover
+          700: "#c2410c",
+          800: "#9a350a",
+          900: "#7c2a08",
         },
-        light: "#F5F5F5",
+        light: "#F5F7FA",
+        // neutral slate carried by Tailwind's own scale elsewhere
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         display: ["var(--font-poppins)", "var(--font-inter)", "sans-serif"],
       },
       boxShadow: {
-        card: "0 10px 30px -12px rgba(0, 51, 102, 0.25)",
-        "card-hover": "0 24px 50px -18px rgba(0, 51, 102, 0.4)",
-        gold: "0 10px 30px -10px rgba(212, 175, 55, 0.55)",
+        card: "0 10px 30px -12px rgba(0, 43, 107, 0.18)",
+        "card-hover": "0 24px 50px -18px rgba(0, 43, 107, 0.32)",
+        accent: "0 10px 30px -10px rgba(255, 90, 0, 0.45)",
       },
       backgroundImage: {
         "primary-gradient":
-          "linear-gradient(135deg, #003366 0%, #0a4788 55%, #1a5cad 100%)",
-        "gold-gradient":
-          "linear-gradient(135deg, #D4AF37 0%, #e4c566 50%, #b3922a 100%)",
-        "light-gradient": "linear-gradient(180deg, #f5f5f5 0%, #ffffff 100%)",
+          "linear-gradient(135deg, #001638 0%, #002B6B 55%, #0047B3 100%)",
+        "accent-gradient":
+          "linear-gradient(135deg, #FF5A00 0%, #FF7A1A 55%, #E04D00 100%)",
+        "light-gradient": "linear-gradient(180deg, #F5F7FA 0%, #ffffff 100%)",
       },
       keyframes: {
         "fade-up": {

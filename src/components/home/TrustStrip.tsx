@@ -61,7 +61,7 @@ export default function TrustStrip({ items }: { items?: TrustItem[] }) {
               key={item.title}
               className="flex flex-col items-center gap-2 px-3 py-6 text-center"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E11D2A]/10 text-lg text-[#E11D2A]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FF5A00]/10 text-lg text-[#FF5A00]">
                 <Icon />
               </span>
               <div>

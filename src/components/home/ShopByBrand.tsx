@@ -29,7 +29,7 @@ export default function ShopByBrand({ brands }: ShopByBrandProps) {
         {/* header */}
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b-2 border-slate-100 pb-3">
           <div>
-            <p className="text-[0.7rem] font-extrabold uppercase tracking-[0.22em] text-[#E11D2A]">
+            <p className="text-[0.7rem] font-extrabold uppercase tracking-[0.22em] text-[#FF5A00]">
               Trusted Names
             </p>
             <h2 className="mt-1 font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
@@ -38,7 +38,7 @@ export default function ShopByBrand({ brands }: ShopByBrandProps) {
           </div>
           <Link
             href="/products"
-            className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#E11D2A] transition hover:gap-3"
+            className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#FF5A00] transition hover:gap-3"
           >
             Browse All Brands
             <FaArrowRight className="transition-transform group-hover:translate-x-0.5" />
@@ -52,7 +52,7 @@ export default function ShopByBrand({ brands }: ShopByBrandProps) {
               href={`/products?brand=${b.brand.id}`}
               className="group w-[158px] flex-none snap-start sm:w-[188px]"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#E11D2A]/40 group-hover:shadow-lg">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#FF5A00]/40 group-hover:shadow-lg">
                 {b.image ? (
                   <Image
                     src={b.image}

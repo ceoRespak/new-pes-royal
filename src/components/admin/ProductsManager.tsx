@@ -108,14 +108,14 @@ type SortKey = "recent" | "name" | "price-asc" | "price-desc";
 
 /** Deterministic accent per category (stays stable while browsing). */
 const CAT_ACCENTS = [
-  { bar: "from-sky-500 to-blue-700", chip: "bg-sky-100 text-sky-700", dot: "bg-sky-500" },
-  { bar: "from-emerald-500 to-teal-700", chip: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
-  { bar: "from-amber-500 to-orange-700", chip: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
-  { bar: "from-rose-500 to-red-700", chip: "bg-rose-100 text-rose-700", dot: "bg-rose-500" },
-  { bar: "from-violet-500 to-purple-700", chip: "bg-violet-100 text-violet-700", dot: "bg-violet-500" },
-  { bar: "from-cyan-500 to-sky-700", chip: "bg-cyan-100 text-cyan-700", dot: "bg-cyan-500" },
-  { bar: "from-lime-500 to-green-700", chip: "bg-lime-100 text-lime-700", dot: "bg-lime-500" },
-  { bar: "from-fuchsia-500 to-pink-700", chip: "bg-fuchsia-100 text-fuchsia-700", dot: "bg-fuchsia-500" },
+  { bar: "from-[#002B6B] to-[#0047B3]", chip: "bg-[#002B6B]/10 text-[#002B6B]", dot: "bg-[#002B6B]" },
+  { bar: "from-[#FF5A00] to-[#E04D00]", chip: "bg-[#FF5A00]/10 text-[#E04D00]", dot: "bg-[#FF5A00]" },
+  { bar: "from-[#0047B3] to-[#1E5CB3]", chip: "bg-[#0047B3]/10 text-[#0047B3]", dot: "bg-[#0047B3]" },
+  { bar: "from-[#FF7A1A] to-[#FF5A00]", chip: "bg-[#FF7A1A]/10 text-[#E04D00]", dot: "bg-[#FF7A1A]" },
+  { bar: "from-[#001B45] to-[#002B6B]", chip: "bg-[#001B45]/10 text-[#001B45]", dot: "bg-[#001B45]" },
+  { bar: "from-[#FF9A4D] to-[#FF5A00]", chip: "bg-[#FF5A00]/10 text-[#E04D00]", dot: "bg-[#FF7A1A]" },
+  { bar: "from-[#0a4695] to-[#002B6B]", chip: "bg-[#0a4695]/10 text-[#0a4695]", dot: "bg-[#0a4695]" },
+  { bar: "from-[#E04D00] to-[#C2410C]", chip: "bg-[#E04D00]/10 text-[#C2410C]", dot: "bg-[#E04D00]" },
 ];
 function accentFor(name: string) {
   let h = 0;
@@ -424,7 +424,7 @@ export default function ProductsManager({ products, categories }: Props) {
   return (
     <div>
       {/* Summary header */}
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 rounded-3xl bg-gradient-to-r from-[#003366] to-[#003a7a] p-5 text-white shadow-sm">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 rounded-3xl bg-gradient-to-r from-[#002B6B] to-[#003D94] p-5 text-white shadow-sm">
         <div>
           <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-white/60">
             {activeCat === "all" ? "All categories" : activeCat}
@@ -438,7 +438,7 @@ export default function ProductsManager({ products, categories }: Props) {
         </div>
         <button
           onClick={() => openCreate()}
-          className="inline-flex items-center gap-2 rounded-xl bg-gold-gradient px-5 py-2.5 text-sm font-bold text-primary shadow transition hover:-translate-y-0.5"
+          className="inline-flex items-center gap-2 rounded-xl bg-accent-gradient px-5 py-2.5 text-sm font-bold text-white shadow transition hover:-translate-y-0.5"
         >
           <FaPlus /> Add product
           {activeCat !== "all" ? ` in ${activeCat}` : ""}
@@ -731,7 +731,7 @@ export default function ProductsManager({ products, categories }: Props) {
             className="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
           >
             {/* gradient header — fixed (never scrolls away) */}
-            <div className="flex shrink-0 items-center justify-between gap-3 bg-gradient-to-r from-[#E11D2A] via-[#b8111f] to-[#7a0f16] px-6 py-5 text-white">
+            <div className="flex shrink-0 items-center justify-between gap-3 bg-gradient-to-r from-[#FF5A00] via-[#E04D00] to-[#C2410C] px-6 py-5 text-white">
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-lg backdrop-blur">
                   {editing ? <FaEdit /> : <FaPlus />}
@@ -1090,7 +1090,7 @@ export default function ProductsManager({ products, categories }: Props) {
               <button
                 type="submit"
                 disabled={busy}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#E11D2A] to-[#7a0f16] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#E11D2A]/25 transition hover:-translate-y-0.5 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#FF5A00] to-[#C2410C] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#FF5A00]/25 transition hover:-translate-y-0.5 disabled:opacity-60"
               >
                 {busy ? "Saving…" : editing ? "Save changes" : "Create product"}
               </button>
@@ -1121,7 +1121,7 @@ export default function ProductsManager({ products, categories }: Props) {
           transition: all 0.15s;
         }
         .inp:focus {
-          border-color: #003366;
+          border-color: #002B6B;
           background: #fff;
         }
       `}</style>

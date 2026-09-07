@@ -92,7 +92,7 @@ export default function ProductCard({
           {/* Badges */}
           <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
             {product.badge && (
-              <span className="rounded-full bg-[#E11D2A] px-2.5 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider text-white">
+              <span className="rounded-full bg-[#FF5A00] px-2.5 py-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider text-white">
                 {product.badge}
               </span>
             )}
@@ -121,7 +121,7 @@ export default function ProductCard({
           {product.brand && (
             <Link
               href={`/products?brand=${product.brand.id}`}
-              className="mt-0.5 inline-flex w-fit items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-[#E11D2A] transition hover:underline"
+              className="mt-0.5 inline-flex w-fit items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-[#FF5A00] transition hover:underline"
             >
               {product.brand.name}
               {product.brandLine ? ` · ${product.brandLine}` : ""}
@@ -130,7 +130,7 @@ export default function ProductCard({
           <h3 className="mt-1">
             <Link
               href={`/products/${product.slug}`}
-              className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900 transition hover:text-[#E11D2A]"
+              className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900 transition hover:text-[#FF5A00]"
             >
               {product.name}
             </Link>
@@ -138,7 +138,7 @@ export default function ProductCard({
 
           {product.reviews > 0 && (
             <div className="mt-1.5 flex items-center gap-1.5">
-              <RatingStars rating={product.rating} className="!text-amber-400" />
+              <RatingStars rating={product.rating} className="!text-accent-400" />
               <span className="text-[0.68rem] text-slate-400">
                 ({product.reviews})
               </span>
@@ -165,7 +165,7 @@ export default function ProductCard({
                 "flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-[0.7rem] font-bold uppercase tracking-wider transition disabled:cursor-not-allowed",
                 added
                   ? "bg-emerald-600 text-white"
-                  : "bg-[#E11D2A] text-white hover:bg-[#b8111f] disabled:bg-slate-200 disabled:text-slate-400"
+                  : "bg-[#FF5A00] text-white hover:bg-[#E04D00] disabled:bg-slate-200 disabled:text-slate-400"
               )}
             >
               {added ? (
@@ -182,7 +182,7 @@ export default function ProductCard({
             </button>
             <Link
               href={`/products/${product.slug}`}
-              className="flex w-full items-center justify-center gap-1 rounded-lg border border-slate-200 py-2 text-[0.68rem] font-bold text-slate-600 transition hover:border-[#E11D2A] hover:text-[#E11D2A]"
+              className="flex w-full items-center justify-center gap-1 rounded-lg border border-slate-200 py-2 text-[0.68rem] font-bold text-slate-600 transition hover:border-[#FF5A00] hover:text-[#FF5A00]"
             >
               View Details
             </Link>
@@ -233,12 +233,12 @@ export default function ProductCard({
         {/* Badges */}
         <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
           {product.badge && (
-            <span className="rounded-full bg-accent px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary shadow">
+            <span className="rounded-full bg-accent px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-white shadow">
               {product.badge}
             </span>
           )}
           {discount && (
-            <span className="rounded-full bg-red-600 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-white shadow">
+            <span className="rounded-full bg-[#FF5A00] px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-white shadow">
               -{discount}%
             </span>
           )}
@@ -285,7 +285,7 @@ export default function ProductCard({
         <h3 className="mt-1.5">
           <Link
             href={`/products/${product.slug}`}
-            className="line-clamp-1 font-display text-[0.95rem] font-semibold text-slate-800 transition hover:text-primary"
+            className="line-clamp-1 font-display text-[0.95rem] font-semibold text-primary transition hover:text-accent"
           >
             {product.name}
           </Link>
@@ -335,7 +335,7 @@ export default function ProductCard({
             "mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[0.68rem] font-bold uppercase tracking-widest transition disabled:cursor-not-allowed",
             added
               ? "bg-emerald-600 text-white"
-              : "bg-primary text-white hover:bg-primary-800 disabled:bg-slate-200 disabled:text-slate-400"
+              : "bg-accent text-white hover:bg-accent-600 disabled:bg-slate-200 disabled:text-slate-400"
           )}
         >
           {added ? (

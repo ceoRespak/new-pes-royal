@@ -67,7 +67,7 @@ export default function ContactForm() {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center rounded-3xl border border-emerald-100 bg-emerald-50/60 px-8 py-20 text-center"
           >
-            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 text-4xl text-white shadow-gold">
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 text-4xl text-white shadow-accent">
               <FaCheckCircle />
             </span>
             <h3 className="mt-6 font-display text-2xl font-bold text-primary">

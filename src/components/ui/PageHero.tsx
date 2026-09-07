@@ -47,7 +47,7 @@ export default function PageHero({
     <h1 className="font-display max-w-3xl text-4xl font-bold leading-tight md:text-5xl lg:text-[3.4rem]">
       {title}{" "}
       {highlight && (
-        <span className="bg-gold-gradient bg-clip-text text-transparent">
+        <span className="bg-accent-gradient bg-clip-text text-transparent">
           {highlight}
         </span>
       )}
@@ -65,7 +65,7 @@ export default function PageHero({
       {/* decorative rings */}
       <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border-[3rem] border-white/5" />
       <div className="pointer-events-none absolute -bottom-32 -left-16 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
-      <div className="absolute inset-x-0 top-0 h-1 bg-gold-gradient" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-accent-gradient" />
 
       <div className="container-px relative">
         {image ? (

@@ -52,7 +52,7 @@ export default function Footer({
     { href: site.social.whatsapp, label: "WhatsApp", Icon: FaWhatsapp },
   ].filter((s) => s.href);
   return (
-    <footer className="relative overflow-hidden bg-[#001a33] text-slate-300">
+    <footer className="relative overflow-hidden bg-[#001B45] text-slate-300">
       {/* Decorative glow */}
       <div className="pointer-events-none absolute -left-32 -top-32 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-primary-500/20 blur-3xl" />
@@ -186,7 +186,7 @@ export default function Footer({
                 aria-label={label}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-sm text-slate-300 transition hover:border-accent hover:bg-accent hover:text-primary"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-sm text-slate-300 transition hover:border-accent hover:bg-accent hover:text-white"
               >
                 <Icon />
               </a>

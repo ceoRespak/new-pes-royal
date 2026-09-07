@@ -261,7 +261,7 @@ export default function Navbar({
             >
               <FaShoppingCart />
               {ready && count > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#E11D2A] px-1 text-[0.62rem] font-extrabold text-white shadow">
+                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FF5A00] px-1 text-[0.62rem] font-extrabold text-white shadow">
                   {count > 99 ? "99+" : count}
                 </span>
               )}
@@ -318,7 +318,7 @@ export default function Navbar({
                 >
                   <span
                     className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ background: c.accent ?? "#003366" }}
+                    style={{ background: c.accent ?? "#002B6B" }}
                   />
                   <span className="truncate">{c.shortName || c.name}</span>
                   {c.count > 0 && (
@@ -422,7 +422,7 @@ export default function Navbar({
                   <Link
                     href="/products"
                     onClick={() => setOpen(false)}
-                    className="block rounded-xl px-4 py-2 text-sm font-extrabold text-[#E11D2A]"
+                    className="block rounded-xl px-4 py-2 text-sm font-extrabold text-[#FF5A00]"
                   >
                     View All Products →
                   </Link>
@@ -433,7 +433,7 @@ export default function Navbar({
                 <Link
                   href="/cart"
                   onClick={() => setOpen(false)}
-                  className="relative flex items-center justify-center gap-2 rounded-full bg-[#E11D2A] px-5 py-3 text-sm font-bold text-white"
+                  className="relative flex items-center justify-center gap-2 rounded-full bg-[#FF5A00] px-5 py-3 text-sm font-bold text-white"
                 >
                   <FaShoppingCart />
                   {ready && count > 0 ? `Cart (${count})` : "Cart"}

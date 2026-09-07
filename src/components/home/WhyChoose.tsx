@@ -54,7 +54,7 @@ export default function WhyChoose({
     <section className="bg-light/50 py-12 md:py-16">
       <div className="container-px">
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#E11D2A]">
+          <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-[#FF5A00]">
             Why Choose Respak Express?
           </p>
           <h2 className="mt-1 font-display text-2xl font-extrabold text-slate-900 md:text-3xl">
@@ -68,9 +68,9 @@ export default function WhyChoose({
             return (
               <div
                 key={item.title}
-                className="group rounded-2xl border border-slate-200 bg-white p-6 text-center transition hover:-translate-y-1 hover:border-[#E11D2A]/30 hover:shadow-lg"
+                className="group rounded-2xl border border-slate-200 bg-white p-6 text-center transition hover:-translate-y-1 hover:border-[#FF5A00]/30 hover:shadow-lg"
               >
-                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E11D2A]/10 text-2xl text-[#E11D2A] transition group-hover:bg-[#E11D2A] group-hover:text-white">
+                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#FF5A00]/10 text-2xl text-[#FF5A00] transition group-hover:bg-[#FF5A00] group-hover:text-white">
                   <Icon />
                 </span>
                 <h3 className="mt-4 font-display text-base font-bold text-slate-900">

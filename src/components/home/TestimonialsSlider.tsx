@@ -19,7 +19,7 @@ export default function TestimonialsSlider({
     <section className="section-pad relative overflow-hidden bg-primary-gradient text-white">
       <div className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-primary-500/20 blur-3xl" />
-      <div className="absolute inset-x-0 top-0 h-1 bg-gold-gradient" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-accent-gradient" />
 
       <div className="container-px relative">
         <SectionHeading
@@ -59,7 +59,7 @@ export default function TestimonialsSlider({
                   ))}
                 </div>
                 <figcaption className="mt-4 flex items-center gap-3 border-t border-white/10 pt-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-gradient font-display text-sm font-bold text-primary">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-gradient font-display text-sm font-bold text-white">
                     {t.initials}
                   </span>
                   <div>

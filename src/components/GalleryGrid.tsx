@@ -85,7 +85,7 @@ export default function GalleryGrid({ items: propItems }: { items?: GalleryItem[
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/10 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
 
-              <span className="absolute left-4 top-4 rounded-full bg-gold-gradient px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-primary">
+              <span className="absolute left-4 top-4 rounded-full bg-accent-gradient px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-white">
                 {item.category}
               </span>
               <span className="absolute right-4 top-4 flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-primary opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
@@ -129,7 +129,7 @@ export default function GalleryGrid({ items: propItems }: { items?: GalleryItem[
                 e.stopPropagation();
                 move(-1);
               }}
-              className="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-gold-gradient hover:text-primary"
+              className="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-accent-gradient hover:text-white"
             >
               <FaChevronLeft />
             </button>
@@ -166,7 +166,7 @@ export default function GalleryGrid({ items: propItems }: { items?: GalleryItem[
                 e.stopPropagation();
                 move(1);
               }}
-              className="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-gold-gradient hover:text-primary"
+              className="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-accent-gradient hover:text-white"
             >
               <FaChevronRight />
             </button>

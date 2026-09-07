@@ -125,6 +125,8 @@ const DEFAULT_TITLE = "Peshawar's Most";
 const DEFAULT_HIGHLIGHT = "Trusted Electric Shop";
 const DEFAULT_SHORT =
   "Respak Express has been serving Peshawar since 2015. We provide high-quality electrical products ranging from wires and cables to smart home solutions.";
+const DEFAULT_YEAR = "2015";
+const DEFAULT_LOCATION = "Peshawar, Pakistan";
 const DEFAULT_P1 =
   "Respak Express has been serving the people of Peshawar for over a decade from our location at Shop No. 1, Haroon Market, Karkhano Bazar. We are approved distributors of Pakistan Cables, AGE Cables, and Fast Cables, and stock premium brands including Philips, Schneider, ABB, Opal, Royal Fans, Voldam Fan, Lahore Fan, Pak Fan, BlueDot Smart Home, and more.";
 const DEFAULT_P2 =
@@ -141,6 +143,8 @@ export default function AboutPage() {
     short?: string;
     image?: string;
     companyHeading?: string;
+    sinceYear?: string;
+    location?: string;
     p1?: string;
     p2?: string;
     mission?: { title?: string; text?: string };
@@ -161,6 +165,8 @@ export default function AboutPage() {
     short: raw.short || DEFAULT_SHORT,
     image: raw.image || site.shopFront || DEFAULT_COMPANY_IMG,
     companyHeading: raw.companyHeading || site.shopName,
+    sinceYear: raw.sinceYear || DEFAULT_YEAR,
+    location: raw.location || DEFAULT_LOCATION,
     p1: raw.p1 || DEFAULT_P1,
     p2: raw.p2 || DEFAULT_P2,
     mission: {
@@ -213,10 +219,10 @@ export default function AboutPage() {
                 <FaFlag className="text-2xl text-accent" />
                 <div>
                   <p className="font-display text-lg font-extrabold leading-none">
-                    Since 2015
+                    Since {ab.sinceYear}
                   </p>
                   <p className="mt-1 text-[0.7rem] uppercase tracking-widest text-white/70">
-                    Peshawar, Pakistan
+                    {ab.location}
                   </p>
                 </div>
               </div>
@@ -230,7 +236,7 @@ export default function AboutPage() {
               </span>
               <h2 className="heading heading-underline">
                 {ab.companyHeading} — trusted since{" "}
-                <span className="text-accent">2015</span>
+                <span className="text-accent">{ab.sinceYear}</span>
               </h2>
             </AnimatedSectionWrapper>
             <AnimatedSectionWrapper delay={0.1}>
@@ -365,7 +371,7 @@ export default function AboutPage() {
               <span className="h-px w-6 bg-accent" />
             </span>
             <h2 className="heading mx-auto max-w-2xl heading-underline-center">
-              Serving Peshawar since 2015
+              Serving Peshawar since {ab.sinceYear}
             </h2>
           </AnimatedSectionWrapper>
 

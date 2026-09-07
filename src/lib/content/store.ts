@@ -70,6 +70,10 @@ export interface SiteContent {
     image?: string;
     /** “Company Profile” intro heading (first line above the paragraphs). */
     companyHeading?: string;
+    /** Established year shown in the badge + “trusted since” heading. */
+    sinceYear?: string;
+    /** Location shown under “Since …” on the badge. */
+    location?: string;
     /** Company Profile paragraphs. */
     p1?: string;
     p2?: string;

@@ -51,6 +51,8 @@ export interface AboutSections {
   short: string;
   image: string;
   companyHeading: string;
+  sinceYear: string;
+  location: string;
   p1: string;
   p2: string;
   mission: { title: string; text: string };
@@ -69,6 +71,8 @@ const DEFAULT_ABOUT: AboutSections = {
     "Respak Express has been serving Peshawar since 2015. We provide high-quality electrical products ranging from wires and cables to smart home solutions.",
   image: "/images/about/company.svg",
   companyHeading: "Respak Express",
+  sinceYear: "2015",
+  location: "Peshawar, Pakistan",
   p1: "Respak Express has been serving the people of Peshawar for over a decade from our location at Shop No. 1, Haroon Market, Karkhano Bazar. We are approved distributors of Pakistan Cables, AGE Cables, and Fast Cables, and stock premium brands including Philips, Schneider, ABB, Opal, Royal Fans, Voldam Fan, Lahore Fan, Pak Fan, BlueDot Smart Home, and more.",
   p2: "Whether you're an electrician, contractor, or homeowner, we provide expert advice and genuine products at the best prices in town. Now you can also shop online — browse our catalog, place your order, and get same-day delivery across Peshawar.",
   mission: {
@@ -479,7 +483,7 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const [about, setAbout] = useState<AboutSections>(aboutInit);
   const setAboutField = <K extends keyof AboutSections>(k: K, v: AboutSections[K]) =>
     setAbout((a) => ({ ...a, [k]: v }));
-  const setAboutText = (k: "title" | "highlight" | "short" | "companyHeading" | "p1" | "p2" | "image", v: string) =>
+  const setAboutText = (k: "title" | "highlight" | "short" | "companyHeading" | "sinceYear" | "location" | "p1" | "p2" | "image", v: string) =>
     setAbout((a) => ({ ...a, [k]: v }));
   const setMission = (k: "title" | "text", v: string) =>
     setAbout((a) => ({ ...a, mission: { ...a.mission, [k]: v } }));
@@ -568,6 +572,8 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
         short: about.short,
         image: about.image,
         companyHeading: about.companyHeading,
+        sinceYear: about.sinceYear,
+        location: about.location,
         p1: about.p1,
         p2: about.p2,
         mission: about.mission,
@@ -1141,6 +1147,16 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
               <span className={lbl}>Shop front image</span>
               <SmallImageUpload value={about.image} onChange={(url) => setAboutText("image", url)} recommended="1600 × 1000" minW={1200} />
             </label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="block">
+                <span className={lbl}>Established year (badge + heading)</span>
+                <input className={input} value={about.sinceYear} onChange={(e) => setAboutText("sinceYear", e.target.value)} placeholder="e.g. 2015" />
+              </label>
+              <label className="block">
+                <span className={lbl}>Location (badge under “Since”)</span>
+                <input className={input} value={about.location} onChange={(e) => setAboutText("location", e.target.value)} placeholder="e.g. Peshawar, Pakistan" />
+              </label>
+            </div>
             <label className="block">
               <span className={lbl}>Paragraph 1</span>
               <textarea rows={3} className={`${input} resize-none`} value={about.p1} onChange={(e) => setAboutText("p1", e.target.value)} />

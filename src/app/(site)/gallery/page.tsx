@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getContent } from "@/lib/content/store";
+import { galleryItems as defaultGalleryItems } from "@/data/gallery";
+import type { GalleryItem } from "@/types";
 
 export const dynamic = "force-dynamic";
 import PageHero from "@/components/ui/PageHero";
@@ -13,7 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function GalleryPage() {
-  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["gallery"] ?? {}) as Record<string, string>;
+  const content = getContent();
+  const pg = (((content.pages ?? {}) as Record<string, Record<string, string>>)["gallery"] ?? {}) as Record<string, string>;
+  const items = (content.galleryItems as GalleryItem[] | undefined) ?? defaultGalleryItems;
   return (
     <>
       <PageHero
@@ -25,7 +29,7 @@ export default function GalleryPage() {
 
       <section className="section-pad bg-light/60">
         <div className="container-px">
-          <GalleryGrid />
+          <GalleryGrid items={items} />
         </div>
       </section>
     </>

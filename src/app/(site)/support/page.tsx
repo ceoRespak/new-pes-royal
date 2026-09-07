@@ -18,8 +18,9 @@ import AnimatedSectionWrapper, {
   StaggerGroup,
   StaggerItem,
 } from "@/components/ui/AnimatedSectionWrapper";
-import { faqs } from "@/data/faqs";
+import { faqs as defaultFaqs } from "@/data/faqs";
 import { serviceCenters } from "@/data/dealers";
+import type { Faq } from "@/types";
 
 export const metadata: Metadata = {
   title: "Support & Warranty",
@@ -68,7 +69,9 @@ const downloads = [
 ];
 
 export default function SupportPage() {
-  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["support"] ?? {}) as Record<string, string>;
+  const content = getContent();
+  const pg = (((content.pages ?? {}) as Record<string, Record<string, string>>)["support"] ?? {}) as Record<string, string>;
+  const faqList = (content.faqs as Faq[] | undefined) ?? defaultFaqs;
   return (
     <>
       <PageHero
@@ -249,7 +252,7 @@ export default function SupportPage() {
               </AnimatedSectionWrapper>
             </div>
             <AnimatedSectionWrapper delay={0.1}>
-              <FaqAccordion faqs={faqs} />
+              <FaqAccordion faqs={faqList} />
             </AnimatedSectionWrapper>
           </div>
         </div>

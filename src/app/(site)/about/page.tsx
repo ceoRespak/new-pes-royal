@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import { getContent } from "@/lib/content/store";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-const milestones = [
+const defaultMilestones = [
   {
     year: "2015",
     title: "The shop opens",
@@ -58,37 +59,44 @@ const milestones = [
   },
 ];
 
-const values = [
+const VALUE_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  shield: FaShieldAlt,
+  award: FaAward,
+  heart: FaHeart,
+  handshake: FaHandshake,
+};
+
+const defaultValues = [
   {
-    icon: FaShieldAlt,
+    icon: "shield",
     title: "Integrity",
     text: "Only genuine, authentic products — and honest advice, always.",
   },
   {
-    icon: FaAward,
+    icon: "award",
     title: "Quality Brands",
     text: "We stock brands we trust: Pakistan Cables, Schneider, ABB, Royal & more.",
   },
   {
-    icon: FaHeart,
+    icon: "heart",
     title: "Customer Care",
     text: "Expert guidance for electricians, contractors and homeowners.",
   },
   {
-    icon: FaHandshake,
+    icon: "handshake",
     title: "Fair Partnership",
     text: "Fair prices and reliable supply for every customer and project.",
   },
 ];
 
-const stats = [
+const defaultStats = [
   { value: 10, suffix: "+", label: "Years in Peshawar" },
   { value: 13, suffix: "", label: "Product Categories" },
   { value: 100, suffix: "+", label: "Products Online" },
   { value: 12, suffix: "+", label: "Top Brands" },
 ];
 
-const introPoints = [
+const defaultIntroPoints = [
   "Approved distributor of Pakistan Cables, AGE & Fast Cables",
   "Genuine Philips, Schneider, ABB, Opal, Royal & Pak Fan products",
   "Expert advice for electricians, contractors & homeowners",
@@ -98,7 +106,21 @@ const introPoints = [
 export default function AboutPage() {
   const site = getRuntimeSite();
   const about = site.about;
-  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["about"] ?? {}) as Record<string, string>;
+  const content = getContent();
+  const pg = (((content.pages ?? {}) as Record<string, Record<string, string>>)["about"] ?? {}) as Record<string, string>;
+  const ab = (content.about ?? {}) as {
+    introPoints?: string[];
+    values?: { icon: string; title: string; text: string }[];
+    stats?: { value: number; suffix: string; label: string }[];
+    milestones?: { year: string; title: string; text: string }[];
+  };
+  const introPoints = ab.introPoints ?? defaultIntroPoints;
+  const values = (ab.values ?? defaultValues).map((v) => ({
+    ...v,
+    icon: VALUE_ICONS[v.icon] ?? FaShieldAlt,
+  }));
+  const stats = ab.stats ?? defaultStats;
+  const milestones = ab.milestones ?? defaultMilestones;
   return (
     <>
       <PageHero

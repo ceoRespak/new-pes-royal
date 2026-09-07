@@ -12,12 +12,14 @@ import {
   FaTimes,
   FaDirections,
 } from "react-icons/fa";
-import { dealers } from "@/data/dealers";
+import { dealers as defaultDealers } from "@/data/dealers";
+import type { Dealer } from "@/types";
 import { cn } from "@/lib/utils";
 
 type Mode = "all" | "service" | "head";
 
-export default function DealerDirectory() {
+export default function DealerDirectory({ dealers: propDealers }: { dealers?: Dealer[] }) {
+  const dealers = propDealers && propDealers.length ? propDealers : defaultDealers;
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<Mode>("all");
 
@@ -34,11 +36,11 @@ export default function DealerDirectory() {
       );
     }
     return list;
-  }, [query, mode]);
+  }, [query, mode, dealers]);
 
   const cities = useMemo(
     () => Array.from(new Set(dealers.map((d) => d.city))),
-    []
+    [dealers]
   );
 
   const modeBtn = (m: Mode, label: string) => (
@@ -55,7 +57,7 @@ export default function DealerDirectory() {
     </button>
   );
 
-  const directions = (d: (typeof dealers)[number]) =>
+  const directions = (d: Dealer) =>
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
       `${d.name}, ${d.address}, ${d.city}`
     )}`;

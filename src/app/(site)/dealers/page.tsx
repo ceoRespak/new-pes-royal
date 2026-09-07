@@ -7,6 +7,8 @@ import PageHero from "@/components/ui/PageHero";
 import DealerDirectory from "@/components/DealerDirectory";
 import AnimatedSectionWrapper from "@/components/ui/AnimatedSectionWrapper";
 import { getRuntimeSite } from "@/lib/content/runtime-site";
+import { dealers as defaultDealers } from "@/data/dealers";
+import type { Dealer } from "@/types";
 
 export const metadata: Metadata = {
   title: "Dealers & Retail Network",
@@ -35,7 +37,9 @@ const perks = [
 
 export default function DealersPage() {
   const site = getRuntimeSite();
-  const pg = (((getContent().pages ?? {}) as Record<string, Record<string, string>>)["dealers"] ?? {}) as Record<string, string>;
+  const content = getContent();
+  const pg = (((content.pages ?? {}) as Record<string, Record<string, string>>)["dealers"] ?? {}) as Record<string, string>;
+  const dealers = (content.dealers as Dealer[] | undefined) ?? defaultDealers;
   return (
     <>
       <PageHero
@@ -94,7 +98,7 @@ export default function DealersPage() {
             </p>
           </AnimatedSectionWrapper>
 
-          <DealerDirectory />
+          <DealerDirectory dealers={dealers} />
         </div>
       </section>
     </>

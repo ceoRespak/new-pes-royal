@@ -59,6 +59,40 @@ export interface SiteContent {
     role: string;
     city: string;
   }[];
+  /** About page — editable sections (fall back to built-in defaults). */
+  about?: {
+    introPoints?: string[];
+    values?: { icon: string; title: string; text: string }[];
+    stats?: { value: number; suffix: string; label: string }[];
+    milestones?: { year: string; title: string; text: string }[];
+  };
+  /** Gallery photo entries. */
+  galleryItems?: {
+    id: string;
+    title: string;
+    category: string;
+    location: string;
+    image: string;
+  }[];
+  /** Support page FAQs. */
+  faqs?: {
+    id: string;
+    category: string;
+    question: string;
+    answer: string;
+  }[];
+  /** Dealers & locations. */
+  dealers?: {
+    id: string;
+    name: string;
+    city: string;
+    area: string;
+    address: string;
+    phone: string;
+    timing: string;
+    isServiceCenter: boolean;
+    isHeadOffice: boolean;
+  }[];
   updatedAt?: number;
   // more sections to come (header/footer, inner pages…)
   [key: string]: unknown;

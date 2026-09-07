@@ -11,20 +11,27 @@ import {
   FaCommentDots,
   FaFileAlt,
   FaImages,
+  FaInfoCircle,
   FaPhoneAlt,
   FaPlus,
+  FaQuestionCircle,
   FaQuoteRight,
   FaSave,
+  FaStore,
   FaThumbsUp,
   FaTrash,
   FaCheckCircle,
 } from "react-icons/fa";
 import { heroSlides as defaultHero } from "@/data/hero";
 import { testimonials as defaultTestimonials } from "@/data/testimonials";
+import { galleryItems as defaultGalleryItems } from "@/data/gallery";
+import { faqs as defaultFaqs } from "@/data/faqs";
+import { dealers as defaultDealers } from "@/data/dealers";
 import { site } from "@/data/site";
 import { resolveImage } from "@/lib/images";
 import UploadButton from "@/components/admin/UploadButton";
 import HeroImageAdjustModal, { type HeroAdjust } from "@/components/admin/HeroImageAdjustModal";
+import type { Faq, Dealer, GalleryItem } from "@/types";
 import type { HeroSlide } from "@/data/hero";
 
 /* ---------------- types & defaults ---------------- */
@@ -36,6 +43,41 @@ export interface Slogan {
   eyebrow: string; title: string; highlight: string; description: string;
   ctaLabel: string; ctaHref: string;
 }
+
+export interface AboutSections {
+  introPoints: string[];
+  values: { icon: string; title: string; text: string }[];
+  stats: { value: number; suffix: string; label: string }[];
+  milestones: { year: string; title: string; text: string }[];
+}
+
+const DEFAULT_ABOUT: AboutSections = {
+  introPoints: [
+    "Approved distributor of Pakistan Cables, AGE & Fast Cables",
+    "Genuine Philips, Schneider, ABB, Opal, Royal & Pak Fan products",
+    "Expert advice for electricians, contractors & homeowners",
+    "Free same-day delivery across Peshawar",
+  ],
+  values: [
+    { icon: "shield", title: "Integrity", text: "Only genuine, authentic products — and honest advice, always." },
+    { icon: "award", title: "Quality Brands", text: "We stock brands we trust: Pakistan Cables, Schneider, ABB, Royal & more." },
+    { icon: "heart", title: "Customer Care", text: "Expert guidance for electricians, contractors and homeowners." },
+    { icon: "handshake", title: "Fair Partnership", text: "Fair prices and reliable supply for every customer and project." },
+  ],
+  stats: [
+    { value: 10, suffix: "+", label: "Years in Peshawar" },
+    { value: 13, suffix: "", label: "Product Categories" },
+    { value: 100, suffix: "+", label: "Products Online" },
+    { value: 12, suffix: "+", label: "Top Brands" },
+  ],
+  milestones: [
+    { year: "2015", title: "The shop opens", text: "Respak Express opens its doors at Shop No. 1, Haroon Market, Karkhano Bazar, Peshawar — with one promise: genuine products at fair prices." },
+    { year: "Growing", title: "Becoming approved distributors", text: "We become approved distributors of Pakistan Cables, AGE Cables and Fast Cables, and start stocking premium brands like Philips, Schneider, ABB, Royal Fans and Pak Fan." },
+    { year: "Expanding", title: "A second branch", text: "To serve more customers we open a second outlet at Khyber Bazaar, Peshawar — bringing the same genuine stock and honest advice closer to you." },
+    { year: "Online", title: "Shop online, delivered same-day", text: "Our online store goes live with free same-day delivery across Peshawar, letting electricians, contractors and homeowners order from anywhere." },
+    { year: "Today", title: "Peshawar's trusted electric shop", text: "From wires and circuit breakers to fans, lighting, DBs and smart home — customers across the city rely on Respak Express every day." },
+  ],
+};
 
 const DEFAULT_TRUST: TrustItem[] = [
   { icon: "truck", title: "Nationwide Delivery", text: "Fast courier all over Pakistan" },
@@ -60,7 +102,7 @@ const DEFAULT_WHY: WhyItem[] = [
   { icon: "headset", title: "Expert After-Sales Support", text: "Warranty help & honest buying advice." },
 ];
 
-const ICONS = ["truck","shield","money","check","headset","store","tags","award","bolt","star","sun","wifi","headset"];
+const ICONS = ["truck","shield","money","check","headset","store","tags","award","bolt","star","sun","wifi","headset","heart","handshake","eye","bullseye"];
 const DEFAULT_BG =
   "radial-gradient(1200px 620px at 85% -10%, rgba(26,92,173,0.5), transparent 60%), linear-gradient(120deg,#001a33 0%,#003366 58%,#0a4788 100%)";
 
@@ -338,6 +380,20 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const [testimonials, setTestimonials] = useState<Testimonial[]>(
     pick("testimonials", defaultTestimonials as Testimonial[])
   );
+  const aboutInit = (initial.about as AboutSections | undefined) ?? DEFAULT_ABOUT;
+  const [aboutIntro, setAboutIntro] = useState<string[]>(aboutInit.introPoints);
+  const [aboutValues, setAboutValues] = useState<AboutSections["values"]>(aboutInit.values);
+  const [aboutStats, setAboutStats] = useState<AboutSections["stats"]>(aboutInit.stats);
+  const [aboutMilestones, setAboutMilestones] = useState<AboutSections["milestones"]>(aboutInit.milestones);
+  const [galleryItems, setGallery] = useState<GalleryItem[]>(
+    (initial.galleryItems as GalleryItem[] | undefined) ?? defaultGalleryItems
+  );
+  const [faqs, setFaqs] = useState<Faq[]>(
+    (initial.faqs as Faq[] | undefined) ?? defaultFaqs
+  );
+  const [dealers, setDealers] = useState<Dealer[]>(
+    (initial.dealers as Dealer[] | undefined) ?? defaultDealers
+  );
   const [siteInfo, setSiteInfo] = useState<Record<string, string>>(
     (initial.siteInfo as Record<string, string> | undefined) || {}
   );
@@ -367,6 +423,12 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const setWhyItem = setList(setWhy);
   const setPromo = setList(setPromos);
   const setTestimonial = setList(setTestimonials);
+  const setGalleryItem = setList(setGallery);
+  const setFaq = setList(setFaqs);
+  const setDealer = setList(setDealers);
+  const setAboutValue = setList(setAboutValues);
+  const setAboutStat = setList(setAboutStats);
+  const setAboutMilestone = setList(setAboutMilestones);
 
   function move<T>(setter: React.Dispatch<React.SetStateAction<T[]>>, i: number, dir: -1 | 1) {
     setter((list) => {
@@ -389,6 +451,15 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
       whyChoose: { heading: whyHeading, items: why },
       promoBanners: promos,
       testimonials,
+      about: {
+        introPoints: aboutIntro,
+        values: aboutValues,
+        stats: aboutStats,
+        milestones: aboutMilestones,
+      },
+      galleryItems,
+      faqs,
+      dealers,
       siteInfo: Object.fromEntries(
         Object.entries(siteInfo).filter(([, v]) => String(v).trim() !== "")
       ),
@@ -452,6 +523,13 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
   const movePromo = (i: number, d: -1 | 1) => move(setPromos, i, d);
   const moveTesti = (i: number, d: -1 | 1) => move(setTestimonials, i, d);
   const moveHero = (i: number, d: -1 | 1) => move(setHero, i, d);
+  const moveIntro = (i: number, d: -1 | 1) => move(setAboutIntro, i, d);
+  const moveValue = (i: number, d: -1 | 1) => move(setAboutValues, i, d);
+  const moveStat = (i: number, d: -1 | 1) => move(setAboutStats, i, d);
+  const moveMilestone = (i: number, d: -1 | 1) => move(setAboutMilestones, i, d);
+  const moveGallery = (i: number, d: -1 | 1) => move(setGallery, i, d);
+  const moveFaq = (i: number, d: -1 | 1) => move(setFaqs, i, d);
+  const moveDealer = (i: number, d: -1 | 1) => move(setDealers, i, d);
 
   return (
     <div className="space-y-5">
@@ -892,6 +970,141 @@ export default function SiteContentEditor({ initial }: { initial: Record<string,
         </div>
       </Group>
 
+      {/* ============ ABOUT PAGE ============ */}
+      <Group title="About page sections" hint="Intro points, core values, stats band & history timeline shown on the About page." accent="bg-gradient-to-r from-emerald-500 to-teal-700" icon={FaInfoCircle} count={aboutIntro.length + aboutValues.length + aboutMilestones.length}>
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Intro points (bullets under “Company Profile”)</p>
+          <div className="space-y-2">
+            {aboutIntro.map((p, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <textarea rows={1} className={`${input} resize-none`} value={p} onChange={(e) => setAboutIntro((l) => l.map((x, xi) => (xi === i ? e.target.value : x)))} />
+                <ItemControls i={i} len={aboutIntro.length} onRemove={() => removeAt(setAboutIntro)(i)} moveFn={(d) => moveIntro(i, d)} />
+              </div>
+            ))}
+          </div>
+          <AddButton label="Add intro point" onClick={() => pushAt<string>(setAboutIntro, "")} />
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Core values</p>
+          <div className="space-y-2">
+            {aboutValues.map((v, i) => (
+              <ItemRow key={i} label={v.title} controls={<ItemControls i={i} len={aboutValues.length} onRemove={() => removeAt(setAboutValues)(i)} moveFn={(d) => moveValue(i, d)} />}>
+                <div className="grid gap-2 sm:grid-cols-[7rem_1fr]">
+                  <IconPick value={v.icon} onChange={(x) => setAboutValue(i, { icon: x })} />
+                  <input className={input} value={v.title} onChange={(e) => setAboutValue(i, { title: e.target.value })} placeholder="Title" />
+                  <textarea rows={2} className={`${input} resize-none sm:col-span-2`} value={v.text} onChange={(e) => setAboutValue(i, { text: e.target.value })} placeholder="Short description" />
+                </div>
+              </ItemRow>
+            ))}
+          </div>
+          <AddButton label="Add value" onClick={() => pushAt(setAboutValues, { icon: "shield", title: "New value", text: "" })} />
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Stats band (numbers)</p>
+          <div className="space-y-2">
+            {aboutStats.map((s, i) => (
+              <ItemRow key={i} label={`${s.value}${s.suffix} ${s.label}`} controls={<ItemControls i={i} len={aboutStats.length} onRemove={() => removeAt(setAboutStats)(i)} moveFn={(d) => moveStat(i, d)} />}>
+                <div className="grid gap-2 sm:grid-cols-[6rem_5rem_1fr]">
+                  <input type="number" className={input} value={s.value} onChange={(e) => setAboutStat(i, { value: Number(e.target.value) || 0 })} />
+                  <input className={input} value={s.suffix} onChange={(e) => setAboutStat(i, { suffix: e.target.value })} placeholder="+ " />
+                  <input className={input} value={s.label} onChange={(e) => setAboutStat(i, { label: e.target.value })} placeholder="Label" />
+                </div>
+              </ItemRow>
+            ))}
+          </div>
+          <AddButton label="Add stat" onClick={() => pushAt(setAboutStats, { value: 0, suffix: "+", label: "New stat" })} />
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">History timeline (milestones)</p>
+          <div className="space-y-2">
+            {aboutMilestones.map((m, i) => (
+              <ItemRow key={i} label={`${m.year} — ${m.title}`} controls={<ItemControls i={i} len={aboutMilestones.length} onRemove={() => removeAt(setAboutMilestones)(i)} moveFn={(d) => moveMilestone(i, d)} />}>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <input className={input} value={m.year} onChange={(e) => setAboutMilestone(i, { year: e.target.value })} placeholder="Year / label" />
+                  <input className={input} value={m.title} onChange={(e) => setAboutMilestone(i, { title: e.target.value })} placeholder="Title" />
+                  <textarea rows={2} className={`${input} resize-none sm:col-span-2`} value={m.text} onChange={(e) => setAboutMilestone(i, { text: e.target.value })} placeholder="Description" />
+                </div>
+              </ItemRow>
+            ))}
+          </div>
+          <AddButton label="Add milestone" onClick={() => pushAt(setAboutMilestones, { year: "", title: "New milestone", text: "" })} />
+        </div>
+      </Group>
+
+      {/* ============ GALLERY ============ */}
+      <Group title="Gallery photos" hint="Real project photos with captions — shown on the Gallery page." accent="bg-gradient-to-r from-rose-500 to-red-700" icon={FaImages} count={galleryItems.length}>
+        <div className="space-y-3">
+          {galleryItems.map((g, i) => (
+            <ItemRow key={g.id} label={g.title} controls={<ItemControls i={i} len={galleryItems.length} onRemove={() => removeAt(setGallery)(i)} moveFn={(d) => moveGallery(i, d)} />}>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <input className={input} value={g.title} onChange={(e) => setGalleryItem(i, { title: e.target.value })} placeholder="Title" />
+                <input className={input} value={g.category} onChange={(e) => setGalleryItem(i, { category: e.target.value })} placeholder="Category (e.g. Fans)" />
+                <input className={input} value={g.location} onChange={(e) => setGalleryItem(i, { location: e.target.value })} placeholder="Location" />
+                <div className="flex items-center gap-2">
+                  <input className={input} value={g.image} onChange={(e) => setGalleryItem(i, { image: e.target.value })} placeholder="/images/gallery/…" />
+                  <UploadButton value={g.image} onChange={(url) => setGalleryItem(i, { image: url })} label="Upload" />
+                </div>
+              </div>
+              {g.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={`${g.image}-${imgV}`} src={`${resolveImg(g.image)}${resolveImg(g.image).includes("?") ? "&" : "?"}v=${imgV}`} alt={g.title} className="mt-2 h-16 w-28 rounded-lg border border-slate-200 bg-white object-cover" />
+              )}
+            </ItemRow>
+          ))}
+          <AddButton label="Add photo" onClick={() => pushAt(setGallery, { id: `g-${Date.now()}`, title: "New photo", category: "Fans", location: "Peshawar", image: "" })} />
+        </div>
+      </Group>
+
+      {/* ============ SUPPORT FAQ ============ */}
+      <Group title="Support FAQs" hint="Questions & answers on the Support page (categories: warranty / products / orders / support)." accent="bg-gradient-to-r from-cyan-500 to-blue-700" icon={FaQuestionCircle} count={faqs.length}>
+        <div className="space-y-3">
+          {faqs.map((f, i) => (
+            <ItemRow key={f.id} label={f.question} controls={<ItemControls i={i} len={faqs.length} onRemove={() => removeAt(setFaqs)(i)} moveFn={(d) => moveFaq(i, d)} />}>
+              <div className="grid gap-2 sm:grid-cols-[9rem_1fr]">
+                <select className={input} value={f.category} onChange={(e) => setFaq(i, { category: e.target.value as Faq["category"] })}>
+                  {["warranty", "products", "orders", "support"].map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <input className={input} value={f.question} onChange={(e) => setFaq(i, { question: e.target.value })} placeholder="Question" />
+                <textarea rows={2} className={`${input} resize-none sm:col-span-2`} value={f.answer} onChange={(e) => setFaq(i, { answer: e.target.value })} placeholder="Answer" />
+              </div>
+            </ItemRow>
+          ))}
+          <AddButton label="Add FAQ" onClick={() => pushAt(setFaqs, { id: `f-${Date.now()}`, category: "support", question: "", answer: "" } as Faq)} />
+        </div>
+      </Group>
+
+      {/* ============ DEALERS ============ */}
+      <Group title="Dealers & locations" hint="Outlets shown on the Dealers page." accent="bg-gradient-to-r from-orange-500 to-amber-700" icon={FaStore} count={dealers.length}>
+        <div className="space-y-3">
+          {dealers.map((d, i) => (
+            <ItemRow key={d.id} label={d.name} controls={<ItemControls i={i} len={dealers.length} onRemove={() => removeAt(setDealers)(i)} moveFn={(d2) => moveDealer(i, d2)} />}>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <input className={input} value={d.name} onChange={(e) => setDealer(i, { name: e.target.value })} placeholder="Name" />
+                <input className={input} value={d.city} onChange={(e) => setDealer(i, { city: e.target.value })} placeholder="City" />
+                <input className={input} value={d.area} onChange={(e) => setDealer(i, { area: e.target.value })} placeholder="Area / market" />
+                <input className={input} value={d.phone} onChange={(e) => setDealer(i, { phone: e.target.value })} placeholder="Phone" />
+                <input className={`${input} sm:col-span-2`} value={d.address} onChange={(e) => setDealer(i, { address: e.target.value })} placeholder="Full address" />
+                <input className={input} value={d.timing} onChange={(e) => setDealer(i, { timing: e.target.value })} placeholder="Timing" />
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                    <input type="checkbox" className="h-4 w-4 accent-[#E11D2A]" checked={d.isServiceCenter} onChange={(e) => setDealer(i, { isServiceCenter: e.target.checked })} /> Service center
+                  </label>
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                    <input type="checkbox" className="h-4 w-4 accent-[#E11D2A]" checked={d.isHeadOffice} onChange={(e) => setDealer(i, { isHeadOffice: e.target.checked })} /> Head office
+                  </label>
+                </div>
+              </div>
+            </ItemRow>
+          ))}
+          <AddButton label="Add dealer" onClick={() => pushAt(setDealers, { id: `d-${Date.now()}`, name: "New outlet", city: "Peshawar", area: "", address: "", phone: "", timing: "", isServiceCenter: true, isHeadOffice: false } as Dealer)} />
+        </div>
+      </Group>
+
       {/* ============ HEADER / FOOTER CONTACT ============ */}
       <Group
         title="Header &amp; Footer (site-wide)"
@@ -975,16 +1188,16 @@ function Group({ title, hint, accent, icon: Icon, count, children }: { title: st
   );
 }
 
-function ItemRow({ label, onRemove, controls, children }: { label: string; onRemove: () => void; controls?: React.ReactNode; children: React.ReactNode }) {
+function ItemRow({ label, onRemove, controls, children }: { label: string; onRemove?: () => void; controls?: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className="truncate text-sm font-bold text-slate-700">{label || "New item"}</span>
-        {controls ?? (
+        {controls ?? (onRemove ? (
           <button type="button" onClick={onRemove} className="rounded-lg p-2 text-red-400 hover:bg-red-50" title="Remove">
             <FaTrash />
           </button>
-        )}
+        ) : null)}
       </div>
       {children}
     </div>

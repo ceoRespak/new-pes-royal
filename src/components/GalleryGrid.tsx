@@ -10,19 +10,25 @@ import {
   FaMapMarkerAlt,
   FaTimes,
 } from "react-icons/fa";
-import { galleryFilters, galleryItems } from "@/data/gallery";
+import { galleryItems as defaultGalleryItems } from "@/data/gallery";
+import type { GalleryItem } from "@/types";
 import { cn } from "@/lib/utils";
 
-export default function GalleryGrid() {
-  const [filter, setFilter] = useState("All");
+export default function GalleryGrid({ items: propItems }: { items?: GalleryItem[] }) {
+  const allItems = propItems && propItems.length ? propItems : defaultGalleryItems;
+  const filters = useMemo(
+    () => ["All", ...Array.from(new Set(allItems.map((g) => g.category)))] as string[],
+    [allItems]
+  );
+  const [filter, setFilter] = useState<string>("All");
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   const items = useMemo(
     () =>
       filter === "All"
-        ? galleryItems
-        : galleryItems.filter((g) => g.category === filter),
-    [filter]
+        ? allItems
+        : allItems.filter((g) => g.category === filter),
+    [filter, allItems]
   );
 
   const activeItem = lightbox !== null ? items[lightbox] : null;
@@ -37,7 +43,7 @@ export default function GalleryGrid() {
     <div>
       {/* Filters */}
       <div className="no-scrollbar mb-10 flex gap-2 overflow-x-auto pb-1 lg:justify-center">
-        {galleryFilters.map((f) => (
+        {filters.map((f) => (
           <button
             key={f}
             onClick={() => {

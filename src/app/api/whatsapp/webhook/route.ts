@@ -1,7 +1,24 @@
 import { NextResponse } from "next/server";
 import { getAllOrders, updateOrder } from "@/lib/orders/store";
-import { normalizePhone, sendWaText } from "@/lib/notify/whatsapp-ba";
+import {
+  normalizePhone,
+  sendWaText,
+  waConfigured,
+} from "@/lib/notify/whatsapp-ba";
 import { site } from "@/data/site";
+
+/** Best-effort WhatsApp ping to the store owner (ORDER_WA_TO). */
+async function notifyOwner(text: string): Promise<void> {
+  try {
+    const ownerRaw = process.env.ORDER_WA_TO?.trim();
+    if (!ownerRaw || !waConfigured()) return;
+    const to = normalizePhone(ownerRaw);
+    if (!to) return;
+    await sendWaText(to, text).catch(() => {});
+  } catch {
+    /* owner notification must never break webhook handling */
+  }
+}
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -81,6 +98,14 @@ async function handleEvents(body: WaWebhookBody) {
             ? `Hi ${first},\n\nYour order ${order.ref} has been cancelled successfully. If there was any issue, please let us know — our team is here to help.`
             : `Thank you! Your order ${order.ref} is confirmed. We'll contact you shortly to arrange delivery. — ${site.name}`;
           await sendWaText(from, reply).catch(() => {});
+
+          // Keep the store owner posted when the customer confirms/cancels
+          // over WhatsApp.
+          await notifyOwner(
+            `${cancel ? "❌ Cancelled" : "✅ Confirmed"} by customer on WhatsApp: order ${
+              order.ref
+            } (${order.customer.name}, ${order.customer.city}).`
+          );
         }
       }
     }

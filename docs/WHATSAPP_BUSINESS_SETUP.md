@@ -80,19 +80,31 @@ WA_VERIFY_TOKEN=choose-a-secret    # must match the webhook verify token
 WA_API_VERSION=v21.0
 WA_ORDER_TEMPLATE=order_placed
 WA_ORDER_TEMPLATE_LANG=en
+ORDER_WA_TO=0345xxxxxxx            # owner's WhatsApp for new-order alerts
 ```
 
-Nothing breaks if these are empty — the site falls back to the `wa.me` button.
+`ORDER_WA_TO` is the **owner's** WhatsApp number. On every new order the
+business sends them a full recap message, and when a customer taps
+Confirm/Cancel the owner gets a short update too. This number must be
+**different** from `WA_PHONE_ID` (you can’t WhatsApp your own sender number).
+Free-form (non-template) messages like these are only allowed inside a 24-hour
+customer-service window, so the owner should send the business number a quick
+message (e.g. “hi”) once — after that the recap messages will go through.
+
+Nothing breaks if these are empty — the site falls back to the `wa.me` button
+and the owner still gets the order by email (`ORDER_EMAILS_TO`).
 
 ## 6. How it behaves
 
 - **On checkout** → order is saved and the template is sent to the customer’s
-  phone (auto-converted to `92…` format) with order ref + total.
+  phone (auto-converted to `92…` format) with order ref + total; the store
+  owner gets the recap on WhatsApp (`ORDER_WA_TO`) and by email
+  (`ORDER_EMAILS_TO`).
 - **Customer taps Confirm** → Meta posts to `/api/whatsapp/webhook` → the
-  matching pending order becomes **confirmed** and a thank-you WhatsApp is
-  returned.
-- **Customer taps Cancel** → the order becomes **cancelled** and a cancellation
-  WhatsApp is returned.
+  matching pending order becomes **confirmed**, a thank-you WhatsApp is
+  returned, and the owner is pinged on WhatsApp.
+- **Customer taps Cancel** → the order becomes **cancelled**, a cancellation
+  WhatsApp is returned, and the owner is pinged on WhatsApp.
 - Changes appear in **Admin → Orders** immediately.
 
 ## Troubleshooting

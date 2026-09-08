@@ -8,7 +8,13 @@ import {
 } from "@/lib/checkout/config";
 import { createOrder } from "@/lib/orders/store";
 import { sendOrderEmails } from "@/lib/notify/mailer";
-import { sendOrderWhatsAppConfirmation } from "@/lib/notify/whatsapp-ba";
+import { orderWhatsappText } from "@/lib/notify/order-email";
+import {
+  normalizePhone,
+  sendOrderWhatsAppConfirmation,
+  sendWaText,
+  waConfigured,
+} from "@/lib/notify/whatsapp-ba";
 import { getLiveProducts } from "@/lib/store/live";
 import { getCurrentCustomer } from "@/lib/customers/session";
 import { variantsForProduct } from "@/lib/admin/variants-store";
@@ -205,6 +211,25 @@ export async function POST(req: Request) {
     }
   } catch (e) {
     console.warn("[order-whatsapp] send error:", String(e));
+  }
+
+  // WhatsApp recap to the STORE OWNER (ORDER_WA_TO) so they get the order on
+  // WhatsApp too, not just email. Best-effort & silent unless configured.
+  // Note: free-form business messages need a 24h window — the owner should
+  // message the business number once (see docs/WHATSAPP_BUSINESS_SETUP.md).
+  try {
+    const ownerRaw = process.env.ORDER_WA_TO?.trim();
+    if (waConfigured() && ownerRaw) {
+      const ownerPhone = normalizePhone(ownerRaw);
+      if (ownerPhone) {
+        const relay = await sendWaText(ownerPhone, orderWhatsappText(order));
+        if (relay.ok === false) {
+          console.warn("[order-whatsapp-owner]", relay.error || "send failed");
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("[order-whatsapp-owner] send error:", String(e));
   }
 
   return NextResponse.json({ ok: true, order });
